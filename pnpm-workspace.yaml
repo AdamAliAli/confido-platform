@@ -1,0 +1,19 @@
+packages:
+  - apps/*
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - argon2
+  - prisma
+  - sharp
+overrides:
+  motion-dom: 12.23.12
+  motion-utils: 12.23.6
+allowBuilds:
+  '@nestjs/core': true
+  '@prisma/client': true
+  '@prisma/engines': true
+  argon2: true
+  prisma: true
+  sharp: true

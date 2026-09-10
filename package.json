@@ -1,0 +1,1 @@
+{"name":"confido-platform","private":true,"packageManager":"pnpm@9.15.4","scripts":{"dev":"concurrently \"pnpm --filter web dev\" \"pnpm --filter api start:dev\"","build":"pnpm --filter api build && pnpm --filter web build","lint":"pnpm -r lint"},"devDependencies":{"concurrently":"9.1.2"}}
