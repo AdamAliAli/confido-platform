@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Block = { id: string; type: string; data: Record<string, any> };
@@ -9,7 +9,6 @@ const PROJECT_IMAGES = [
   'https://framerusercontent.com/images/jJ7iXw4DvAMgulhCvEedvyNESw.png?width=1296&height=740',
   'https://framerusercontent.com/images/yfzBZc6F0VBzvzZKKzd9FBXIRas.png?width=1296&height=740',
   'https://framerusercontent.com/images/JmP3L3tgMpB8WTmZMk2np846IE.png?width=1296&height=740',
-
 ];
 
 type ActiveCell = { id: string; row: number; column: number; image: string };
@@ -31,25 +30,38 @@ function ConfidoLogo() {
 function InteractiveCells({ images }: { images: string[] }) {
   const lastCell = useRef('');
   const imageIndex = useRef(0);
-  const [cells, setCells] = useState<ActiveCell[]>([]);
+  const lastRevealAt = useRef(0);
+  const hideTimer = useRef<number | null>(null);
+  const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
 
   useEffect(() => {
     images.forEach((src) => {
       const image = new Image();
       image.src = src;
     });
+
+    return () => {
+      if (hideTimer.current) window.clearTimeout(hideTimer.current);
+    };
   }, [images]);
 
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'touch' || images.length === 0) return;
+
+    const now = performance.now();
+    if (now - lastRevealAt.current < 85) return;
+
     const bounds = event.currentTarget.getBoundingClientRect();
     const columns = 8;
     const rows = 5;
     const column = Math.min(columns - 1, Math.floor(((event.clientX - bounds.left) / bounds.width) * columns));
     const row = Math.min(rows - 1, Math.floor(((event.clientY - bounds.top) / bounds.height) * rows));
     const key = `${row}-${column}`;
+
     if (key === lastCell.current) return;
+
     lastCell.current = key;
+    lastRevealAt.current = now;
 
     const next = {
       id: `${key}-${Date.now()}`,
@@ -57,31 +69,44 @@ function InteractiveCells({ images }: { images: string[] }) {
       column,
       image: images[imageIndex.current++ % images.length],
     };
-    setCells((current) => [...current.slice(-6), next]);
-    window.setTimeout(() => setCells((current) => current.filter((cell) => cell.id !== next.id)), 620);
+
+    if (hideTimer.current) window.clearTimeout(hideTimer.current);
+    setActiveCell(next);
+    hideTimer.current = window.setTimeout(() => setActiveCell(null), 430);
   }, [images]);
 
   return (
     <div className="cell-stage" onPointerMove={revealCell} aria-hidden="true">
-      <div className="cell-grid" />
-      {cells.map((cell) => (
-        <motion.div
-          key={cell.id}
-          className="image-cell"
-          style={{ '--cell-row': cell.row, '--cell-column': cell.column, backgroundImage: `url("${cell.image}")` } as React.CSSProperties}
-          initial={{ opacity: 0, scale: 0.86 }}
-          animate={{ opacity: 0.72, scale: 1 }}
-          transition={{ duration: 0.12, ease: 'easeOut' }}
-        />
-      ))}
+      <AnimatePresence mode="wait">
+        {activeCell && (
+          <motion.div
+            key={activeCell.id}
+            className="image-cell"
+            style={{
+              '--cell-row': activeCell.row,
+              '--cell-column': activeCell.column,
+              backgroundImage: `url("${activeCell.image}")`,
+            } as React.CSSProperties}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 0.76, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.1, ease: 'easeOut' }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 function Hero({ data }: { data: Record<string, any> }) {
+  const galleryImages =
+    Array.isArray(data.galleryImages) && data.galleryImages.length
+      ? data.galleryImages
+      : PROJECT_IMAGES;
+
   return (
     <section id="hero" className="hero-shell">
-      <InteractiveCells images={Array.isArray(data.galleryImages) && data.galleryImages.length ? data.galleryImages : PROJECT_IMAGES} />
+      <InteractiveCells images={galleryImages} />
       <div className="hero-sphere" aria-hidden="true" />
 
       <header className="hero-nav">
