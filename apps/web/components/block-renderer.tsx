@@ -38,7 +38,7 @@ function InteractiveCells({ images }: { images: string[] }) {
       const image = new Image();
       image.src = src;
     });
-  }, []);
+  }, [images]);
 
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'touch' || images.length === 0) return;
@@ -59,7 +59,7 @@ function InteractiveCells({ images }: { images: string[] }) {
     };
     setCells((current) => [...current.slice(-6), next]);
     window.setTimeout(() => setCells((current) => current.filter((cell) => cell.id !== next.id)), 620);
-  }, []);
+  }, [images]);
 
   return (
     <div className="cell-stage" onPointerMove={revealCell} aria-hidden="true">
