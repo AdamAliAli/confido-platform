@@ -1,1 +1,153 @@
-'use client';import{motion}from'framer-motion';type Block={id:string;type:string;data:any};const reveal={initial:{opacity:0,y:30},whileInView:{opacity:1,y:0},viewport:{once:true,amount:.2},transition:{duration:.65}};export function BlockRenderer({blocks=[]}:{blocks:Block[]}){return <>{blocks.map(b=>{if(b.type==='hero')return <section key={b.id} className="grid-lines relative min-h-screen overflow-hidden px-6 pt-32 md:px-[8vw]"><div className="orb absolute left-1/2 top-1/2 h-[70vw] max-h-[760px] w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-[50%]"/><motion.div {...reveal} className="relative z-10 mx-auto max-w-6xl"><p className="mb-14 text-sm uppercase text-zinc-300"><i className="mr-3 inline-block h-2 w-2 bg-mint"/>{b.data.eyebrow}</p><h1 className="text-[17vw] font-light leading-[.85] tracking-[-.07em] md:text-[9vw]">{b.data.title}</h1><h2 className="mt-12 text-right text-[13vw] font-light leading-none tracking-[-.07em] md:text-[8vw]"><span className="text-mint">{b.data.accent}</span> {b.data.subtitle}</h2><p className="ml-auto mt-10 max-w-sm text-zinc-300">{b.data.description}</p></motion.div></section>;if(b.type==='services')return <section key={b.id} className="px-6 py-28 md:px-[8vw]"><motion.h2 {...reveal} className="mb-16 text-6xl font-light tracking-tight md:text-8xl">Our <span className="text-mint">Expertise</span></motion.h2><div>{b.data.items?.map((x:any,i:number)=><motion.div {...reveal} key={i} className="grid border-t border-white/15 py-8 md:grid-cols-[140px_1fr_1fr]"><small className="text-zinc-500">Service #{i+1}</small><h3 className="text-4xl">{x.title}</h3><p className="text-zinc-400">{x.description}</p></motion.div>)}</div></section>;if(b.type==='contact')return <section key={b.id} className="bg-gradient-to-b from-ink to-emerald-950 px-6 py-36 text-center"><motion.h2 {...reveal} className="text-6xl font-light tracking-tight md:text-9xl">{b.data.title}<br/><span className="text-mint">{b.data.accent}</span></motion.h2><p className="mx-auto mt-8 max-w-lg text-zinc-300">{b.data.description}</p><a className="mt-10 inline-block border border-white/30 px-7 py-4 hover:bg-mint hover:text-black" href={`mailto:${b.data.email}`}>Start a Conversation ↗</a></section>;return null})}</>}
+'use client';
+
+import { motion } from 'framer-motion';
+import { useCallback, useRef, useState } from 'react';
+
+type Block = {
+  id: string;
+  type: string;
+  data: Record<string, any>;
+};
+
+const PROJECT_IMAGES = [
+  'https://framerusercontent.com/images/jJ7iXw4DvAMgulhCvEedvyNESw.png?width=1296&height=740',
+  'https://framerusercontent.com/images/yfzBZc6F0VBzvzZKKzd9FBXIRas.png?width=1296&height=740',
+  'https://framerusercontent.com/images/JmP3L3tgMpB8WTmZMk2np846IE.png?width=1296&height=740',
+  'https://framerusercontent.com/images/LtwdL5pxo7YbkmSPBJn6shHk9pw.png?width=1370&height=842',
+];
+
+type ActiveCell = {
+  id: string;
+  row: number;
+  column: number;
+  image: string;
+};
+
+function ConfidoLogo() {
+  return (
+    <a className="brand" href="#hero" aria-label="Confido home">
+      <svg className="brand-mark" viewBox="0 0 170 80" aria-hidden="true">
+        <path
+          d="M7 47c30 20 67 21 99 5 15-8 27-18 37-33 4-7 13-10 20-6 8 4 10 13 6 21-12 22-32 38-55 47C72 97 30 84 7 52c-2-2-2-4 0-5Z"
+          fill="currentColor"
+        />
+      </svg>
+      <span className="brand-copy">
+        <span className="brand-name">Confido</span>
+        <span className="brand-tagline">Advertising &amp; Marketing Services</span>
+      </span>
+    </a>
+  );
+}
+
+function InteractiveCells() {
+  const lastCell = useRef('');
+  const imageIndex = useRef(0);
+  const [cells, setCells] = useState<ActiveCell[]>([]);
+
+  const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch') return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const columns = window.innerWidth < 768 ? 4 : 8;
+    const rows = window.innerWidth < 768 ? 6 : 5;
+    const column = Math.min(columns - 1, Math.floor(((event.clientX - bounds.left) / bounds.width) * columns));
+    const row = Math.min(rows - 1, Math.floor(((event.clientY - bounds.top) / bounds.height) * rows));
+    const key = `${row}-${column}`;
+
+    if (key === lastCell.current) return;
+    lastCell.current = key;
+
+    const next: ActiveCell = {
+      id: `${key}-${Date.now()}`,
+      row,
+      column,
+      image: PROJECT_IMAGES[imageIndex.current % PROJECT_IMAGES.length],
+    };
+
+    imageIndex.current += 1;
+    setCells((current) => [...current.slice(-5), next]);
+    window.setTimeout(() => {
+      setCells((current) => current.filter((cell) => cell.id !== next.id));
+    }, 1150);
+  }, []);
+
+  return (
+    <div className="cell-stage" onPointerMove={revealCell} aria-hidden="true">
+      <div className="cell-grid" />
+      {cells.map((cell) => (
+        <motion.div
+          key={cell.id}
+          className="image-cell"
+          style={{
+            '--cell-row': cell.row,
+            '--cell-column': cell.column,
+            backgroundImage: `url("${cell.image}")`,
+          } as React.CSSProperties}
+          initial={{ opacity: 0, scale: 0.82 }}
+          animate={{ opacity: 0.72, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.24, ease: 'easeOut' }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Hero({ data }: { data: Record<string, any> }) {
+  return (
+    <section id="hero" className="hero-shell">
+      <InteractiveCells />
+      <div className="hero-glow" aria-hidden="true" />
+
+      <header className="hero-nav">
+        <ConfidoLogo />
+        <span className="nav-label">Consultancy</span>
+        <a className="book-link" href="#contact">
+          <span>Book a Call</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </header>
+
+      <div className="hero-content">
+        <div className="hero-kicker">
+          <span className="kicker-dot" />
+          <span>{data.eyebrow}</span>
+          <span className="kicker-index">V</span>
+        </div>
+
+        <motion.div
+          className="headline-wrap"
+          initial={{ opacity: 0, y: 34 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="headline-row headline-top">
+            <h1>{data.title}</h1>
+            <span className="hero-year">© 2026</span>
+          </div>
+
+          <div className="hero-middle">
+            <p>{data.description}</p>
+            <span className="headline-with">{data.accent}</span>
+          </div>
+
+          <div className="headline-row headline-bottom">
+            <span className="scroll-cue">Scroll Down</span>
+            <h2>{data.subtitle}</h2>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+export function BlockRenderer({ blocks = [] }: { blocks: Block[] }) {
+  return (
+    <>
+      {blocks.map((block) =>
+        block.type === 'hero' ? <Hero key={block.id} data={block.data} /> : null,
+      )}
+    </>
+  );
+}
