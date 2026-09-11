@@ -31,7 +31,14 @@ function ConfidoLogo() {
 function InteractiveCells() {
   const lastCell = useRef('');
   const imageIndex = useRef(0);
-  const [cells, setCells] = useState<ActiveCell[]>([]);\n\n  useEffect(() => {\n    PROJECT_IMAGES.forEach((src) => {\n      const image = new Image();\n      image.src = src;\n    });\n  }, []);
+  const [cells, setCells] = useState<ActiveCell[]>([]);
+
+  useEffect(() => {
+    PROJECT_IMAGES.forEach((src) => {
+      const image = new Image();
+      image.src = src;
+    });
+  }, []);
 
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'touch') return;
