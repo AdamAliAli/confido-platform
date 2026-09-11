@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Block = { id: string; type: string; data: Record<string, any> };
@@ -30,18 +30,14 @@ function ConfidoLogo() {
 function InteractiveCells({ images }: { images: string[] }) {
   const lastCell = useRef('');
   const imageIndex = useRef(0);
-  const hideTimer = useRef<number | null>(null);
-  const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
+  const [activeCells, setActiveCells] = useState<ActiveCell[]>([]);
 
   useEffect(() => {
     images.forEach((src) => {
       const image = new Image();
       image.src = src;
+      image.decode?.().catch(() => undefined);
     });
-
-    return () => {
-      if (hideTimer.current) window.clearTimeout(hideTimer.current);
-    };
   }, [images]);
 
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
@@ -55,41 +51,84 @@ function InteractiveCells({ images }: { images: string[] }) {
     const key = `${row}-${column}`;
 
     if (key === lastCell.current) return;
-
     lastCell.current = key;
+
     const next = {
-      id: `${key}-${Date.now()}`,
+      id: `${key}-${performance.now()}`,
       row,
       column,
       image: images[imageIndex.current++ % images.length],
     };
 
-    if (hideTimer.current) window.clearTimeout(hideTimer.current);
-    setActiveCell(next);
-    hideTimer.current = window.setTimeout(() => setActiveCell(null), 300);
+    setActiveCells((current) => [...current.slice(-2), next]);
+    window.setTimeout(() => {
+      setActiveCells((current) => current.filter((cell) => cell.id !== next.id));
+    }, 680);
   }, [images]);
 
   return (
-    <div className="cell-stage" onPointerMove={revealCell} aria-hidden="true">
-      {activeCell && (
-        <motion.div
-          key={activeCell.id}
-          className="image-cell"
-          style={{
-            '--cell-row': activeCell.row,
-            '--cell-column': activeCell.column,
-            backgroundImage: `url("${activeCell.image}")`,
-          } as React.CSSProperties}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 0.82, scale: 1 }}
-          transition={{ duration: 0.055, ease: 'linear' }}
-        />
-      )}
+    <div className="cell-stage" onPointerMove={revealCell} onPointerLeave={() => { lastCell.current = ''; }} aria-hidden="true">
+      <AnimatePresence>
+        {activeCells.map((cell) => (
+          <motion.div
+            key={cell.id}
+            className="image-cell"
+            style={{
+              '--cell-row': cell.row,
+              '--cell-column': cell.column,
+              backgroundImage: `url("${cell.image}")`,
+            } as React.CSSProperties}
+            initial={{ opacity: 0, scale: 0.94, y: 8 }}
+            animate={{ opacity: 0.82, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+          />
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
 
+const MENU_ITEMS = ['Home', 'About Us', 'Pricing', 'Projects', 'Services', 'Contact', 'Blogs'];
+
+function MenuPanel({ onClose }: { onClose: () => void }) {
+  return (
+    <>
+      <motion.button
+        className="menu-backdrop"
+        aria-label="Close menu"
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      />
+      <motion.aside
+        className="menu-panel"
+        initial={{ x: '-100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '-100%' }}
+        transition={{ duration: 0.42, ease: [0.76, 0, 0.24, 1] }}
+      >
+        <div className="menu-heading"><i />MENU</div>
+        <nav className="menu-links" aria-label="Main navigation">
+          {MENU_ITEMS.map((item) => (
+            <a key={item} href={`#${item.toLowerCase().replace(' ', '-')}`} onClick={onClose}>
+              <span className="menu-icon" aria-hidden="true" />
+              <span>{item}</span>
+            </a>
+          ))}
+        </nav>
+        <div className="menu-cta">
+          <p>Let’s Build<br /><strong>With Confido</strong></p>
+          <a href="#social-media" onClick={onClose}><i />Social Media</a>
+        </div>
+      </motion.aside>
+    </>
+  );
+}
+
 function Hero({ data }: { data: Record<string, any> }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   const galleryImages =
     Array.isArray(data.galleryImages) && data.galleryImages.length
       ? data.galleryImages
@@ -101,7 +140,7 @@ function Hero({ data }: { data: Record<string, any> }) {
       <div className="hero-sphere" aria-hidden="true" />
 
       <header className="hero-nav">
-        <button className="menu-button" aria-label="Open menu"><span /><span /></button>
+        <button className={`menu-button${menuOpen ? ' is-open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}><span /><span /></button>
         <div className="nav-identity">
           <ConfidoLogo />
           <span className="nav-divider" />
@@ -110,6 +149,8 @@ function Hero({ data }: { data: Record<string, any> }) {
         <a className="book-link" href="#contact"><span>Book a Call</span></a>
         <a className="book-arrow" href="#contact" aria-label="Book a Call">→</a>
       </header>
+
+      <AnimatePresence>{menuOpen && <MenuPanel onClose={() => setMenuOpen(false)} />}</AnimatePresence>
 
       <div className="hero-content">
         <div className="hero-kicker"><span className="kicker-dot" />{data.eyebrow}<span className="kicker-index">V</span></div>
