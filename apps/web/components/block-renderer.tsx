@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Block = { id: string; type: string; data: Record<string, any> };
 
@@ -31,7 +31,7 @@ function ConfidoLogo() {
 function InteractiveCells() {
   const lastCell = useRef('');
   const imageIndex = useRef(0);
-  const [cells, setCells] = useState<ActiveCell[]>([]);
+  const [cells, setCells] = useState<ActiveCell[]>([]);\n\n  useEffect(() => {\n    PROJECT_IMAGES.forEach((src) => {\n      const image = new Image();\n      image.src = src;\n    });\n  }, []);
 
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'touch') return;
