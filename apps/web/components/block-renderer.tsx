@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Block = { id: string; type: string; data: Record<string, any> };
@@ -30,7 +30,6 @@ function ConfidoLogo() {
 function InteractiveCells({ images }: { images: string[] }) {
   const lastCell = useRef('');
   const imageIndex = useRef(0);
-  const lastRevealAt = useRef(0);
   const hideTimer = useRef<number | null>(null);
   const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
 
@@ -48,9 +47,6 @@ function InteractiveCells({ images }: { images: string[] }) {
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'touch' || images.length === 0) return;
 
-    const now = performance.now();
-    if (now - lastRevealAt.current < 85) return;
-
     const bounds = event.currentTarget.getBoundingClientRect();
     const columns = 8;
     const rows = 5;
@@ -61,8 +57,6 @@ function InteractiveCells({ images }: { images: string[] }) {
     if (key === lastCell.current) return;
 
     lastCell.current = key;
-    lastRevealAt.current = now;
-
     const next = {
       id: `${key}-${Date.now()}`,
       row,
@@ -72,28 +66,25 @@ function InteractiveCells({ images }: { images: string[] }) {
 
     if (hideTimer.current) window.clearTimeout(hideTimer.current);
     setActiveCell(next);
-    hideTimer.current = window.setTimeout(() => setActiveCell(null), 430);
+    hideTimer.current = window.setTimeout(() => setActiveCell(null), 300);
   }, [images]);
 
   return (
     <div className="cell-stage" onPointerMove={revealCell} aria-hidden="true">
-      <AnimatePresence mode="wait">
-        {activeCell && (
-          <motion.div
-            key={activeCell.id}
-            className="image-cell"
-            style={{
-              '--cell-row': activeCell.row,
-              '--cell-column': activeCell.column,
-              backgroundImage: `url("${activeCell.image}")`,
-            } as React.CSSProperties}
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 0.76, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.1, ease: 'easeOut' }}
-          />
-        )}
-      </AnimatePresence>
+      {activeCell && (
+        <motion.div
+          key={activeCell.id}
+          className="image-cell"
+          style={{
+            '--cell-row': activeCell.row,
+            '--cell-column': activeCell.column,
+            backgroundImage: `url("${activeCell.image}")`,
+          } as React.CSSProperties}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 0.82, scale: 1 }}
+          transition={{ duration: 0.055, ease: 'linear' }}
+        />
+      )}
     </div>
   );
 }
