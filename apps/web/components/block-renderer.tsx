@@ -28,20 +28,20 @@ function ConfidoLogo() {
   );
 }
 
-function InteractiveCells() {
+function InteractiveCells({ images }: { images: string[] }) {
   const lastCell = useRef('');
   const imageIndex = useRef(0);
   const [cells, setCells] = useState<ActiveCell[]>([]);
 
   useEffect(() => {
-    PROJECT_IMAGES.forEach((src) => {
+    images.forEach((src) => {
       const image = new Image();
       image.src = src;
     });
   }, []);
 
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === 'touch') return;
+    if (event.pointerType === 'touch' || images.length === 0) return;
     const bounds = event.currentTarget.getBoundingClientRect();
     const columns = 8;
     const rows = 5;
@@ -55,10 +55,10 @@ function InteractiveCells() {
       id: `${key}-${Date.now()}`,
       row,
       column,
-      image: PROJECT_IMAGES[imageIndex.current++ % PROJECT_IMAGES.length],
+      image: images[imageIndex.current++ % images.length],
     };
     setCells((current) => [...current.slice(-6), next]);
-    window.setTimeout(() => setCells((current) => current.filter((cell) => cell.id !== next.id)), 1250);
+    window.setTimeout(() => setCells((current) => current.filter((cell) => cell.id !== next.id)), 620);
   }, []);
 
   return (
@@ -71,7 +71,7 @@ function InteractiveCells() {
           style={{ '--cell-row': cell.row, '--cell-column': cell.column, backgroundImage: `url("${cell.image}")` } as React.CSSProperties}
           initial={{ opacity: 0, scale: 0.86 }}
           animate={{ opacity: 0.72, scale: 1 }}
-          transition={{ duration: 0.22, ease: 'easeOut' }}
+          transition={{ duration: 0.12, ease: 'easeOut' }}
         />
       ))}
     </div>
@@ -81,7 +81,7 @@ function InteractiveCells() {
 function Hero({ data }: { data: Record<string, any> }) {
   return (
     <section id="hero" className="hero-shell">
-      <InteractiveCells />
+      <InteractiveCells images={Array.isArray(data.galleryImages) && data.galleryImages.length ? data.galleryImages : PROJECT_IMAGES} />
       <div className="hero-sphere" aria-hidden="true" />
 
       <header className="hero-nav">
