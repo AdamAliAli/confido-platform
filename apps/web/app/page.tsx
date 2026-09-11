@@ -1,1 +1,30 @@
-import{BlockRenderer}from'@/components/block-renderer';import{getPage}from'@/lib/api';const fallback={blocks:[{id:'hero',type:'hero',data:{eyebrow:'Strategic brand consultancy',title:'Brands',accent:'With',subtitle:'Direction',description:'Confido helps businesses build clear positioning, strong direction, and scalable brand systems.'}},{id:'services',type:'services',data:{items:[{title:'Strategy',description:'Clarity before everything.'},{title:'Positioning',description:'Stand for something or disappear.'},{title:'Systems',description:'Built to scale, not just look good.'}]}},{id:'contact',type:'contact',data:{title:"Let’s Build Something",accent:'That Lasts',description:'We work with a limited number of clients to ensure clarity, focus, and real impact.',email:'hello@confido.studio'}}]};export default async function Home(){const page=await getPage()||fallback;return <main><nav className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-white/10 bg-black/75 px-6 backdrop-blur"><b>◡ Confido</b><a className="bg-mint px-6 py-3 text-black" href="#contact">Book a Call ↗</a></nav><BlockRenderer blocks={page.blocks}/></main>}
+import { BlockRenderer } from '@/components/block-renderer';
+import { getPage } from '@/lib/api';
+
+const fallback = {
+  blocks: [
+    {
+      id: 'hero',
+      type: 'hero',
+      data: {
+        eyebrow: 'Strategic brand consultancy',
+        title: 'Brands',
+        accent: 'With',
+        subtitle: 'Direction',
+        description:
+          'Confido helps businesses build clear positioning, strong direction, and scalable brand systems.',
+      },
+    },
+  ],
+};
+
+export default async function Home() {
+  const page = (await getPage()) || fallback;
+  const hero = page.blocks.find((block: { type: string }) => block.type === 'hero');
+
+  return (
+    <main>
+      <BlockRenderer blocks={hero ? [hero] : fallback.blocks} />
+    </main>
+  );
+}
