@@ -45,10 +45,11 @@ export default async function Home() {
   const services = blocks.find((block) => block.type === 'services') || fallbackServices;
   const projects = blocks.find((block) => block.type === 'projects') || { id: 'projects', type: 'projects', data: {} };
   const galleryImages = [...new Set(collectProjectImages(projects.data))];
+  const clarity = blocks.find((block) => block.type === 'clarity') || { id: 'clarity', type: 'clarity', data: {} };
 
   return (
     <main>
-      <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services, projects]} />
+      <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services, projects, clarity]} />
     </main>
   );
 }
