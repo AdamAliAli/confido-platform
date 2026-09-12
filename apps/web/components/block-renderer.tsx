@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion, useMotionValue, useSpring } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Block = { id: string; type: string; data: Record<string, any> };
@@ -315,6 +315,44 @@ function Projects({ data }: { data: Record<string, any> }) {
   );
 }
 
+function ClarityImage({ src, index, progress }: { src: string; index: number; progress: any }) {
+  const start = index / 3;
+  const end = Math.min(start + 0.22, 1);
+  const scale = useTransform(progress, [start, end], [0.84, 1]);
+  const blur = useTransform(progress, [start, end], [16, 0]);
+  const opacity = useTransform(progress, [start, end], [0.64, 1]);
+  const filter = useTransform(blur, (value) => `blur(${value}px)`);
+
+  return (
+    <motion.div className="clarity-image" style={{ scale, filter, opacity }}>
+      <img src={src} alt={`Confido creative direction image ${index + 1}`} loading="lazy" />
+    </motion.div>
+  );
+}
+
+function Clarity({ data }: { data: Record<string, any> }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
+  const trackX = useTransform(scrollYProgress, [0, 1], ['0vw', '-92vw']);
+  const headingX = useTransform(scrollYProgress, [0, 1], ['5vw', '-24vw']);
+  const images = (Array.isArray(data.images) ? data.images : [])
+    .map((item: any) => typeof item === 'string' ? item : projectImage(item))
+    .filter((item: any): item is string => typeof item === 'string' && (item.startsWith('https://') || item.startsWith('http://')))
+    .slice(0, 3);
+  const visibleImages = images.length === 3 ? images : PROJECT_IMAGES;
+
+  return (
+    <section id="clarity" className="clarity-section" ref={sectionRef} aria-label="Clarity built to scale">
+      <div className="clarity-sticky">
+        <motion.h2 style={{ x: headingX }}>Clarity — Built to Scale</motion.h2>
+        <motion.div className="clarity-track" style={{ x: trackX }}>
+          {visibleImages.map((src, index) => <ClarityImage key={`${src}-${index}`} src={src} index={index} progress={scrollYProgress} />)}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 export function BlockRenderer({ blocks = [] }: { blocks: Block[] }) {
-  return <>{blocks.map((block) => block.type === 'hero' ? <Hero key={block.id} data={block.data} /> : block.type === 'services' ? <Expertise key={block.id} data={block.data} /> : block.type === 'projects' ? <Projects key={block.id} data={block.data} /> : null)}</>;
+  return <>{blocks.map((block) => block.type === 'hero' ? <Hero key={block.id} data={block.data} /> : block.type === 'services' ? <Expertise key={block.id} data={block.data} /> : block.type === 'projects' ? <Projects key={block.id} data={block.data} /> : block.type === 'clarity' ? <Clarity key={block.id} data={block.data} /> : null)}</>;
 }
