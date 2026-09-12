@@ -74,4 +74,14 @@
 @media(max-width:767px){.projects-section{padding:75px 20px 22vh}.projects-heading{margin-bottom:48px}.project-card{top:14vh;min-height:300px;aspect-ratio:1.15/1;margin-bottom:21vh}.project-caption{padding:22px;gap:12px;align-items:start;flex-direction:column}.project-category{font-size:11px}.project-caption h3{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.project-card{position:relative;top:auto;margin-bottom:24px}.projects-section{padding-bottom:90px}}
 
+/* Scroll-pinned editorial image sequence. */
+.clarity-section{position:relative;height:300vh;background:#0b2522;overflow:clip;color:#e5f4ef}
+.clarity-sticky{position:sticky;top:0;height:100vh;min-height:600px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.clarity-sticky h2{position:relative;z-index:2;white-space:nowrap;margin:0 0 7vh;font-size:clamp(70px,10vw,190px);font-weight:300;line-height:1;letter-spacing:-.075em;will-change:transform}
+.clarity-track{position:relative;display:flex;align-items:center;gap:4vw;width:max-content;padding-left:29vw;will-change:transform}
+.clarity-image{width:42vw;height:min(52vh,600px);flex:none;overflow:hidden;background:linear-gradient(125deg,#038e7a,#294d48 52%,#0d2522);transform-origin:center}
+.clarity-image img{display:block;width:100%;height:100%;object-fit:cover}
+@media(max-width:767px){.clarity-section{height:270vh}.clarity-sticky{min-height:0}.clarity-sticky h2{font-size:17vw;margin-bottom:8vh}.clarity-track{padding-left:15vw;gap:7vw}.clarity-image{width:70vw;height:47vh}}
+@media(prefers-reduced-motion:reduce){.clarity-section{height:auto;overflow:visible;padding:100px 20px}.clarity-sticky{position:relative;height:auto;min-height:0;display:block;overflow:visible}.clarity-sticky h2{white-space:normal;font-size:clamp(42px,8vw,90px)}.clarity-track{transform:none!important;padding:0;width:100%;flex-wrap:wrap}.clarity-image{width:min(100%,480px);height:360px;transform:none!important;filter:none!important;opacity:1!important}}
+
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}.image-cell{display:none}.scroll-cue i:before,.scroll-cue i:after{animation:none!important}.scroll-cue i:before{opacity:1}}
