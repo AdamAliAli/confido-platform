@@ -31,4 +31,27 @@
 
 @media(max-width:900px){.hero-content{padding-inline:8vw}.hero-kicker{left:8vw}.hero-lockup{padding-top:38%}.brands-row{grid-template-columns:1fr}.brands-row h1{font-size:clamp(84px,13vw,118px)}.hero-meta{display:flex;align-items:flex-start;gap:25px}.hero-meta p{margin:3px 0 0}.hero-lockup h2{padding-left:10%;font-size:10vw}}
 @media(max-width:767px){.menu-panel{width:100%}.menu-heading{height:66px}.menu-links a{height:66px;padding-inline:9%;font-size:16px}.menu-cta{padding:40px 8%}.menu-cta p{font-size:38px;margin-bottom:38px}.image-cell{left:calc(var(--cell-column)*25%);top:calc(var(--cell-row)*16.666%);width:25%;height:16.666%}.hero-nav{grid-template-columns:54px 1fr 54px;height:54px}.nav-identity{padding-left:14px}.nav-label,.nav-divider,.brand-tagline,.book-link{display:none}.brand-name{font-size:16px}.brand-mark{width:30px}.book-arrow{grid-column:3}.hero-sphere{top:18%;width:150vw;aspect-ratio:1.4/1}.hero-content{min-height:calc(120vh - 54px);padding-inline:20px}.hero-kicker{top:12%;left:20px;font-size:10px}.hero-lockup{padding-top:31vh}.brands-row{display:block}.brands-row h1{font-size:23vw}.hero-meta{display:grid;grid-template-columns:auto 1fr;margin-top:34px;padding-left:24%}.hero-meta>span{font-size:16px}.hero-meta p{font-size:13px}.hero-lockup h2{margin-top:55px;padding-left:0;font-size:15.6vw;text-align:right}.scroll-cue{margin-top:76px}}
+
+/* The services section follows the hero and retains the reference's quiet, ruled layout. */
+.expertise-section{position:relative;min-height:690px;padding:140px 5% 170px;background:#0b2522;color:var(--paper)}
+.expertise-heading{display:flex;justify-content:space-between;align-items:flex-start;min-height:190px}
+.expertise-kicker{display:inline-flex;align-items:center;gap:10px;padding-top:4px;font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+.expertise-kicker i{display:block;width:7px;height:7px;background:var(--mint)}
+.expertise-heading h2{margin:0;text-align:right;font-size:clamp(35px,4vw,70px);font-weight:400;line-height:.91;letter-spacing:-.06em}
+.expertise-heading h2 span{color:var(--mint)}
+.expertise-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid rgba(0,0,0,.6)}
+.expertise-card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:350px;padding:27px 30px 25px;overflow:hidden;background:#0b2522;border-right:1px solid rgba(0,0,0,.6)}
+.expertise-card:last-child{border-right:0}
+.expertise-card:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.57);opacity:0;transition:opacity .35s ease;pointer-events:none}
+.expertise-card:hover:after{opacity:1}
+.expertise-card-top,.expertise-card-copy{position:relative;z-index:1}
+.expertise-card-top{display:flex;justify-content:space-between;align-items:flex-start;color:rgba(239,244,240,.67);font-size:13px}
+.expertise-icon{font-size:23px;line-height:1;font-weight:300}
+.expertise-card-copy h3{margin:0 0 12px;font-size:clamp(25px,2.5vw,41px);line-height:1;letter-spacing:-.055em;font-weight:500}
+.expertise-card-copy p{margin:0;max-width:270px;font-size:14px;line-height:1.45;color:rgba(238,244,240,.62)}
+.expertise-cursor{position:absolute;z-index:3;top:-32px;left:-32px;display:flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:#061713;color:var(--mint);font-size:23px;pointer-events:none}
+@media(max-width:900px){.expertise-section{min-height:auto;padding:100px 5% 120px}.expertise-heading{min-height:170px}.expertise-card{min-height:300px;padding:22px}.expertise-card-copy h3{font-size:30px}}
+@media(max-width:767px){.expertise-section{padding:90px 20px 110px}.expertise-heading{min-height:160px}.expertise-heading h2{font-size:36px}.expertise-kicker{font-size:12px}.expertise-grid{grid-template-columns:1fr}.expertise-card{min-height:245px;border-right:0;border-bottom:1px solid rgba(0,0,0,.6)}.expertise-card:last-child{border-bottom:0}.expertise-card-copy h3{font-size:34px}.expertise-cursor{display:none}}
+@media(prefers-reduced-motion:reduce){.expertise-card:after{transition:none}.expertise-cursor{display:none}}
+
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}.image-cell{display:none}.scroll-cue i:before,.scroll-cue i:after{animation:none!important}.scroll-cue i:before{opacity:1}}
