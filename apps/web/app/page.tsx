@@ -43,12 +43,12 @@ export default async function Home() {
   const blocks = (page?.blocks || []) as PageBlock[];
   const hero = blocks.find((block) => block.type === 'hero') || fallbackHero;
   const services = blocks.find((block) => block.type === 'services') || fallbackServices;
-  const projects = blocks.find((block) => block.type === 'projects');
-  const galleryImages = [...new Set(collectProjectImages(projects?.data))];
+  const projects = blocks.find((block) => block.type === 'projects') || { id: 'projects', type: 'projects', data: {} };
+  const galleryImages = [...new Set(collectProjectImages(projects.data))];
 
   return (
     <main>
-      <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services]} />
+      <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services, projects]} />
     </main>
   );
 }
