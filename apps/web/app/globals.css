@@ -42,6 +42,7 @@
 .expertise-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid rgba(0,0,0,.6)}
 .expertise-card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:350px;padding:27px 30px 25px;overflow:hidden;background:#0b2522;border-right:1px solid rgba(0,0,0,.6)}
 .expertise-card:last-child{border-right:0}
+@media(hover:hover) and (pointer:fine){.expertise-card,.expertise-card *{cursor:none}}
 .expertise-card:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.57);opacity:0;transition:opacity .35s ease;pointer-events:none}
 .expertise-card:hover:after{opacity:1}
 .expertise-card-top,.expertise-card-copy{position:relative;z-index:1}
