@@ -266,7 +266,7 @@ const FALLBACK_PROJECTS: Project[] = [
 
 function projectImage(value: any): string | undefined {
   const candidate = [value?.image, value?.imageUrl, value?.cover, value?.thumbnail, value?.coverImage, value?.galleryImages?.[0]]
-    .find((item) => typeof item === 'string' && /^https?:\\/\\//.test(item));
+    .find((item) => typeof item === 'string' && (item.startsWith('https://') || item.startsWith('http://')));
   return candidate;
 }
 
