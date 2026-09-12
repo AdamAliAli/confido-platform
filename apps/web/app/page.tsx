@@ -3,6 +3,18 @@ import { getPage } from '@/lib/api';
 
 type PageBlock = { id: string; type: string; data: Record<string, unknown> };
 
+const fallbackServices: PageBlock = {
+  id: 'services',
+  type: 'services',
+  data: {
+    services: [
+      { title: 'Strategy', description: 'Clarity before complexity.' },
+      { title: 'Positioning', description: 'Stand for something, or disappear.' },
+      { title: 'Systems', description: 'Built to scale, built to last.' },
+    ],
+  },
+};
+
 const fallbackHero: PageBlock = {
   id: 'hero',
   type: 'hero',
@@ -30,12 +42,13 @@ export default async function Home() {
   const page = await getPage();
   const blocks = (page?.blocks || []) as PageBlock[];
   const hero = blocks.find((block) => block.type === 'hero') || fallbackHero;
+  const services = blocks.find((block) => block.type === 'services') || fallbackServices;
   const projects = blocks.find((block) => block.type === 'projects');
   const galleryImages = [...new Set(collectProjectImages(projects?.data))];
 
   return (
     <main>
-      <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }]} />
+      <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services]} />
     </main>
   );
 }
