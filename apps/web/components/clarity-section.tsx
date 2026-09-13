@@ -55,9 +55,10 @@ function splitMetric(value: string) {
   };
 }
 
-function AnimatedMetric({ value, progress }: { value: string; progress: MotionValue<number> }) {
+function AnimatedMetric({ value, progress, index }: { value: string; progress: MotionValue<number>; index: number }) {
   const { target, suffix, decimals } = splitMetric(value);
-  const raw = useTransform(progress, [0.28, 0.68], [0, target], { clamp: true });
+  const end = [0.48, 0.62, 0.54][index] ?? Math.min(0.48 + index * 0.07, 0.78);
+  const raw = useTransform(progress, [0.22, end], [0, target], { clamp: true });
   const smooth = useSpring(raw, { stiffness: 115, damping: 28, mass: 0.45 });
   const display = useTransform(smooth, (current) => `${current.toFixed(decimals)}${suffix}`);
 
@@ -103,7 +104,7 @@ function ClarityCard({
       />
       <div className="clarity-card-copy">
         <span><i />{metric.label}</span>
-        <AnimatedMetric value={metric.value} progress={progress} />
+        <AnimatedMetric value={metric.value} progress={progress} index={index} />
       </div>
     </motion.article>
   );
