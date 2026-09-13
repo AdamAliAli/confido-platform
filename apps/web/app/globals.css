@@ -74,19 +74,22 @@
 @media(max-width:767px){.projects-section{padding:75px 20px 22vh}.projects-heading{margin-bottom:48px}.project-card{top:14vh;min-height:300px;aspect-ratio:1.15/1;margin-bottom:21vh}.project-caption{padding:22px;gap:12px;align-items:start;flex-direction:column}.project-category{font-size:11px}.project-caption h3{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.project-card{position:relative;top:auto;margin-bottom:24px}.projects-section{padding-bottom:90px}}
 
-/* Original Framer artwork: one triptych, revealed as three metric cards. */
-.clarity-section{position:relative;overflow:hidden;min-height:1000px;padding:105px 4.5% 145px;background:#0b2522;color:#e5f4ef}
-.clarity-heading{width:max-content;max-width:none;white-space:nowrap;margin:0 0 105px;font-size:clamp(82px,10.5vw,184px);font-weight:300;line-height:1;letter-spacing:-.065em;will-change:transform}
+/* The three cards zoom out as one scroll-linked composition. */
+.clarity-section{position:relative;height:225vh;overflow:hidden;background:#0b2522;color:#e5f4ef}
+.clarity-sticky{position:sticky;top:0;height:100vh;min-height:620px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.clarity-heading{position:absolute;z-index:2;top:4vh;left:0;width:max-content;max-width:none;white-space:nowrap;margin:0;font-size:clamp(82px,10.5vw,184px);font-weight:300;line-height:1;letter-spacing:-.065em;pointer-events:none;will-change:transform,opacity}
+.clarity-composition{width:91%;transform-origin:center center;will-change:transform}
 .clarity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4%;width:100%}
-.clarity-card{position:relative;min-width:0;aspect-ratio:.56/1;max-height:720px;overflow:hidden;border-radius:18px;background:#08211e;contain:paint}
+.clarity-card{position:relative;min-width:0;aspect-ratio:.56/1;max-height:72vh;overflow:hidden;border-radius:18px;background:#08211e;contain:paint}
 .clarity-card-art{position:absolute;inset:-2%;background-repeat:no-repeat;background-color:#0caa90;transform-origin:center;backface-visibility:hidden;will-change:transform,filter}
 .clarity-card-copy{position:absolute;z-index:1;inset:auto 4% 5%;display:flex;flex-direction:column;gap:24px;pointer-events:none}
 .clarity-card-copy span{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:500;white-space:nowrap}
 .clarity-card-copy span i,.clarity-more i{width:7px;height:7px;background:var(--mint);flex:none}
 .clarity-card-copy strong{font-weight:300;font-size:clamp(54px,7.2vw,130px);line-height:.9;letter-spacing:-.06em;color:rgba(221,250,244,.62)}
-.clarity-more{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:125px;font-size:12px;letter-spacing:.02em}
-@media(max-width:767px){.clarity-section{min-height:0;padding:95px 20px 100px}.clarity-heading{margin-bottom:50px;font-size:17vw}.clarity-grid{grid-template-columns:1fr;gap:35px}.clarity-card{height:min(135vw,620px)}.clarity-card-art{background-size:300% 125%}.clarity-card-copy{bottom:8%}.clarity-card-copy strong{font-size:20vw}.clarity-more{margin-top:65px}}
-@media(prefers-reduced-motion:reduce){.clarity-heading{transform:none!important;white-space:normal}.clarity-card-art{filter:none!important;transform:none!important;opacity:1!important}}
+.clarity-more{position:absolute;z-index:2;bottom:4.5vh;left:50%;display:flex;align-items:center;justify-content:center;gap:8px;margin:0;transform:translateX(-50%);font-size:12px;letter-spacing:.02em;will-change:transform,opacity}
+@media(max-width:900px){.clarity-section{height:205vh}.clarity-composition{width:94%}.clarity-card{max-height:68vh}.clarity-heading{top:7vh}}
+@media(max-width:767px){.clarity-section{height:auto;padding:95px 20px 100px}.clarity-sticky{position:relative;top:auto;height:auto;min-height:0;display:block;overflow:visible}.clarity-heading{position:relative;top:auto;left:auto;margin-bottom:50px;font-size:17vw;white-space:normal;transform:none!important;opacity:1!important}.clarity-composition{width:100%;transform:none!important}.clarity-grid{grid-template-columns:1fr;gap:35px}.clarity-card{height:min(135vw,620px);max-height:none}.clarity-card-art{background-size:300% 125%}.clarity-card-copy{bottom:8%}.clarity-card-copy strong{font-size:20vw}.clarity-more{position:relative;left:auto;bottom:auto;width:max-content;margin:65px auto 0;transform:none!important;opacity:1!important}}
+@media(prefers-reduced-motion:reduce){.clarity-section{height:auto;padding:95px 4.5% 120px}.clarity-sticky{position:relative;top:auto;height:auto;min-height:0;display:block;overflow:visible}.clarity-heading{position:relative;top:auto;white-space:normal;transform:none!important;opacity:1!important;margin-bottom:60px}.clarity-composition{transform:none!important}.clarity-more{position:relative;left:auto;bottom:auto;width:max-content;margin:75px auto 0;transform:none!important;opacity:1!important}.clarity-card-art{filter:none!important;transform:none!important;opacity:1!important}}
 
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}.image-cell{display:none}.scroll-cue i:before,.scroll-cue i:after{animation:none!important}.scroll-cue i:before{opacity:1}}
 
