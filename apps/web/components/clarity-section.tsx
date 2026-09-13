@@ -69,10 +69,12 @@ function ClarityCard({
   metric,
   index,
   progress,
+  imageScale,
 }: {
   metric: Metric;
   index: number;
   progress: MotionValue<number>;
+  imageScale: MotionValue<number>;
 }) {
   const [hovered, setHovered] = useState(false);
   const usesTriptych = metric.image === CLARITY_ART;
@@ -83,21 +85,23 @@ function ClarityCard({
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
     >
-      <motion.div
-        className="clarity-card-art"
-        style={{
-          backgroundImage: `url("${metric.image}")`,
-          backgroundPosition: usesTriptych ? `${index * 50}% center` : 'center',
-          backgroundSize: usesTriptych ? `${Math.max(3, DEFAULT_METRICS.length) * 100}% auto` : 'cover',
-        }}
-        animate={{
-          scale: hovered ? 1.16 : 1,
-          filter: hovered ? 'blur(25px)' : 'blur(0px)',
-        }}
-        transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
-        role="img"
-        aria-label={`Confido visual for ${metric.label}`}
-      />
+      <motion.div className="clarity-card-art-zoom" style={{ scale: imageScale }}>
+        <motion.div
+          className="clarity-card-art"
+          style={{
+            backgroundImage: `url("${metric.image}")`,
+            backgroundPosition: usesTriptych ? `${index * 50}% center` : 'center',
+            backgroundSize: usesTriptych ? `${Math.max(3, DEFAULT_METRICS.length) * 100}% auto` : 'cover',
+          }}
+          animate={{
+            scale: hovered ? 1.16 : 1,
+            filter: hovered ? 'blur(25px)' : 'blur(0px)',
+          }}
+          transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+          role="img"
+          aria-label={`Confido visual for ${metric.label}`}
+        />
+      </motion.div>
       <div className="clarity-card-copy">
         <span><i />{metric.label}</span>
         <AnimatedMetric value={metric.value} progress={progress} index={index} />
@@ -113,14 +117,18 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
     offset: ['start start', 'end end'],
   });
 
-  const rawScale = useTransform(scrollYProgress, [0, 0.52, 1], [1.62, 1, 1], { clamp: true });
+  const rawScale = useTransform(scrollYProgress, [0.1, 0.68], [1.62, 1], { clamp: true });
   const compositionScale = useSpring(rawScale, { stiffness: 105, damping: 30, mass: 0.4 });
-  const compositionY = useTransform(scrollYProgress, [0, 0.52, 1], ['14vh', '3vh', '-2vh'], { clamp: true });
-  const headingX = useTransform(scrollYProgress, [0, 0.38], ['-7vw', '-21vw'], { clamp: true });
-  const headingY = useTransform(scrollYProgress, [0, 0.4], ['0vh', '-29vh'], { clamp: true });
-  const headingOpacity = useTransform(scrollYProgress, [0.23, 0.42], [1, 0], { clamp: true });
-  const ctaOpacity = useTransform(scrollYProgress, [0.48, 0.68], [0, 1], { clamp: true });
-  const ctaY = useTransform(scrollYProgress, [0.48, 0.68], [24, 0], { clamp: true });
+  const compositionY = useTransform(
+    scrollYProgress,
+    [0, 0.18, 0.68, 1],
+    ['62vh', '44vh', '3vh', '-4vh'],
+    { clamp: true },
+  );
+  const imageScale = useTransform(scrollYProgress, [0.1, 0.68], [1.34, 1], { clamp: true });
+  const headingX = useTransform(scrollYProgress, [0, 1], ['8vw', '-92vw'], { clamp: true });
+  const ctaOpacity = useTransform(scrollYProgress, [0.58, 0.76], [0, 1], { clamp: true });
+  const ctaY = useTransform(scrollYProgress, [0.58, 0.76], [24, 0], { clamp: true });
   const metrics = normalizeMetrics(data);
 
   return (
@@ -129,7 +137,7 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
         <motion.h2
           id="clarity-heading"
           className="clarity-heading"
-          style={{ x: headingX, y: headingY, opacity: headingOpacity }}
+          style={{ x: headingX }}
         >
           {typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale'}
         </motion.h2>
@@ -145,6 +153,7 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
                 metric={metric}
                 index={index}
                 progress={scrollYProgress}
+                imageScale={imageScale}
               />
             ))}
           </div>
