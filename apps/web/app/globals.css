@@ -80,7 +80,7 @@
 .clarity-heading{position:absolute;z-index:2;top:4vh;left:0;width:max-content;max-width:none;white-space:nowrap;margin:0;font-size:clamp(82px,10.5vw,184px);font-weight:300;line-height:1;letter-spacing:-.065em;pointer-events:none;will-change:transform}
 .clarity-composition{width:91%;transform-origin:center center;will-change:transform}
 .clarity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4%;width:100%}
-.clarity-card{position:relative;min-width:0;aspect-ratio:.56/1;max-height:72vh;overflow:hidden;border-radius:18px;background:#08211e;contain:paint}
+.clarity-card{position:relative;min-width:0;aspect-ratio:.56/1;max-height:64vh;overflow:hidden;border-radius:18px;background:#08211e;contain:paint}
 .clarity-card-art-zoom{position:absolute;inset:-2%;overflow:hidden;border-radius:inherit;transform-origin:center;backface-visibility:hidden;will-change:transform}
 .clarity-card-art{position:absolute;inset:0;background-repeat:no-repeat;background-color:#0caa90;transform-origin:center;backface-visibility:hidden;will-change:transform,filter}
 .clarity-card-copy{position:absolute;z-index:1;inset:auto 4% 5%;display:flex;flex-direction:column;gap:24px;pointer-events:none}
