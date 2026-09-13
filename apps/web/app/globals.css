@@ -75,7 +75,7 @@
 @media(prefers-reduced-motion:reduce){.project-card{position:relative;top:auto;margin-bottom:24px}.projects-section{padding-bottom:90px}}
 
 /* The three cards zoom out as one scroll-linked composition. */
-.clarity-section{position:relative;height:225vh;overflow:hidden;background:#0b2522;color:#e5f4ef}
+.clarity-section{position:relative;height:225vh;overflow:clip;background:#0b2522;color:#e5f4ef}
 .clarity-sticky{position:sticky;top:0;height:100vh;min-height:620px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .clarity-heading{position:absolute;z-index:2;top:4vh;left:0;width:max-content;max-width:none;white-space:nowrap;margin:0;font-size:clamp(82px,10.5vw,184px);font-weight:300;line-height:1;letter-spacing:-.065em;pointer-events:none;will-change:transform,opacity}
 .clarity-composition{width:91%;transform-origin:center center;will-change:transform}
