@@ -57,8 +57,8 @@ function splitMetric(value: string) {
 
 function AnimatedMetric({ value, progress, index }: { value: string; progress: MotionValue<number>; index: number }) {
   const { target, suffix, decimals } = splitMetric(value);
-  const end = [0.48, 0.62, 0.54][index] ?? Math.min(0.48 + index * 0.07, 0.78);
-  const raw = useTransform(progress, [0.22, end], [0, target], { clamp: true });
+  const end = [0.58, 0.69, 0.63][index] ?? Math.min(0.58 + index * 0.06, 0.82);
+  const raw = useTransform(progress, [0.2, end], [0, target], { clamp: true });
   const smooth = useSpring(raw, { stiffness: 115, damping: 28, mass: 0.45 });
   const display = useTransform(smooth, (current) => `${current.toFixed(decimals)}${suffix}`);
 
@@ -82,10 +82,6 @@ function ClarityCard({
       className="clarity-card"
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      initial={{ opacity: 0, y: 45 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
         className="clarity-card-art"
@@ -114,31 +110,54 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ['start end', 'end start'],
+    offset: ['start start', 'end end'],
   });
-  const headingX = useTransform(scrollYProgress, [0.05, 0.58], ['10vw', '-17vw'], { clamp: true });
+
+  const rawScale = useTransform(scrollYProgress, [0, 0.52, 1], [1.62, 1, 1], { clamp: true });
+  const compositionScale = useSpring(rawScale, { stiffness: 105, damping: 30, mass: 0.4 });
+  const compositionY = useTransform(scrollYProgress, [0, 0.52, 1], ['14vh', '3vh', '-2vh'], { clamp: true });
+  const headingX = useTransform(scrollYProgress, [0, 0.38], ['-7vw', '-21vw'], { clamp: true });
+  const headingY = useTransform(scrollYProgress, [0, 0.4], ['0vh', '-29vh'], { clamp: true });
+  const headingOpacity = useTransform(scrollYProgress, [0.23, 0.42], [1, 0], { clamp: true });
+  const ctaOpacity = useTransform(scrollYProgress, [0.48, 0.68], [0, 1], { clamp: true });
+  const ctaY = useTransform(scrollYProgress, [0.48, 0.68], [24, 0], { clamp: true });
   const metrics = normalizeMetrics(data);
 
   return (
     <section id="clarity" className="clarity-section" ref={sectionRef} aria-labelledby="clarity-heading">
-      <motion.h2 id="clarity-heading" className="clarity-heading" style={{ x: headingX }}>
-        {typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale'}
-      </motion.h2>
+      <div className="clarity-sticky">
+        <motion.h2
+          id="clarity-heading"
+          className="clarity-heading"
+          style={{ x: headingX, y: headingY, opacity: headingOpacity }}
+        >
+          {typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale'}
+        </motion.h2>
 
-      <div className="clarity-grid">
-        {metrics.map((metric, index) => (
-          <ClarityCard
-            key={`${metric.label}-${index}`}
-            metric={metric}
-            index={index}
-            progress={scrollYProgress}
-          />
-        ))}
+        <motion.div
+          className="clarity-composition"
+          style={{ scale: compositionScale, y: compositionY }}
+        >
+          <div className="clarity-grid">
+            {metrics.map((metric, index) => (
+              <ClarityCard
+                key={`${metric.label}-${index}`}
+                metric={metric}
+                index={index}
+                progress={scrollYProgress}
+              />
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.a
+          className="clarity-more"
+          href={typeof data.ctaHref === 'string' ? data.ctaHref : '#about-us'}
+          style={{ opacity: ctaOpacity, y: ctaY }}
+        >
+          <i /> {typeof data.ctaLabel === 'string' ? data.ctaLabel : 'MORE ABOUT US'}
+        </motion.a>
       </div>
-
-      <a className="clarity-more" href={typeof data.ctaHref === 'string' ? data.ctaHref : '#about-us'}>
-        <i /> {typeof data.ctaLabel === 'string' ? data.ctaLabel : 'MORE ABOUT US'}
-      </a>
     </section>
   );
 }
