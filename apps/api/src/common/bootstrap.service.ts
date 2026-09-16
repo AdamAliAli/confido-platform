@@ -20,8 +20,9 @@ export class BootstrapService implements OnModuleInit {
         slug: 'home', title: 'Confido', published: true,
         blocks: { create: [
           { type: 'hero', position: 0, data: { eyebrow: 'Strategic brand consultancy', title: 'Brands', accent: 'With', subtitle: 'Direction', description: 'Confido helps businesses build clear positioning, strong direction, and scalable brand systems.' } },
-          { type: 'services', position: 1, data: { items: [{ title: 'Strategy', description: 'Clarity before everything.' }, { title: 'Positioning', description: 'Stand for something or disappear.' }, { title: 'Systems', description: 'Built to scale, not just look good.' }] } },
-          { type: 'contact', position: 2, data: { title: 'Let’s Build Something', accent: 'That Lasts', description: 'We work with a limited number of clients to ensure clarity, focus, and real impact.', email: 'hello@confido.studio' } },
+          { type: 'services', position: 1, data: { services: [{ title: 'Strategy', description: 'Clarity before everything.' }, { title: 'Positioning', description: 'Stand for something or disappear.' }, { title: 'Systems', description: 'Built to scale, not just look good.' }] } },
+          { type: 'projects', position: 2, data: { projects: [] } },
+          { type: 'clarity', position: 3, data: {} },
         ] },
       },
     });
