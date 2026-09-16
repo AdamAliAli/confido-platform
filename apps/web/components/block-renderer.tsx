@@ -272,8 +272,8 @@ function projectImage(value: any): string | undefined {
 }
 
 function Projects({ data }: { data: Record<string, any> }) {
-  const items = Array.isArray(data.projects) ? data.projects : Array.isArray(data.items) ? data.items : [];
-  const projects: Project[] = items
+  const projectItems = Array.isArray(data.projects) ? data.projects : [];
+  const projects: Project[] = projectItems
     .filter((item: any) => item && projectImage(item))
     .map((item: any, index: number) => ({
       title: typeof item.title === 'string' ? item.title : typeof item.name === 'string' ? item.name : `Project ${index + 1}`,
