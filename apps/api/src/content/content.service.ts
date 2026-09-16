@@ -2,7 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../common/prisma.service';
 import { RedisService } from '../common/redis.service';
-import { CreateBlockDto, CreatePageDto, UpdateBlockDto } from './dto';
+import {
+  CreateBlockDto,
+  CreatePageDto,
+  SUPPORTED_BLOCK_TYPES,
+  UpdateBlockDto,
+} from './dto';
+
+const supportedTypes = [...SUPPORTED_BLOCK_TYPES];
 
 @Injectable()
 export class ContentService {
@@ -23,7 +30,7 @@ export class ContentService {
       where: { slug, published: true },
       include: {
         blocks: {
-          where: { enabled: true },
+          where: { enabled: true, type: { in: supportedTypes } },
           orderBy: { position: 'asc' },
         },
       },
@@ -39,7 +46,12 @@ export class ContentService {
 
   all() {
     return this.db.page.findMany({
-      include: { blocks: { orderBy: { position: 'asc' } } },
+      include: {
+        blocks: {
+          where: { type: { in: supportedTypes } },
+          orderBy: { position: 'asc' },
+        },
+      },
     });
   }
 
