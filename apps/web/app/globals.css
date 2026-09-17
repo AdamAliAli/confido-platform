@@ -80,9 +80,9 @@
 .clarity-heading{position:absolute;z-index:2;top:4vh;left:8vw;display:flex;width:max-content;max-width:none;white-space:nowrap;margin:0;font-size:clamp(82px,10.5vw,184px);font-weight:300;line-height:1;letter-spacing:-.065em;pointer-events:none;will-change:transform}
 .clarity-heading-group{display:flex;flex:none}
 .clarity-heading-copy{display:block;flex:none;padding-right:8vw}
-.clarity-composition{width:88.5%;transform-origin:center center;will-change:transform}
+.clarity-composition{width:90.3%;transform-origin:center center;will-change:transform}
 .clarity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8%;width:100%}
-.clarity-card{position:relative;min-width:0;aspect-ratio:.642/1;max-height:68.5vh;overflow:hidden;border-radius:18px;background:#08211e;contain:paint}
+.clarity-card{position:relative;min-width:0;aspect-ratio:.596/1;max-height:84vh;overflow:hidden;border-radius:24px;background:#08211e;contain:paint}
 .clarity-card-art-zoom{position:absolute;inset:-2%;overflow:hidden;border-radius:inherit;transform-origin:center;backface-visibility:hidden;will-change:transform}
 .clarity-card-art{position:absolute;inset:0;background-repeat:no-repeat;background-color:#0caa90;transform-origin:center;backface-visibility:hidden;will-change:transform,filter}
 .clarity-card-copy{position:absolute;z-index:1;inset:auto 4% 5%;display:flex;flex-direction:column;gap:24px;pointer-events:none}

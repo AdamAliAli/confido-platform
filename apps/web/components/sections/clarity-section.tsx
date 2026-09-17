@@ -122,7 +122,7 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
   const compositionY = useTransform(
     scrollYProgress,
     [0, 0.18, 0.68, 1],
-    ['62vh', '46vh', '12vh', '8vh'],
+    ['62vh', '46vh', '4vh', '-1vh'],
     { clamp: true },
   );
   const imageScale = useTransform(scrollYProgress, [0.1, 0.68], [1.34, 1], { clamp: true });
