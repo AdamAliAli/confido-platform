@@ -126,8 +126,6 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
     { clamp: true },
   );
   const imageScale = useTransform(scrollYProgress, [0.1, 0.68], [1.34, 1], { clamp: true });
-  const rawHeadingX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%'], { clamp: true });
-  const headingX = useSpring(rawHeadingX, { stiffness: 48, damping: 19, mass: 0.9 });
   const ctaOpacity = useTransform(scrollYProgress, [0.58, 0.76], [0, 1], { clamp: true });
   const ctaY = useTransform(scrollYProgress, [0.58, 0.76], [24, 0], { clamp: true });
   const metrics = normalizeMetrics(data);
@@ -139,7 +137,13 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
         <motion.h2
           id="clarity-heading"
           className="clarity-heading"
-          style={{ x: headingX }}
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{
+            duration: 22,
+            ease: 'linear',
+            repeat: Infinity,
+            repeatType: 'loop',
+          }}
         >
           {[0, 1].map((group) => (
             <span className="clarity-heading-group" aria-hidden={group === 1} key={group}>
