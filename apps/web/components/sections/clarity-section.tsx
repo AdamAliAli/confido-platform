@@ -126,10 +126,11 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
     { clamp: true },
   );
   const imageScale = useTransform(scrollYProgress, [0.1, 0.68], [1.34, 1], { clamp: true });
-  const headingX = useTransform(scrollYProgress, [0, 1], ['8vw', '-92vw'], { clamp: true });
+  const headingX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%'], { clamp: true });
   const ctaOpacity = useTransform(scrollYProgress, [0.58, 0.76], [0, 1], { clamp: true });
   const ctaY = useTransform(scrollYProgress, [0.58, 0.76], [24, 0], { clamp: true });
   const metrics = normalizeMetrics(data);
+  const heading = typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale';
 
   return (
     <section id="clarity" className="clarity-section" ref={sectionRef} aria-labelledby="clarity-heading">
@@ -139,7 +140,12 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
           className="clarity-heading"
           style={{ x: headingX }}
         >
-          {typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale'}
+          {[0, 1].map((group) => (
+            <span className="clarity-heading-group" aria-hidden={group === 1} key={group}>
+              <span className="clarity-heading-copy">{heading}</span>
+              <span className="clarity-heading-copy" aria-hidden="true">{heading}</span>
+            </span>
+          ))}
         </motion.h2>
 
         <motion.div
