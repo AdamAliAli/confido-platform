@@ -126,7 +126,8 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
     { clamp: true },
   );
   const imageScale = useTransform(scrollYProgress, [0.1, 0.68], [1.34, 1], { clamp: true });
-  const headingX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%'], { clamp: true });
+  const rawHeadingX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%'], { clamp: true });
+  const headingX = useSpring(rawHeadingX, { stiffness: 48, damping: 19, mass: 0.9 });
   const ctaOpacity = useTransform(scrollYProgress, [0.58, 0.76], [0, 1], { clamp: true });
   const ctaY = useTransform(scrollYProgress, [0.58, 0.76], [24, 0], { clamp: true });
   const metrics = normalizeMetrics(data);
