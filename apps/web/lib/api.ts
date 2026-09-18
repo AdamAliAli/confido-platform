@@ -3,7 +3,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 export async function getPage() {
   try {
     const response = await fetch(`${API}/content/public/home`, {
-      next: { revalidate: 5 },
+      cache: 'no-store',
     });
 
     if (!response.ok) return null;
