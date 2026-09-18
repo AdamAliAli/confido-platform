@@ -1,1 +1,12 @@
-import { Module } from '@nestjs/common';import { PrismaService } from '../common/prisma.service';import { RedisService } from '../common/redis.service';import { AuthModule } from '../auth/auth.module';import { ContentController } from './content.controller';import { ContentService } from './content.service';@Module({imports:[AuthModule],controllers:[ContentController],providers:[ContentService,PrismaService,RedisService]})export class ContentModule{}
+import { Module } from '@nestjs/common';
+import { PrismaService } from '../common/prisma.service';
+import { AuthModule } from '../auth/auth.module';
+import { ContentController } from './content.controller';
+import { ContentService } from './content.service';
+
+@Module({
+  imports: [AuthModule],
+  controllers: [ContentController],
+  providers: [ContentService, PrismaService],
+})
+export class ContentModule {}
