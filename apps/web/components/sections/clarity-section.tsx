@@ -111,35 +111,30 @@ function ClarityCard({
 }
 
 export function ClaritySection({ data }: { data: Record<string, any> }) {
-  const sectionRef = useRef<HTMLElement>(null);
+  const cardsStageRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
+    target: cardsStageRef,
+    offset: ['start end', 'end end'],
   });
 
-  const rawScale = useTransform(scrollYProgress, [0.1, 0.68], [1.62, 1], { clamp: true });
+  const rawScale = useTransform(scrollYProgress, [0.05, 0.7], [1.62, 1], { clamp: true });
   const compositionScale = useSpring(rawScale, { stiffness: 105, damping: 30, mass: 0.4 });
   const compositionY = useTransform(
     scrollYProgress,
-    [0, 0.18, 0.42, 0.58, 0.72, 1],
-    ['68vh', '55vh', '32vh', '18vh', '2vh', '-1vh'],
+    [0, 0.24, 0.7, 1],
+    ['34vh', '22vh', '0vh', '-1vh'],
     { clamp: true },
   );
-  const imageScale = useTransform(scrollYProgress, [0.1, 0.68], [1.34, 1], { clamp: true });
-  const headingOpacity = useTransform(scrollYProgress, [0, 0.46, 0.64, 1], [1, 1, 0, 0], { clamp: true });
-  const headingY = useTransform(scrollYProgress, [0.46, 0.64], [0, -52], { clamp: true });
-  const ctaOpacity = useTransform(scrollYProgress, [0.58, 0.76], [0, 1], { clamp: true });
-  const ctaY = useTransform(scrollYProgress, [0.58, 0.76], [24, 0], { clamp: true });
+  const imageScale = useTransform(scrollYProgress, [0.05, 0.7], [1.34, 1], { clamp: true });
   const metrics = normalizeMetrics(data);
   const heading = typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale';
 
   return (
-    <section id="clarity" className="clarity-section" ref={sectionRef} aria-labelledby="clarity-heading">
-      <div className="clarity-sticky">
+    <section id="clarity" className="clarity-section" aria-labelledby="clarity-heading">
+      <div className="clarity-heading-stage">
         <motion.h2
           id="clarity-heading"
           className="clarity-heading"
-          style={{ opacity: headingOpacity, y: headingY }}
           animate={{ x: ['0%', '-50%'] }}
           transition={{
             duration: 22,
@@ -155,32 +150,37 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
             </span>
           ))}
         </motion.h2>
-
-        <motion.div
-          className="clarity-composition"
-          style={{ scale: compositionScale, y: compositionY }}
-        >
-          <div className="clarity-grid">
-            {metrics.map((metric, index) => (
-              <ClarityCard
-                key={`${metric.label}-${index}`}
-                metric={metric}
-                index={index}
-                progress={scrollYProgress}
-                imageScale={imageScale}
-              />
-            ))}
-          </div>
-        </motion.div>
-
-        <motion.a
-          className="clarity-more"
-          href={typeof data.ctaHref === 'string' ? data.ctaHref : '#about-us'}
-          style={{ opacity: ctaOpacity, y: ctaY }}
-        >
-          <i /> {typeof data.ctaLabel === 'string' ? data.ctaLabel : 'MORE ABOUT US'}
-        </motion.a>
       </div>
+
+      <div className="clarity-heading-gap" aria-hidden="true" />
+
+      <div className="clarity-cards-stage" ref={cardsStageRef}>
+        <div className="clarity-cards-sticky">
+          <motion.div
+            className="clarity-composition"
+            style={{ scale: compositionScale, y: compositionY }}
+          >
+            <div className="clarity-grid">
+              {metrics.map((metric, index) => (
+                <ClarityCard
+                  key={`${metric.label}-${index}`}
+                  metric={metric}
+                  index={index}
+                  progress={scrollYProgress}
+                  imageScale={imageScale}
+                />
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      <a
+        className="clarity-more"
+        href={typeof data.ctaHref === 'string' ? data.ctaHref : '#about-us'}
+      >
+        <i /> {typeof data.ctaLabel === 'string' ? data.ctaLabel : 'MORE ABOUT US'}
+      </a>
     </section>
   );
 }
