@@ -121,11 +121,13 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
   const compositionScale = useSpring(rawScale, { stiffness: 105, damping: 30, mass: 0.4 });
   const compositionY = useTransform(
     scrollYProgress,
-    [0, 0.18, 0.68, 1],
-    ['62vh', '46vh', '4vh', '-1vh'],
+    [0, 0.18, 0.42, 0.58, 0.72, 1],
+    ['68vh', '55vh', '32vh', '18vh', '2vh', '-1vh'],
     { clamp: true },
   );
   const imageScale = useTransform(scrollYProgress, [0.1, 0.68], [1.34, 1], { clamp: true });
+  const headingOpacity = useTransform(scrollYProgress, [0, 0.46, 0.64, 1], [1, 1, 0, 0], { clamp: true });
+  const headingY = useTransform(scrollYProgress, [0.46, 0.64], [0, -52], { clamp: true });
   const ctaOpacity = useTransform(scrollYProgress, [0.58, 0.76], [0, 1], { clamp: true });
   const ctaY = useTransform(scrollYProgress, [0.58, 0.76], [24, 0], { clamp: true });
   const metrics = normalizeMetrics(data);
@@ -137,6 +139,7 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
         <motion.h2
           id="clarity-heading"
           className="clarity-heading"
+          style={{ opacity: headingOpacity, y: headingY }}
           animate={{ x: ['0%', '-50%'] }}
           transition={{
             duration: 22,
