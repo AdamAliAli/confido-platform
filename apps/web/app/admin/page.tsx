@@ -43,6 +43,7 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [pageId, setPageId] = useState('');
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [saveStatus, setSaveStatus] = useState<Record<string, string>>({});
 
   async function login() {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
@@ -75,14 +76,32 @@ export default function Admin() {
   }, []);
 
   async function save(block: Block) {
-    await adminFetch(`/content/admin/blocks/${block.id}`, token, {
+    setSaveStatus((current) => ({ ...current, [block.id]: 'Saving…' }));
+
+    const response = await adminFetch(`/content/admin/blocks/${block.id}`, token, {
       method: 'PATCH',
       body: JSON.stringify({
         data: block.data,
         enabled: block.enabled,
-        position: block.position,
       }),
     });
+
+    if (!response.ok) {
+      const message = await response.text();
+      console.error('Failed to save block', response.status, message);
+      setSaveStatus((current) => ({
+        ...current,
+        [block.id]: `Save failed (${response.status})`,
+      }));
+      return;
+    }
+
+    const saved = (await response.json()) as Block;
+
+    setBlocks((current) =>
+      current.map((value) => (value.id === saved.id ? saved : value)),
+    );
+    setSaveStatus((current) => ({ ...current, [block.id]: 'Saved' }));
   }
 
   async function add(type: SupportedBlockType) {
@@ -157,14 +176,20 @@ export default function Admin() {
           <Reorder.Item value={block} key={block.id} className="rounded-xl border border-white/10 bg-zinc-900 p-5">
             <div className="mb-5 flex items-center justify-between">
               <b className="capitalize">⠿ {block.type}</b>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
+                {saveStatus[block.id] && (
+                  <span className="text-sm text-zinc-400">{saveStatus[block.id]}</span>
+                )}
                 <button onClick={() => save(block)} className="rounded bg-white px-3 py-2 text-black">Save</button>
                 <button onClick={() => remove(block.id)} className="rounded bg-red-950 px-3 py-2 text-red-200">Delete</button>
               </div>
             </div>
             <BlockForm
               data={block.data}
-              onChange={(data) => setBlocks((current) => current.map((value) => value.id === block.id ? { ...value, data } : value))}
+              onChange={(data) => {
+                setBlocks((current) => current.map((value) => value.id === block.id ? { ...value, data } : value));
+                setSaveStatus((current) => ({ ...current, [block.id]: 'Unsaved changes' }));
+              }}
             />
           </Reorder.Item>
         ))}
