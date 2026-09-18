@@ -76,17 +76,17 @@
 
 /* The three cards zoom out as one scroll-linked composition. */
 .clarity-section{position:relative;overflow:clip;background:#0b2522;color:#e5f4ef}
-.clarity-heading-stage{position:relative;height:clamp(300px,42vh,460px);overflow:hidden}
+.clarity-heading-stage{position:relative;height:clamp(280px,36vh,400px);overflow:hidden}
 .clarity-heading{position:absolute;z-index:2;top:4vh;left:8vw;display:flex;width:max-content;max-width:none;white-space:nowrap;margin:0;font-size:clamp(82px,10.5vw,184px);font-weight:300;line-height:1;letter-spacing:-.065em;pointer-events:none;will-change:transform}
 .clarity-heading-group{display:flex;flex:none}
 .clarity-heading-copy{display:block;flex:none;padding-right:8vw}
-.clarity-heading-gap{height:clamp(100px,14vh,160px)}
-.clarity-cards-stage{position:relative;height:185vh}
+.clarity-heading-gap{height:clamp(64px,8vh,96px)}
+.clarity-cards-stage{position:relative;height:205vh}
 .clarity-cards-sticky{position:sticky;top:0;height:100vh;min-height:620px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .clarity-composition{width:90.3%;transform-origin:center center;will-change:transform}
 .clarity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8%;width:100%}
-.clarity-card{position:relative;min-width:0;aspect-ratio:.596/1;max-height:84vh;overflow:hidden;border-radius:24px;background:#08211e;contain:paint}
-.clarity-card-art-zoom{position:absolute;inset:-2%;overflow:hidden;border-radius:inherit;transform-origin:center;backface-visibility:hidden;will-change:transform}
+.clarity-card{position:relative;min-width:0;aspect-ratio:.596/1;max-height:84vh;overflow:hidden;border-radius:24px;background:transparent;contain:paint}
+.clarity-card-art-zoom{position:absolute;inset:0;overflow:hidden;border-radius:inherit;transform-origin:center;backface-visibility:hidden;will-change:transform}
 .clarity-card-art{position:absolute;inset:0;background-repeat:no-repeat;background-color:#0caa90;transform-origin:center;backface-visibility:hidden;will-change:transform,filter}
 .clarity-card-copy{position:absolute;z-index:1;inset:auto 4% 5%;display:flex;flex-direction:column;gap:24px;pointer-events:none}
 .clarity-card-copy span{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:500;white-space:nowrap}

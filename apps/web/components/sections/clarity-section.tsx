@@ -55,14 +55,31 @@ function splitMetric(value: string) {
   };
 }
 
-function AnimatedMetric({ value, progress, index }: { value: string; progress: MotionValue<number>; index: number }) {
+function AnimatedMetric({
+  value,
+  progress,
+  index,
+  hovered,
+}: {
+  value: string;
+  progress: MotionValue<number>;
+  index: number;
+  hovered: boolean;
+}) {
   const { target, suffix, decimals } = splitMetric(value);
   const end = [0.58, 0.69, 0.63][index] ?? Math.min(0.58 + index * 0.06, 0.82);
   const raw = useTransform(progress, [0.2, end], [0, target], { clamp: true });
   const smooth = useSpring(raw, { stiffness: 115, damping: 28, mass: 0.45 });
   const display = useTransform(smooth, (current) => `${current.toFixed(decimals)}${suffix}`);
 
-  return <motion.strong>{display}</motion.strong>;
+  return (
+    <motion.strong
+      animate={{ color: hovered ? '#dff8f0' : 'rgba(221, 250, 244, 0.62)' }}
+      transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {display}
+    </motion.strong>
+  );
 }
 
 function ClarityCard({
@@ -104,7 +121,7 @@ function ClarityCard({
       </motion.div>
       <div className="clarity-card-copy">
         <span><i />{metric.label}</span>
-        <AnimatedMetric value={metric.value} progress={progress} index={index} />
+        <AnimatedMetric value={metric.value} progress={progress} index={index} hovered={hovered} />
       </div>
     </motion.article>
   );
@@ -117,15 +134,25 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
     offset: ['start end', 'end end'],
   });
 
-  const rawScale = useTransform(scrollYProgress, [0.05, 0.7], [1.62, 1], { clamp: true });
-  const compositionScale = useSpring(rawScale, { stiffness: 105, damping: 30, mass: 0.4 });
-  const compositionY = useTransform(
+  const rawScale = useTransform(
     scrollYProgress,
-    [0, 0.24, 0.7, 1],
-    ['34vh', '22vh', '0vh', '-1vh'],
+    [0, 0.2, 0.45, 0.72, 1],
+    [1.68, 1.62, 1.47, 1.2, 1],
     { clamp: true },
   );
-  const imageScale = useTransform(scrollYProgress, [0.05, 0.7], [1.34, 1], { clamp: true });
+  const compositionScale = useSpring(rawScale, { stiffness: 92, damping: 28, mass: 0.48 });
+  const compositionY = useTransform(
+    scrollYProgress,
+    [0, 0.12, 0.32, 0.55, 0.78, 1],
+    ['28vh', '14vh', '2vh', '-2vh', '-1vh', '-1vh'],
+    { clamp: true },
+  );
+  const imageScale = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.45, 0.72, 1],
+    [1.38, 1.34, 1.24, 1.09, 1],
+    { clamp: true },
+  );
   const metrics = normalizeMetrics(data);
   const heading = typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale';
 
