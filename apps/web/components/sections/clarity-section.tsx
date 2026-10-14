@@ -201,13 +201,6 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
           </motion.div>
         </div>
       </div>
-
-      <a
-        className="clarity-more"
-        href={typeof data.ctaHref === 'string' ? data.ctaHref : '#about-us'}
-      >
-        <i /> {typeof data.ctaLabel === 'string' ? data.ctaLabel : 'MORE ABOUT US'}
-      </a>
     </section>
   );
 }
