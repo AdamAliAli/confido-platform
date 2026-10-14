@@ -1,5 +1,6 @@
 import { BlockRenderer } from '@/components/block-renderer';
 import { getPage } from '@/lib/api';
+import { LocationSection } from '@/components/sections/location-section';
 
 type PageBlock = { id: string; type: string; data: Record<string, unknown> };
 
@@ -50,6 +51,7 @@ export default async function Home() {
   return (
     <main>
       <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services, projects, clarity]} />
+      <LocationSection />
     </main>
   );
 }
