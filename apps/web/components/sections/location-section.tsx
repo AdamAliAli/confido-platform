@@ -6,8 +6,8 @@ const MAP_URL = 'https://maps.app.goo.gl/gvksn5TNcgMmMP2h7?g_st=ac';
 
 const LOCATION_PHOTOS = [
   { src: 'https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SNDoO_lBBIlrFalSBp_X6jNKlLydmaGwt2ri9OfoGBkmWu25hrz5T6ULSRKDkY_4G9j6YeGk_rY4Z0-s36MqC_chObCHi9PjxAM5pvgOYP7k8IPEiNTEWwLLcXffo07klTF8Q=s1200-k-no', alt: 'Confido brand identity workspace' },
-  { src: 'https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SQHFDY5GAZgGn76X27fiuT7d1Ng8noF-SWQiehsItG4toQHpyRXLH-93gU5MtuaLHTXZqcuPrJmuPPEr33nVyEwbahrMBD_rof3zjBp94tOhj28ZZfY_l-qxE-q3t4p_lpzlsRUA=s1200-k-no', alt: 'Confido motion graphics work' },
-  { src: 'https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TP9jW0lBFJpamtnEHiTgXaWNI6q_dfkygS8L0Dll_gd0tACZ8k4gWcVladT6_ji7kV-8VlEakKidirXNkRKhMBX_RlBh6Gzxyqg5oS4u-QKLTnnkEceY92sEy4mP9zBvbCr3KsWQ=s1200-k-no', alt: 'Confido branding portfolio presentation' },
+  { src: '/images/location/reference-forest.png', alt: 'Sunlit forest landscape' },
+  { src: '/images/location/reference-traveler.png', alt: 'Traveler walking through the city' },
 ] as const;
 
 const reveal = {
