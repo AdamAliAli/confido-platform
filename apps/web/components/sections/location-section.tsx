@@ -40,15 +40,17 @@ export function LocationSection() {
         <LocationPhoto photo={LOCATION_PHOTOS[0]} index={0} />
 
         <motion.a className="location-place-card" href={MAP_URL} target="_blank" rel="noreferrer" aria-label="Open Confido Agency in Google Maps" {...reveal} transition={{ ...reveal.transition, delay: 0.08 }}>
-          <span className="location-place-label"><i aria-hidden="true" />OUR PLACE</span>
-          <svg className="location-pin" viewBox="0 0 120 160" aria-hidden="true">
-            <path d="M60 8C30.2 8 6 32.2 6 62c0 43.1 54 90 54 90s54-46.9 54-90C114 32.2 89.8 8 60 8Z" />
-            <circle cx="60" cy="62" r="21" />
-          </svg>
-          <span className="location-address">
-            <small>BASED IN MY</small>
-            <strong id="location-heading">Kuala Lumpur,<br />Malaysia</strong>
-            <em>VIEW ON MAPS ↗</em>
+          <span className="location-place-frame">
+            <span className="location-place-label"><i aria-hidden="true" />OUR PLACE</span>
+            <svg className="location-pin" viewBox="0 0 120 160" aria-hidden="true">
+              <path d="M60 8C30.2 8 6 32.2 6 62c0 43.1 54 90 54 90s54-46.9 54-90C114 32.2 89.8 8 60 8Z" />
+              <circle cx="60" cy="62" r="21" />
+            </svg>
+            <span className="location-address">
+              <small>BASED IN MY</small>
+              <strong id="location-heading">Kuala Lumpur,<br />Malaysia</strong>
+              <em>VIEW ON MAPS ↗</em>
+            </span>
           </span>
         </motion.a>
 
