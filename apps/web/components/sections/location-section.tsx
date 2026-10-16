@@ -36,7 +36,6 @@ export function LocationSection() {
       </div>
 
       <div className="location-showcase">
-        <div className="location-empty-cell" aria-hidden="true" />
         <LocationPhoto photo={LOCATION_PHOTOS[0]} index={0} />
 
         <motion.a className="location-place-card" href={MAP_URL} target="_blank" rel="noreferrer" aria-label="Open Confido Agency in Google Maps" {...reveal} transition={{ ...reveal.transition, delay: 0.08 }}>
