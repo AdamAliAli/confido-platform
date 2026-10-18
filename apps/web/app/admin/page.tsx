@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Reorder } from 'framer-motion';
 import { adminFetch } from '@/lib/api';
 import { BlockForm } from '@/components/block-form';
+import { TeamAdmin } from '@/components/team-admin';
 
 const SUPPORTED_BLOCK_TYPES = ['hero', 'services', 'projects', 'clarity'] as const;
 type SupportedBlockType = (typeof SUPPORTED_BLOCK_TYPES)[number];
@@ -44,6 +45,7 @@ export default function Admin() {
   const [pageId, setPageId] = useState('');
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [saveStatus, setSaveStatus] = useState<Record<string, string>>({});
+  const [view, setView] = useState<'blocks' | 'team'>('blocks');
 
   async function login() {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
@@ -143,9 +145,12 @@ export default function Admin() {
       <header className="mx-auto mb-8 flex max-w-5xl flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-sm text-mint">CONFIDO CMS</p>
-          <h1 className="text-3xl">Page blocks</h1>
+          <h1 className="text-3xl">{view === 'blocks' ? 'Page blocks' : 'Team members'}</h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setView('blocks')} className={`rounded px-4 py-3 ${view === 'blocks' ? 'bg-white text-black' : 'border border-white/20'}`}>Page blocks</button>
+          <button onClick={() => setView('team')} className={`rounded px-4 py-3 ${view === 'team' ? 'bg-white text-black' : 'border border-white/20'}`}>Team</button>
+          {view === 'blocks' && <>
           <select id="newType" className="rounded bg-zinc-800 px-3">
             {SUPPORTED_BLOCK_TYPES.map((type) => (
               <option key={type} value={type}>{type[0].toUpperCase() + type.slice(1)}</option>
@@ -163,9 +168,11 @@ export default function Admin() {
           >
             Publish
           </button>
+          </>}
         </div>
       </header>
 
+      {view === 'team' ? <TeamAdmin token={token} /> : (
       <Reorder.Group
         axis="y"
         values={blocks}
@@ -194,6 +201,7 @@ export default function Admin() {
           </Reorder.Item>
         ))}
       </Reorder.Group>
+      )}
     </main>
   );
 }

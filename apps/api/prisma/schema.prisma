@@ -46,3 +46,19 @@ model Block {
   @@unique([pageId, position])
   @@index([pageId])
 }
+
+model TeamMember {
+  id           String   @id @default(cuid())
+  name         String
+  role         String
+  quote        String?
+  photoUrl     String
+  xUrl         String?
+  dribbbleUrl  String?
+  linkedinUrl  String?
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([sortOrder])
+}
