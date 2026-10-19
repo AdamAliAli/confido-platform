@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { adminFetch, type TeamMember } from '@/lib/api';
 
 type TeamForm = {
@@ -49,6 +49,7 @@ function payloadFromForm(form: TeamForm) {
 }
 
 export function TeamAdmin({ token }: { token: string }) {
+  const formSectionRef = useRef<HTMLElement>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [form, setForm] = useState<TeamForm>(EMPTY_FORM);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -79,6 +80,13 @@ export function TeamAdmin({ token }: { token: string }) {
   function resetForm() {
     setForm(EMPTY_FORM);
     setEditingId(null);
+  }
+
+  function startEditing(member: TeamMember) {
+    setEditingId(member.id);
+    setForm(formFromMember(member));
+    setStatus('');
+    formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async function save() {
@@ -117,7 +125,7 @@ export function TeamAdmin({ token }: { token: string }) {
 
   return (
     <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_1.1fr]">
-      <section className="rounded-xl border border-white/10 bg-zinc-900 p-5">
+      <section ref={formSectionRef} className="scroll-mt-6 rounded-xl border border-white/10 bg-zinc-900 p-5">
         <div className="mb-5 flex items-center justify-between gap-4">
           <h2 className="text-xl">{editingId ? 'Edit team member' : 'Add team member'}</h2>
           {editingId && <button type="button" onClick={resetForm} className="text-sm text-zinc-400 hover:text-white">Cancel</button>}
@@ -173,7 +181,7 @@ export function TeamAdmin({ token }: { token: string }) {
               <p className="truncate text-sm text-zinc-400">{member.role} · Order {member.sortOrder}</p>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => { setEditingId(member.id); setForm(formFromMember(member)); setStatus(''); }} className="rounded border border-white/20 px-3 py-2 text-sm">Edit</button>
+              <button type="button" onClick={() => startEditing(member)} className="rounded border border-white/20 px-3 py-2 text-sm">Edit</button>
               <button type="button" onClick={() => remove(member)} className="rounded bg-red-950 px-3 py-2 text-sm text-red-200">Delete</button>
             </div>
           </article>

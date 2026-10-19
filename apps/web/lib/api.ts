@@ -28,7 +28,7 @@ export async function getPage() {
 export async function getTeam(): Promise<TeamMember[]> {
   try {
     const response = await fetch(`${API}/team`, {
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
 
     if (!response.ok) return [];
