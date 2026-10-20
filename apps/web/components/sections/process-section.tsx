@@ -40,7 +40,7 @@ export function ProcessSection() {
       aria-labelledby="process-heading"
       className={`${poppins.className} overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white`}
     >
-      <div className="grid md:grid-cols-[57%_43%]">
+      <div className="grid md:grid-cols-2">
         <div className="relative min-w-0 p-6 md:min-h-[900px] md:border-r md:border-white/[0.06] md:p-10">
           <div className="flex items-center gap-2 text-sm font-medium tracking-[0.08em]">
             <span className="h-2 w-2 bg-mint" aria-hidden="true" />
@@ -50,7 +50,7 @@ export function ProcessSection() {
           <div className="mt-16 md:sticky md:bottom-16 md:mt-[55vh] md:pb-16">
             <h2 id="process-heading" className="text-[42px] font-normal leading-[1.02] tracking-[-0.04em] md:text-[56px]">
               <span className="block">A Process Built</span>
-              <span className="block text-mint">on Clarity</span>
+              <span className="ml-[8%] block text-mint">on Clarity</span>
             </h2>
           </div>
         </div>
@@ -81,7 +81,7 @@ export function ProcessSection() {
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
                         transition={{ duration: reducedMotion ? 0 : 0.4, ease: 'easeOut' }}
-                        className="flex flex-col overflow-hidden md:flex-1"
+                        className="-mx-6 flex flex-col overflow-hidden px-6 md:flex-1"
                       >
                         <div className="mx-auto my-[30px] aspect-[3/2] w-full max-w-[280px] shrink-0 overflow-hidden">
                           <Image
@@ -93,9 +93,9 @@ export function ProcessSection() {
                           />
                         </div>
 
-                        <div className="mt-auto flex w-full shrink-0 flex-col gap-4 border-l border-mint bg-[#06100e] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="-mx-6 mt-auto flex w-[calc(100%+48px)] shrink-0 flex-col gap-4 bg-[#06100e] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                           <span className="text-[22px] font-normal text-mint">{item.title}</span>
-                          <span className="max-w-[220px] text-[13px] leading-5 text-white/80">{item.description}</span>
+                          <span className="max-w-[240px] text-[13px] font-semibold leading-5 text-white">{item.description}</span>
                         </div>
                       </motion.div>
                     ) : (
