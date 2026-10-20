@@ -112,14 +112,21 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
       </div>
 
       <div className="relative mx-auto max-w-6xl">
-        <Image
-          src="/images/ribbon.webp"
-          width={745}
-          height={732}
-          alt=""
+        <motion.div
+          animate={reducedMotion ? { y: 0 } : { y: [0, -50, 0] }}
+          transition={reducedMotion ? { duration: 0 } : { duration: 6, ease: 'easeInOut', repeat: Infinity }}
+          className="pointer-events-none absolute left-1/2 top-[52%] z-0 md:top-[56%]"
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-[52%] z-0 h-auto w-[140vw] max-w-none -translate-x-1/2 -translate-y-[32%] select-none sm:w-[105vw] md:top-[56%] md:w-[820px]"
-        />
+        >
+          <Image
+            src="/images/ribbon.webp"
+            width={745}
+            height={732}
+            alt=""
+            aria-hidden="true"
+            className="h-auto w-[140vw] max-w-none -translate-x-1/2 -translate-y-[32%] select-none sm:w-[105vw] md:w-[820px]"
+          />
+        </motion.div>
 
         <div
           ref={trackRef}
