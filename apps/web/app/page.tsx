@@ -2,6 +2,7 @@ import { BlockRenderer } from '@/components/block-renderer';
 import { getPage } from '@/lib/api';
 import { LocationSection } from '@/components/sections/location-section';
 import { TeamSection } from '@/components/sections/team-section';
+import { ProcessSection } from '@/components/sections/process-section';
 
 type PageBlock = { id: string; type: string; data: Record<string, unknown> };
 
@@ -54,6 +55,7 @@ export default async function Home() {
       <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services, projects, clarity]} />
       <LocationSection />
       <TeamSection />
+      <ProcessSection />
     </main>
   );
 }
