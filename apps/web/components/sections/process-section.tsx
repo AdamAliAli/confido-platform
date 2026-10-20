@@ -60,27 +60,32 @@ export function ProcessSection() {
             const active = activeIndex === index;
 
             return (
-              <button
+              <motion.button
                 key={item.step}
+                layout={!reducedMotion}
+                transition={{ layout: { duration: reducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] } }}
                 type="button"
                 aria-expanded={active}
                 onClick={() => setActiveIndex((current) => (current === index ? null : index))}
                 className="block w-full border-b border-white/[0.06] text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:flex md:flex-1 md:flex-col"
               >
-                <motion.div layout={!reducedMotion} className="w-full px-8 pt-8 md:flex md:flex-1 md:flex-col">
+                <div className="relative w-full px-8 pt-8 md:flex md:flex-1 md:flex-col">
                   <div className={`flex items-center gap-2 text-xs transition-colors ${active ? 'text-mint' : 'text-white/60'}`}>
                     <span className={`h-2 w-2 transition-colors ${active ? 'bg-mint' : 'bg-white/30'}`} aria-hidden="true" />
                     {item.step}
                   </div>
 
-                  <AnimatePresence initial={false} mode="wait">
+                  <AnimatePresence initial={false} mode="popLayout">
                     {active ? (
                       <motion.div
                         key="expanded"
                         initial={reducedMotion ? false : { height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
-                        transition={{ duration: reducedMotion ? 0 : 0.4, ease: 'easeOut' }}
+                        transition={{
+                          height: { duration: reducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] },
+                          opacity: { duration: reducedMotion ? 0 : 0.25 },
+                        }}
                         className="-mx-8 flex flex-col overflow-hidden px-8 md:flex-1"
                       >
                         <div className="mx-auto my-12 aspect-[3/2] w-full max-w-[280px] shrink-0 overflow-hidden">
@@ -104,15 +109,15 @@ export function ProcessSection() {
                         initial={reducedMotion ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={reducedMotion ? undefined : { opacity: 0 }}
-                        transition={{ duration: reducedMotion ? 0 : 0.4, ease: 'easeOut' }}
+                        transition={{ duration: reducedMotion ? 0 : 0.25, ease: 'easeInOut' }}
                         className="mt-20 pb-8 text-[22px] font-normal text-white/70"
                       >
                         {item.title}
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </motion.div>
-              </button>
+                </div>
+              </motion.button>
             );
           })}
         </div>
