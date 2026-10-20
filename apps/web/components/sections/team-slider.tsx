@@ -1,11 +1,13 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
+import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef, useState } from 'react';
-import type { KeyboardEvent, UIEvent } from 'react';
+import type { KeyboardEvent, ReactNode, UIEvent } from 'react';
 import type { TeamMember } from '@/lib/api';
 
-function SocialLink({ href, label, children }: { href?: string | null; label: string; children: string }) {
+function SocialLink({ href, label, children }: { href?: string | null; label: string; children: ReactNode }) {
   if (!href) return null;
 
   return (
@@ -14,7 +16,7 @@ function SocialLink({ href, label, children }: { href?: string | null; label: st
       target="_blank"
       rel="noreferrer"
       aria-label={label}
-      className="grid h-9 w-9 place-items-center rounded-full border border-white/20 text-[11px] text-paper transition-colors hover:border-mint hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
+      className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-black text-white transition-colors hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
     >
       {children}
     </a>
@@ -51,7 +53,9 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
   const showControls = members.length > 1;
 
   function goTo(index: number) {
-    const nextIndex = Math.max(0, Math.min(index, members.length - 1));
+    if (!members.length) return;
+
+    const nextIndex = (index + members.length) % members.length;
     const track = trackRef.current;
     const slide = track?.children.item(nextIndex) as HTMLElement | null;
 
@@ -87,75 +91,98 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
       aria-labelledby="team-heading"
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      className="relative overflow-hidden bg-[#0b2420] px-5 py-24 text-paper outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:px-12 md:py-32"
+      className="relative min-h-[760px] overflow-hidden bg-gradient-to-b from-[#0a1f1c] to-[#0d3b31] px-5 py-20 text-paper outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:min-h-[900px] md:px-12 md:py-24"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(19,187,161,0.09),transparent_42%)]" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <span className="absolute left-[calc(50%_-_160px)] top-0 h-[76%] w-px bg-white/[0.06]" />
+        <span className="absolute right-[calc(50%_-_160px)] top-0 h-[76%] w-px bg-white/[0.06]" />
+        <span className="absolute left-0 top-1/2 h-px w-full bg-white/[0.06]" />
+        <span className="absolute bottom-[14%] left-0 h-px w-full bg-white/[0.06]" />
+      </div>
 
-      <div id="team-heading" className="relative mb-14 flex items-center justify-center gap-2 text-xs font-semibold tracking-[0.08em] md:mb-20">
+      <div id="team-heading" className="relative z-10 mx-auto mb-14 flex w-full max-w-[320px] items-center justify-center gap-2 text-sm font-medium tracking-[0.08em] md:mb-16">
         <span className="h-2 w-2 bg-mint" aria-hidden="true" />
         TEAM MEMBERS
       </div>
 
       <div className="relative mx-auto max-w-6xl">
+        <Image
+          src="/images/ribbon.webp"
+          width={745}
+          height={732}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-[52%] z-0 h-auto w-[150vw] max-w-none -translate-x-1/2 -translate-y-1/2 select-none sm:w-[110vw] md:top-[56%] md:w-[900px]"
+        />
+
         <div
           ref={trackRef}
           onScroll={handleScroll}
-          className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="relative z-10 flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {members.map((member) => (
+          {members.map((member, index) => (
             <div key={member.id} className="flex w-full shrink-0 snap-center justify-center px-1 sm:px-14">
               <motion.article
-                initial={reducedMotion ? false : { opacity: 0.72, scale: 0.975 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ amount: 0.65 }}
+                initial={false}
+                animate={reducedMotion || index === activeIndex ? { opacity: 1, scale: 1 } : { opacity: 0.72, scale: 0.975 }}
                 transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className="flex min-h-[560px] w-full max-w-[380px] flex-col overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-[#172722] to-[#0d1512] p-5 shadow-2xl shadow-black/25 sm:min-h-[610px] sm:p-6"
+                className="flex min-h-[600px] w-full max-w-[470px] flex-col overflow-hidden bg-gradient-to-b from-[#1d1f1f] to-[#1f3a32] p-6 shadow-2xl shadow-black/25 sm:min-h-[660px] sm:p-12"
               >
-                <div className="flex min-h-9 items-start justify-between gap-4">
-                  <p className="pt-2 text-xs uppercase tracking-[0.12em] text-white/55">{member.role}</p>
+                <div className="flex min-h-11 items-start justify-between gap-4">
+                  <p className="max-w-[210px] pt-2 text-lg font-semibold leading-6 text-white/80">{member.role}</p>
                   <div className="flex gap-2">
-                    <SocialLink href={member.xUrl} label={`${member.name} on X`}>X</SocialLink>
-                    <SocialLink href={member.dribbbleUrl} label={`${member.name} on Dribbble`}>Dr</SocialLink>
-                    <SocialLink href={member.linkedinUrl} label={`${member.name} on LinkedIn`}>in</SocialLink>
+                    <SocialLink href={member.xUrl} label={`${member.name} on X`}>
+                      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+                      </svg>
+                    </SocialLink>
+                    <SocialLink href={member.dribbbleUrl} label={`${member.name} on Dribbble`}>
+                      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
+                        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.79 4.61a8.47 8.47 0 0 1 1.68 5.15 19.2 19.2 0 0 0-5.01-.24 22.64 22.64 0 0 0-.65-1.45 15.64 15.64 0 0 0 3.98-3.46ZM12 3.53c2.2 0 4.2.84 5.7 2.22a13.77 13.77 0 0 1-3.55 3.1 44.13 44.13 0 0 0-2.52-4.05 8.3 8.3 0 0 1 .37-1.27Zm-2.15.75a37.9 37.9 0 0 1 2.56 4.03 31.98 31.98 0 0 1-8.63 1.14 8.5 8.5 0 0 1 6.07-5.17Zm-6.3 7.12v-.42a33.12 33.12 0 0 0 9.6-1.34l.55 1.17.4.9a14.78 14.78 0 0 0-7.58 5.86 8.42 8.42 0 0 1-2.97-6.17Zm4.22 7.08a13.02 13.02 0 0 1 6.94-5.24 27.97 27.97 0 0 1 1.1 5.83A8.44 8.44 0 0 1 7.77 18.48Zm9.55-.28a29.65 29.65 0 0 0-1.02-5.35 16.3 16.3 0 0 1 4.07.31 8.48 8.48 0 0 1-3.05 5.04Z" />
+                      </svg>
+                    </SocialLink>
+                    <SocialLink href={member.linkedinUrl} label={`${member.name} on LinkedIn`}>
+                      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
+                        <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V8.98h3.41v1.57h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.29ZM5.32 7.41a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13Zm1.78 13.04H3.54V8.98H7.1v11.47Z" />
+                      </svg>
+                    </SocialLink>
                   </div>
                 </div>
 
-                <div className="mx-auto mt-8 h-[300px] w-full max-w-[290px] overflow-hidden rounded-lg bg-[#10231f] sm:h-[340px]">
+                <div className="mx-auto mt-10 h-[285px] w-[225px] shrink-0 overflow-hidden bg-[#10231f]">
                   <MemberPortrait member={member} />
                 </div>
 
-                <div className="mt-auto pt-7 text-center">
-                  {member.quote && <p className="mx-auto mb-5 max-w-[290px] text-sm leading-6 text-white/50">“{member.quote}”</p>}
-                  <h2 className="text-4xl font-light tracking-[-0.055em] sm:text-5xl">{member.name}</h2>
+                <div className="mt-auto pt-12 text-center">
+                  {member.quote && <p className="mx-auto mb-5 max-w-[320px] text-lg leading-7 text-white/[0.55]">{member.quote}</p>}
+                  <h2 className="text-4xl font-normal tracking-[-0.045em]">{member.name}</h2>
                 </div>
               </motion.article>
             </div>
           ))}
         </div>
-
-        {showControls && (
-          <>
-            <button
-              type="button"
-              aria-label="Previous team member"
-              disabled={activeIndex === 0}
-              onClick={() => goTo(activeIndex - 1)}
-              className="absolute left-0 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-[#07110f]/90 text-2xl transition hover:border-mint hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint disabled:cursor-not-allowed disabled:opacity-25 md:h-14 md:w-14"
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              aria-label="Next team member"
-              disabled={activeIndex === members.length - 1}
-              onClick={() => goTo(activeIndex + 1)}
-              className="absolute right-0 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-[#07110f]/90 text-2xl transition hover:border-mint hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint disabled:cursor-not-allowed disabled:opacity-25 md:h-14 md:w-14"
-            >
-              →
-            </button>
-          </>
-        )}
       </div>
+
+      {showControls && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous team member"
+            onClick={() => goTo(activeIndex - 1)}
+            className="absolute left-6 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black text-white transition-colors hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
+          >
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            aria-label="Next team member"
+            onClick={() => goTo(activeIndex + 1)}
+            className="absolute right-6 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black text-white transition-colors hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
+          >
+            <ChevronRight className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </>
+      )}
     </section>
   );
 }
