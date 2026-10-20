@@ -2,10 +2,16 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
+import { Poppins } from 'next/font/google';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode, UIEvent } from 'react';
 import type { TeamMember } from '@/lib/api';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+});
 
 function SocialLink({ href, label, children }: { href?: string | null; label: string; children: ReactNode }) {
   if (!href) return null;
@@ -91,7 +97,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
       aria-labelledby="team-heading"
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      className="relative min-h-[760px] overflow-hidden bg-gradient-to-b from-[#0a1f1c] to-[#0d3b31] px-5 py-20 text-paper outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:min-h-[900px] md:px-12 md:py-24"
+      className={`${poppins.className} relative min-h-[760px] overflow-hidden bg-gradient-to-b from-[#0a1f1c] to-[#0d3b31] px-5 py-20 text-paper outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:min-h-[900px] md:px-12 md:py-24`}
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <span className="absolute left-[calc(50%_-_160px)] top-0 h-[76%] w-px bg-white/[0.06]" />
@@ -100,7 +106,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
         <span className="absolute bottom-[14%] left-0 h-px w-full bg-white/[0.06]" />
       </div>
 
-      <div id="team-heading" className="relative z-10 mx-auto mb-14 flex w-full max-w-[320px] items-center justify-center gap-2 text-sm font-medium tracking-[0.08em] md:mb-16">
+      <div id="team-heading" className="relative z-10 mx-auto mb-16 flex w-full max-w-[320px] items-center justify-center gap-2 text-sm font-medium tracking-[0.08em] md:mb-[100px]">
         <span className="h-2 w-2 bg-mint" aria-hidden="true" />
         TEAM MEMBERS
       </div>
@@ -112,7 +118,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
           height={732}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-[52%] z-0 h-auto w-[150vw] max-w-none -translate-x-1/2 -translate-y-1/2 select-none sm:w-[110vw] md:top-[56%] md:w-[900px]"
+          className="pointer-events-none absolute left-1/2 top-[52%] z-0 h-auto w-[140vw] max-w-none -translate-x-1/2 -translate-y-[32%] select-none sm:w-[105vw] md:top-[56%] md:w-[820px]"
         />
 
         <div
@@ -126,10 +132,10 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
                 initial={false}
                 animate={reducedMotion || index === activeIndex ? { opacity: 1, scale: 1 } : { opacity: 0.72, scale: 0.975 }}
                 transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className="flex min-h-[600px] w-full max-w-[470px] flex-col overflow-hidden bg-gradient-to-b from-[#1d1f1f] to-[#1f3a32] p-6 shadow-2xl shadow-black/25 sm:min-h-[660px] sm:p-12"
+                className="flex w-full max-w-[470px] flex-col overflow-hidden bg-gradient-to-b from-[#1d1f1f] to-[#1f3a32] p-6 shadow-2xl shadow-black/25 sm:px-12 sm:pb-10 sm:pt-12"
               >
                 <div className="flex min-h-11 items-start justify-between gap-4">
-                  <p className="max-w-[210px] pt-2 text-lg font-semibold leading-6 text-white/80">{member.role}</p>
+                  <p className="line-clamp-2 max-w-[210px] pt-2 text-xl font-semibold leading-6 text-white/80">{member.role}</p>
                   <div className="flex gap-2">
                     <SocialLink href={member.xUrl} label={`${member.name} on X`}>
                       <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
@@ -153,9 +159,9 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
                   <MemberPortrait member={member} />
                 </div>
 
-                <div className="mt-auto pt-12 text-center">
-                  {member.quote && <p className="mx-auto mb-5 max-w-[320px] text-lg leading-7 text-white/[0.55]">{member.quote}</p>}
-                  <h2 className="text-4xl font-normal tracking-[-0.045em]">{member.name}</h2>
+                <div className="pt-12 text-center">
+                  {member.quote && <p className="mx-auto mb-4 max-w-[320px] text-lg leading-7 text-white/[0.55]">{member.quote}</p>}
+                  <h2 className="text-[40px] font-normal tracking-tight">{member.name}</h2>
                 </div>
               </motion.article>
             </div>
@@ -169,17 +175,17 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
             type="button"
             aria-label="Previous team member"
             onClick={() => goTo(activeIndex - 1)}
-            className="absolute left-6 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black text-white transition-colors hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
+            className="absolute left-6 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-[#0a1512] text-white transition-colors hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
           >
-            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            <ChevronLeft className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
           </button>
           <button
             type="button"
             aria-label="Next team member"
             onClick={() => goTo(activeIndex + 1)}
-            className="absolute right-6 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black text-white transition-colors hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
+            className="absolute right-6 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-[#0a1512] text-white transition-colors hover:text-mint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
           >
-            <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            <ChevronRight className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
           </button>
         </>
       )}
