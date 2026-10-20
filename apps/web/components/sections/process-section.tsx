@@ -50,7 +50,7 @@ export function ProcessSection() {
           <div className="mt-16 md:sticky md:bottom-16 md:mt-[55vh] md:pb-16">
             <h2 id="process-heading" className="text-[42px] font-normal leading-[1.02] tracking-[-0.04em] md:text-[56px]">
               <span className="block">A Process Built</span>
-              <span className="ml-[12%] block text-mint">on Clarity</span>
+              <span className="block text-mint">on Clarity</span>
             </h2>
           </div>
         </div>
@@ -67,7 +67,7 @@ export function ProcessSection() {
                 onClick={() => setActiveIndex((current) => (current === index ? null : index))}
                 className="block w-full border-b border-white/[0.06] text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:flex md:flex-1 md:flex-col"
               >
-                <motion.div layout={!reducedMotion} className="p-6 md:flex md:flex-1 md:flex-col">
+                <motion.div layout={!reducedMotion} className="w-full px-6 pt-6 md:flex md:flex-1 md:flex-col">
                   <div className={`flex items-center gap-2 text-xs transition-colors ${active ? 'text-mint' : 'text-white/60'}`}>
                     <span className={`h-2 w-2 transition-colors ${active ? 'bg-mint' : 'bg-white/30'}`} aria-hidden="true" />
                     {item.step}
@@ -81,19 +81,19 @@ export function ProcessSection() {
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
                         transition={{ duration: reducedMotion ? 0 : 0.4, ease: 'easeOut' }}
-                        className="overflow-hidden md:flex md:flex-1 md:flex-col"
+                        className="flex flex-col overflow-hidden md:flex-1"
                       >
-                        <div className="mx-auto mt-[30px] h-[100px] w-[150px] overflow-hidden">
+                        <div className="mx-auto my-[30px] aspect-[3/2] w-full max-w-[280px] shrink-0 overflow-hidden">
                           <Image
                             src={item.image}
-                            width={150}
-                            height={100}
+                            width={280}
+                            height={187}
                             alt=""
                             className="h-full w-full object-cover grayscale"
                           />
                         </div>
 
-                        <div className="mt-[30px] flex w-full flex-col gap-4 border-l border-mint bg-[#06100e] px-6 py-5 sm:flex-row sm:items-center sm:justify-between md:mt-auto">
+                        <div className="mt-auto flex w-full shrink-0 flex-col gap-4 border-l border-mint bg-[#06100e] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                           <span className="text-[22px] font-normal text-mint">{item.title}</span>
                           <span className="max-w-[220px] text-[13px] leading-5 text-white/80">{item.description}</span>
                         </div>
@@ -105,7 +105,7 @@ export function ProcessSection() {
                         animate={{ opacity: 1 }}
                         exit={reducedMotion ? undefined : { opacity: 0 }}
                         transition={{ duration: reducedMotion ? 0 : 0.4, ease: 'easeOut' }}
-                        className="mt-[50px] text-[22px] font-normal text-white/70 md:mt-auto"
+                        className="mt-[50px] pb-6 text-[22px] font-normal text-white/70 md:mt-auto"
                       >
                         {item.title}
                       </motion.div>
