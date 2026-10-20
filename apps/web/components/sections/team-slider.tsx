@@ -149,7 +149,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
                   </div>
                 </div>
 
-                <div className="mx-auto mt-10 h-[285px] w-[225px] shrink-0 overflow-hidden bg-[#10231f]">
+                <div className="mx-auto mt-10 aspect-[200/252] w-full max-w-[200px] shrink-0 overflow-hidden bg-[#10231f]">
                   <MemberPortrait member={member} />
                 </div>
 
