@@ -95,7 +95,7 @@ export function ProcessSection() {
 
                         <div className="-mx-6 mt-auto flex w-[calc(100%+48px)] shrink-0 flex-col gap-4 bg-[#06100e] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                           <span className="text-[22px] font-normal text-mint">{item.title}</span>
-                          <span className="max-w-[240px] text-[13px] font-semibold leading-5 text-white">{item.description}</span>
+                          <span className="ml-auto w-[70%] shrink-0 text-right text-[16px] font-semibold leading-6 text-white">{item.description}</span>
                         </div>
                       </motion.div>
                     ) : (
