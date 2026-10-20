@@ -3,8 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { Poppins } from 'next/font/google';
-import { useEffect, useState } from 'react';
-import type { FocusEvent, MouseEvent } from 'react';
+import { useState } from 'react';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -35,28 +34,6 @@ const PROCESS_STEPS = [
 export function ProcessSection() {
   const reducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 767px)');
-
-    function syncViewport() {
-      setIsMobile(media.matches);
-      setActiveIndex((current) => (media.matches ? current ?? 0 : null));
-    }
-
-    syncViewport();
-    media.addEventListener('change', syncViewport);
-    return () => media.removeEventListener('change', syncViewport);
-  }, []);
-
-  function handleMouseLeave(event: MouseEvent<HTMLButtonElement>) {
-    if (!isMobile && document.activeElement !== event.currentTarget) setActiveIndex(null);
-  }
-
-  function handleBlur(event: FocusEvent<HTMLButtonElement>) {
-    if (!isMobile && !event.currentTarget.matches(':hover')) setActiveIndex(null);
-  }
 
   return (
     <section
@@ -87,11 +64,7 @@ export function ProcessSection() {
                 key={item.step}
                 type="button"
                 aria-expanded={active}
-                onMouseEnter={() => !isMobile && setActiveIndex(index)}
-                onMouseLeave={handleMouseLeave}
-                onFocus={() => setActiveIndex(index)}
-                onBlur={handleBlur}
-                onClick={() => setActiveIndex(index)}
+                onClick={() => setActiveIndex((current) => (current === index ? null : index))}
                 className="block w-full border-b border-white/[0.06] text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:flex md:flex-1 md:flex-col"
               >
                 <motion.div layout={!reducedMotion} className="p-6 md:flex md:flex-1 md:flex-col">
