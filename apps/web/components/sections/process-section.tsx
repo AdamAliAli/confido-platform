@@ -67,7 +67,7 @@ export function ProcessSection() {
                 onClick={() => setActiveIndex((current) => (current === index ? null : index))}
                 className="block w-full border-b border-white/[0.06] text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:flex md:flex-1 md:flex-col"
               >
-                <motion.div layout={!reducedMotion} className="w-full px-6 pt-6 md:flex md:flex-1 md:flex-col">
+                <motion.div layout={!reducedMotion} className="w-full px-8 pt-8 md:flex md:flex-1 md:flex-col">
                   <div className={`flex items-center gap-2 text-xs transition-colors ${active ? 'text-mint' : 'text-white/60'}`}>
                     <span className={`h-2 w-2 transition-colors ${active ? 'bg-mint' : 'bg-white/30'}`} aria-hidden="true" />
                     {item.step}
@@ -81,9 +81,9 @@ export function ProcessSection() {
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
                         transition={{ duration: reducedMotion ? 0 : 0.4, ease: 'easeOut' }}
-                        className="-mx-6 flex flex-col overflow-hidden px-6 md:flex-1"
+                        className="-mx-8 flex flex-col overflow-hidden px-8 md:flex-1"
                       >
-                        <div className="mx-auto my-[30px] aspect-[3/2] w-full max-w-[280px] shrink-0 overflow-hidden">
+                        <div className="mx-auto my-12 aspect-[3/2] w-full max-w-[280px] shrink-0 overflow-hidden">
                           <Image
                             src={item.image}
                             width={280}
@@ -93,7 +93,7 @@ export function ProcessSection() {
                           />
                         </div>
 
-                        <div className="-mx-6 mt-auto flex w-[calc(100%+48px)] shrink-0 flex-col gap-4 bg-[#06100e] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="-mx-8 mt-auto flex w-[calc(100%+64px)] shrink-0 flex-col gap-4 bg-[#06100e] px-8 py-6 sm:flex-row sm:items-center sm:justify-between">
                           <span className="text-[22px] font-normal text-mint">{item.title}</span>
                           <span className="ml-auto w-[70%] shrink-0 text-right text-[16px] font-semibold leading-6 text-white">{item.description}</span>
                         </div>
@@ -105,7 +105,7 @@ export function ProcessSection() {
                         animate={{ opacity: 1 }}
                         exit={reducedMotion ? undefined : { opacity: 0 }}
                         transition={{ duration: reducedMotion ? 0 : 0.4, ease: 'easeOut' }}
-                        className="mt-[50px] pb-6 text-[22px] font-normal text-white/70 md:mt-auto"
+                        className="mt-20 pb-8 text-[22px] font-normal text-white/70"
                       >
                         {item.title}
                       </motion.div>
