@@ -5,7 +5,7 @@ import { TeamSection } from '@/components/sections/team-section';
 import { ProcessSection } from '@/components/sections/process-section';
 import { FAQSection } from '@/components/sections/faq-section';
 
-type PageBlock = { id: string; type: string; data: Record<string, unknown> };
+type PageBlock = { id: string; type: string; enabled?: boolean; data: Record<string, unknown> };
 
 const fallbackServices: PageBlock = {
   id: 'services',
@@ -44,16 +44,21 @@ function collectProjectImages(value: unknown): string[] {
 
 export default async function Home() {
   const page = await getPage();
-  const blocks = (page?.blocks || []) as PageBlock[];
-  const hero = blocks.find((block) => block.type === 'hero') || fallbackHero;
-  const services = blocks.find((block) => block.type === 'services') || fallbackServices;
-  const projects = blocks.find((block) => block.type === 'projects') || { id: 'projects', type: 'projects', data: {} };
-  const galleryImages = [...new Set(collectProjectImages(projects.data))];
-  const clarity = blocks.find((block) => block.type === 'clarity') || { id: 'clarity', type: 'clarity', data: {} };
+  const apiBlocks = (page?.blocks || []) as PageBlock[];
+  const blocks: PageBlock[] = apiBlocks.length ? apiBlocks.filter((block) => block.enabled !== false) : [
+    fallbackHero,
+    fallbackServices,
+    { id: 'projects', type: 'projects', data: {} },
+    { id: 'clarity', type: 'clarity', data: {} },
+  ];
+  const galleryImages = [...new Set(blocks.filter((block) => block.type === 'projects').flatMap((block) => collectProjectImages(block.data)))];
+  const renderedBlocks = blocks.map((block) => block.type === 'hero'
+    ? { ...block, data: { ...block.data, galleryImages } }
+    : block);
 
   return (
     <main>
-      <BlockRenderer blocks={[{ ...hero, data: { ...hero.data, galleryImages } }, services, projects, clarity]} />
+      <BlockRenderer blocks={renderedBlocks} />
       <LocationSection />
       <TeamSection />
       <ProcessSection />

@@ -2,12 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Reorder } from 'framer-motion';
-import { adminFetch } from '@/lib/api';
+import { API, adminFetch } from '@/lib/api';
 import { BlockForm } from '@/components/block-form';
 import { TeamAdmin } from '@/components/team-admin';
-
-const SUPPORTED_BLOCK_TYPES = ['hero', 'services', 'projects', 'clarity'] as const;
-type SupportedBlockType = (typeof SUPPORTED_BLOCK_TYPES)[number];
 
 type Block = {
   id: string;
@@ -16,27 +13,6 @@ type Block = {
   enabled: boolean;
   data: any;
 };
-
-const BLOCK_TEMPLATES: Record<SupportedBlockType, Record<string, unknown>> = {
-  hero: {
-    title: 'New headline',
-    accent: 'With',
-    subtitle: 'Direction',
-    description: 'Add a clear description.',
-    eyebrow: 'Brand consultancy',
-  },
-  services: {
-    services: [
-      { title: 'New service', description: 'Describe this service.' },
-    ],
-  },
-  projects: { projects: [] },
-  clarity: { heading: 'Built on Clarity — Built to Scale' },
-};
-
-function isSupportedBlock(block: Block) {
-  return SUPPORTED_BLOCK_TYPES.includes(block.type as SupportedBlockType);
-}
 
 export default function Admin() {
   const [token, setToken] = useState('');
@@ -47,34 +23,56 @@ export default function Admin() {
   const [saveStatus, setSaveStatus] = useState<Record<string, string>>({});
   const [view, setView] = useState<'blocks' | 'team'>('blocks');
 
-  async function login() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const result = await response.json();
+  const [loginError, setLoginError] = useState('');
+  const [orderStatus, setOrderStatus] = useState('');
+  const [savingOrder, setSavingOrder] = useState(false);
 
-    if (response.ok) {
+  async function login() {
+    setLoginError('');
+    try {
+      const response = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) throw new Error('Login failed');
+      const result = await response.json();
       localStorage.setItem('accessToken', result.accessToken);
       setToken(result.accessToken);
+      setPassword('');
+      await load(result.accessToken).catch(() => setOrderStatus('Failed to load pages'));
+    } catch {
+      setLoginError('Wrong email or password');
     }
+  }
+
+  function logout() {
+    localStorage.removeItem('accessToken');
+    setToken('');
+    setPassword('');
+    setBlocks([]);
+    setPageId('');
+    setSaveStatus({});
+    setOrderStatus('');
+    setView('blocks');
   }
 
   async function load(activeToken = token) {
     const response = await adminFetch('/content/admin/pages', activeToken);
+    if (!response.ok) throw new Error('Failed to load pages');
     const result = await response.json();
 
-    if (result[0]) {
-      setPageId(result[0].id);
-      setBlocks((result[0].blocks as Block[]).filter(isSupportedBlock));
+    const home = result.find((page: { slug: string }) => page.slug === 'home');
+    if (home) {
+      setPageId(home.id);
+      setBlocks(home.blocks as Block[]);
     }
   }
 
   useEffect(() => {
     const savedToken = localStorage.getItem('accessToken') || '';
     setToken(savedToken);
-    if (savedToken) load(savedToken);
+    if (savedToken) load(savedToken).catch(() => setOrderStatus('Failed to load pages'));
   }, []);
 
   async function save(block: Block) {
@@ -101,41 +99,39 @@ export default function Admin() {
     const saved = (await response.json()) as Block;
 
     setBlocks((current) =>
-      current.map((value) => (value.id === saved.id ? saved : value)),
+      current.map((value) => (value.id === saved.id && value === block ? saved : value)),
     );
-    setSaveStatus((current) => ({ ...current, [block.id]: 'Saved' }));
+    setSaveStatus((current) => ({ ...current, [block.id]: current[block.id] === 'Saving…' ? 'Saved' : current[block.id] }));
   }
 
-  async function add(type: SupportedBlockType) {
-    const response = await adminFetch(`/content/admin/pages/${pageId}/blocks`, token, {
-      method: 'POST',
-      body: JSON.stringify({
-        type,
-        position: blocks.length,
-        data: BLOCK_TEMPLATES[type],
-      }),
-    });
-
-    if (response.ok) {
-      const created = await response.json();
-      setBlocks((current) => [...current, created]);
+  async function saveOrder() {
+    const ids = blocks.map((block) => block.id);
+    setSavingOrder(true);
+    setOrderStatus('Saving order…');
+    try {
+      const response = await adminFetch(`/content/admin/pages/${pageId}/order`, token, {
+        method: 'PATCH',
+        body: JSON.stringify({ ids }),
+      });
+      if (!response.ok) throw new Error('Failed to save order');
+      setOrderStatus('Order saved');
+    } catch {
+      setOrderStatus('Order save failed. Please try again.');
+    } finally {
+      setSavingOrder(false);
     }
-  }
-
-  async function remove(id: string) {
-    await adminFetch(`/content/admin/blocks/${id}`, token, { method: 'DELETE' });
-    setBlocks((current) => current.filter((block) => block.id !== id));
   }
 
   if (!token) {
     return (
       <main className="grid min-h-screen place-items-center bg-zinc-950 p-6">
-        <div className="w-full max-w-sm space-y-4 rounded-2xl border border-white/10 bg-zinc-900 p-7">
+        <form onSubmit={(event) => { event.preventDefault(); void login(); }} className="w-full max-w-sm space-y-4 rounded-2xl border border-white/10 bg-zinc-900 p-7">
           <h1 className="text-3xl">Admin login</h1>
-          <input className="w-full rounded bg-black p-3" placeholder="Email" onChange={(event) => setEmail(event.target.value)} />
-          <input className="w-full rounded bg-black p-3" type="password" placeholder="Password" onChange={(event) => setPassword(event.target.value)} />
-          <button className="w-full rounded bg-mint p-3 text-black" onClick={login}>Sign in</button>
-        </div>
+          <input className="w-full rounded bg-black p-3" aria-label="Email" type="email" autoComplete="username" required placeholder="Email" onChange={(event) => setEmail(event.target.value)} />
+          <input className="w-full rounded bg-black p-3" aria-label="Password" autoComplete="current-password" required type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          <button type="submit" className="w-full rounded bg-mint p-3 text-black">Sign in</button>
+          {loginError && <p role="alert" className="text-sm text-red-300">{loginError}</p>}
+        </form>
       </main>
     );
   }
@@ -151,24 +147,10 @@ export default function Admin() {
           <button onClick={() => setView('blocks')} className={`rounded px-4 py-3 ${view === 'blocks' ? 'bg-white text-black' : 'border border-white/20'}`}>Page blocks</button>
           <button onClick={() => setView('team')} className={`rounded px-4 py-3 ${view === 'team' ? 'bg-white text-black' : 'border border-white/20'}`}>Team</button>
           {view === 'blocks' && <>
-          <select id="newType" className="rounded bg-zinc-800 px-3">
-            {SUPPORTED_BLOCK_TYPES.map((type) => (
-              <option key={type} value={type}>{type[0].toUpperCase() + type.slice(1)}</option>
-            ))}
-          </select>
-          <button
-            onClick={() => add((document.getElementById('newType') as HTMLSelectElement).value as SupportedBlockType)}
-            className="rounded border border-white/20 px-4"
-          >
-            Add block
-          </button>
-          <button
-            onClick={() => adminFetch(`/content/admin/pages/${pageId}/publish`, token, { method: 'POST' })}
-            className="rounded bg-mint px-5 py-3 text-black"
-          >
-            Publish
-          </button>
+            <span role="status" className="self-center text-sm text-zinc-400">{orderStatus}</span>
+            <button onClick={saveOrder} disabled={!pageId || savingOrder} className="rounded bg-mint px-5 py-3 text-black disabled:opacity-50">Save order</button>
           </>}
+          <button onClick={logout} className="rounded border border-white/20 px-4 py-3">Log out</button>
         </div>
       </header>
 
@@ -176,7 +158,7 @@ export default function Admin() {
       <Reorder.Group
         axis="y"
         values={blocks}
-        onReorder={(next) => setBlocks(next.map((block, index) => ({ ...block, position: index })))}
+        onReorder={(next) => { if (!savingOrder) { setBlocks(next); setOrderStatus('Unsaved order'); } }}
         className="mx-auto max-w-5xl space-y-4"
       >
         {blocks.map((block) => (
@@ -188,9 +170,21 @@ export default function Admin() {
                   <span className="text-sm text-zinc-400">{saveStatus[block.id]}</span>
                 )}
                 <button onClick={() => save(block)} className="rounded bg-white px-3 py-2 text-black">Save</button>
-                <button onClick={() => remove(block.id)} className="rounded bg-red-950 px-3 py-2 text-red-200">Delete</button>
+
               </div>
             </div>
+            <label className="mb-4 flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={block.enabled}
+                onChange={(event) => {
+                  const enabled = event.target.checked;
+                  setBlocks((current) => current.map((value) => value.id === block.id ? { ...value, enabled } : value));
+                  setSaveStatus((current) => ({ ...current, [block.id]: 'Unsaved changes' }));
+                }}
+              />
+              Show on site
+            </label>
             <BlockForm
               data={block.data}
               onChange={(data) => {

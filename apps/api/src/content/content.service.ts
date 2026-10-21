@@ -1,9 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../common/prisma.service';
 import {
-  CreateBlockDto,
-  CreatePageDto,
   SUPPORTED_BLOCK_TYPES,
   UpdateBlockDto,
 } from './dto';
@@ -36,32 +34,36 @@ export class ContentService {
     return this.db.page.findMany({
       include: {
         blocks: {
-          where: { type: { in: supportedTypes } },
           orderBy: { position: 'asc' },
         },
       },
     });
   }
 
-  createPage(dto: CreatePageDto) {
-    return this.db.page.create({ data: dto });
-  }
-
-  add(pageId: string, dto: CreateBlockDto) {
-    return this.db.block.create({
-      data: {
-        type: dto.type,
-        position: dto.position,
-        enabled: dto.enabled,
-        data: dto.data as Prisma.InputJsonValue,
-        pageId,
-      },
-    });
+  async order(pageId: string, ids: string[]) {
+    return this.db.$transaction(async (tx) => {
+      const page = await tx.page.findUnique({ where: { id: pageId }, include: { blocks: true } });
+      if (!page) throw new NotFoundException();
+      const pageIds = new Set(page.blocks.map((block) => block.id));
+      if (ids.length !== pageIds.size || new Set(ids).size !== ids.length || ids.some((id) => !pageIds.has(id))) {
+        throw new BadRequestException('ids must contain exactly this page’s blocks');
+      }
+      // Vacate the final positions before assigning the requested order.
+      for (const [index, id] of ids.entries()) {
+        await tx.block.update({ where: { id }, data: { position: 1000 + index } });
+      }
+      for (const [index, id] of ids.entries()) {
+        await tx.block.update({ where: { id }, data: { position: index } });
+      }
+      return tx.page.findUnique({
+        where: { id: pageId },
+        include: { blocks: { orderBy: { position: 'asc' } } },
+      });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
   }
 
   update(id: string, dto: UpdateBlockDto) {
     const data: Prisma.BlockUpdateInput = {
-      position: dto.position,
       enabled: dto.enabled,
       ...(dto.data === undefined
         ? {}
@@ -74,15 +76,4 @@ export class ContentService {
     });
   }
 
-  async remove(id: string) {
-    await this.db.block.delete({ where: { id } });
-    return { deleted: true };
-  }
-
-  publish(id: string) {
-    return this.db.page.update({
-      where: { id },
-      data: { published: true },
-    });
-  }
 }

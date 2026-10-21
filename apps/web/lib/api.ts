@@ -1,4 +1,4 @@
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+export const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export type TeamMember = {
   id: string;
@@ -43,7 +43,7 @@ export async function adminFetch(
   token: string,
   init: RequestInit = {},
 ) {
-  return fetch(`${API}${path}`, {
+  const response = await fetch(`${API}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
@@ -51,4 +51,10 @@ export async function adminFetch(
       ...init.headers,
     },
   });
+  if (response.status === 401 && typeof window !== 'undefined') {
+    localStorage.removeItem('accessToken');
+    window.location.reload();
+    throw new Error('Session expired');
+  }
+  return response;
 }
