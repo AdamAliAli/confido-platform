@@ -1,10 +1,12 @@
 FROM node:22-alpine AS build
 RUN corepack enable
 WORKDIR /app
-COPY package.json pnpm-workspace.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/web/package.json apps/web/package.json
-RUN pnpm install --filter web... --frozen-lockfile=false
+RUN pnpm install --filter web... --frozen-lockfile
 COPY apps/web apps/web
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN pnpm --filter web build
 FROM node:22-alpine
 WORKDIR /app
