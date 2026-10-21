@@ -63,6 +63,17 @@ export class ContentService {
   }
 
   update(id: string, dto: UpdateBlockDto) {
+    if (Array.isArray(dto.data?.projects)) {
+      for (const project of dto.data.projects) {
+        if (
+          !project || typeof project !== 'object' ||
+          typeof project.href !== 'string' || !project.href.startsWith('https://') ||
+          typeof project.image !== 'string' || !project.image.startsWith('https://')
+        ) {
+          throw new BadRequestException('Every project href and image must start with https://');
+        }
+      }
+    }
     const data: Prisma.BlockUpdateInput = {
       enabled: dto.enabled,
       ...(dto.data === undefined
