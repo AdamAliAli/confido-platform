@@ -20,8 +20,8 @@ export function FAQSection() {
       aria-labelledby={`${sectionId}-heading`}
       className={`${poppins.className} overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white`}
     >
-      <div className="grid md:grid-cols-2">
-        <div className="min-w-0 p-6 md:border-r md:border-white/[0.06] md:p-10">
+      <div className="grid py-12 md:grid-cols-2 md:py-32">
+        <div className="min-w-0 px-6 py-8 md:border-r md:border-white/[0.06] md:px-16 md:py-10">
           <div className="flex items-center gap-2 text-base font-medium tracking-[0.08em] md:text-lg">
             <span className="h-2 w-2 bg-mint" aria-hidden="true" />
             FAQ
@@ -45,7 +45,7 @@ export function FAQSection() {
                 type="button"
                 aria-expanded={active}
                 onClick={() => setActiveIndex((current) => (current === index ? null : index))}
-                className={`block w-full border-b border-l border-b-white/[0.06] px-6 py-5 text-left outline-none last:border-b-0 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint ${
+                className={`block w-full border-b border-l border-b-white/[0.06] px-6 py-7 text-left outline-none last:border-b-0 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:px-9 md:py-8 ${
                   active ? 'border-l-mint bg-[#06100e]' : 'border-l-transparent hover:bg-white/[0.02]'
                 }`}
               >
