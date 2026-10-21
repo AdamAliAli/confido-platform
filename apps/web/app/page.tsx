@@ -3,6 +3,7 @@ import { getPage } from '@/lib/api';
 import { LocationSection } from '@/components/sections/location-section';
 import { TeamSection } from '@/components/sections/team-section';
 import { ProcessSection } from '@/components/sections/process-section';
+import { FAQSection } from '@/components/sections/faq-section';
 
 type PageBlock = { id: string; type: string; data: Record<string, unknown> };
 
@@ -56,6 +57,7 @@ export default async function Home() {
       <LocationSection />
       <TeamSection />
       <ProcessSection />
+      <FAQSection />
     </main>
   );
 }
