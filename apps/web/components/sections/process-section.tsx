@@ -2,13 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
-import { Poppins } from 'next/font/google';
 import { useState } from 'react';
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '600'],
-});
 
 const PROCESS_STEPS = [
   {
@@ -38,7 +32,7 @@ export function ProcessSection() {
   return (
     <section
       aria-labelledby="process-heading"
-      className={`${poppins.className} overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white`}
+      className="overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white"
     >
       <div className="grid md:grid-cols-2">
         <div className="relative min-w-0 p-6 md:min-h-[900px] md:border-r md:border-white/[0.06] md:p-10">

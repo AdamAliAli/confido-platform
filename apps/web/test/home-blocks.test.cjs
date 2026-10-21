@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const ts = require('typescript');
 
-async function renderBlocks(page) {
+async function renderHome(page, api = {}) {
   const source = fs.readFileSync(path.join(__dirname, '../app/page.tsx'), 'utf8');
   const { outputText } = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
@@ -14,18 +14,36 @@ async function renderBlocks(page) {
   vm.runInNewContext(outputText, {
     exports,
     require(name) {
-      if (name === '@/lib/api') return { getPage: async () => page };
+      if (name === '@/lib/api') return { getPage: async () => page, getTeam: async () => [], ...api };
       if (name.startsWith('@/components/')) return new Proxy({}, { get: () => () => null });
       return require(name);
     },
   });
-  const result = await exports.default();
+  return exports.default();
+}
+
+async function renderBlocks(page) {
+  const result = await renderHome(page);
   return JSON.parse(JSON.stringify(result.props.children[0].props.blocks));
 }
 
 test('homepage preserves API order and does not inject missing sections', async () => {
   const blocks = ['clarity', 'hero', 'services'].map((type) => ({ id: type, type, enabled: true, data: {} }));
   assert.deepEqual((await renderBlocks({ blocks })).map((block) => block.type), ['clarity', 'hero', 'services']);
+});
+
+test('page and team requests start together and members are passed to TeamSection', async () => {
+  let releasePage;
+  let requestedTeam = false;
+  const members = [{ id: 'member-1', name: 'Test member' }];
+  const pendingPage = new Promise((resolve) => { releasePage = resolve; });
+  const result = renderHome(null, {
+    getPage: () => pendingPage,
+    getTeam: async () => { requestedTeam = true; return members; },
+  });
+  assert.equal(requestedTeam, true);
+  releasePage(null);
+  assert.equal((await result).props.children[2].props.members, members);
 });
 
 test('homepage excludes disabled blocks and their gallery images', async () => {

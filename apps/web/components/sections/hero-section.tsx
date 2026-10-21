@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { PROJECT_IMAGES } from './constants';
 
 type ActiveCell = { id: string; row: number; column: number; image: string };
@@ -23,18 +23,23 @@ function ConfidoLogo() {
 function InteractiveCells({ images }: { images: string[] }) {
   const lastCell = useRef('');
   const imageIndex = useRef(0);
+  const preloaded = useRef(false);
   const [activeCells, setActiveCells] = useState<ActiveCell[]>([]);
 
-  useEffect(() => {
-    images.forEach((src) => {
-      const image = new Image();
-      image.src = src;
-      image.decode?.().catch(() => undefined);
-    });
-  }, [images]);
-
   const revealCell = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === 'touch' || images.length === 0) return;
+    if (
+      event.pointerType !== 'mouse' || images.length === 0 || navigator.maxTouchPoints > 0 ||
+      !window.matchMedia('(min-width: 768px) and (hover: hover) and (pointer: fine)').matches
+    ) return;
+
+    if (!preloaded.current) {
+      preloaded.current = true;
+      images.forEach((src) => {
+        const image = new Image();
+        image.src = src;
+        image.decode?.().catch(() => undefined);
+      });
+    }
 
     const bounds = event.currentTarget.getBoundingClientRect();
     const columns = 8;

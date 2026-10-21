@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { PROJECT_IMAGES } from './constants';
 
 type Project = { title: string; category: string; image: string; year?: string; href?: string };
@@ -47,7 +48,14 @@ export function ProjectsSection({ data }: { data: Record<string, any> }) {
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <img src={project.image} alt={project.title} loading={index === 0 ? 'eager' : 'lazy'} />
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 1296px"
+              priority={index === 0}
+              loading={index === 0 ? undefined : 'lazy'}
+            />
             <div className="project-caption">
               <span className="project-category">{project.category}<i /></span>
               <div>

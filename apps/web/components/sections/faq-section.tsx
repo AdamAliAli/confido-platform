@@ -1,14 +1,8 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Poppins } from 'next/font/google';
 import { useId, useState } from 'react';
 import { FAQS } from './faq-data';
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '600'],
-});
 
 export function FAQSection() {
   const reducedMotion = useReducedMotion();
@@ -18,7 +12,7 @@ export function FAQSection() {
   return (
     <section
       aria-labelledby={`${sectionId}-heading`}
-      className={`${poppins.className} overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white`}
+      className="overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white"
     >
       <div className="grid py-12 md:grid-cols-2 md:py-32">
         <div className="min-w-0 px-6 py-8 md:border-r md:border-white/[0.06] md:px-16 md:py-10">

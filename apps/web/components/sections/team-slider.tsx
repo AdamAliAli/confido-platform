@@ -2,16 +2,10 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
-import { Poppins } from 'next/font/google';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode, UIEvent } from 'react';
 import type { TeamMember } from '@/lib/api';
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '600'],
-});
 
 function SocialLink({ href, label, children }: { href?: string | null; label: string; children: ReactNode }) {
   if (!href) return null;
@@ -97,7 +91,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
       aria-labelledby="team-heading"
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      className={`${poppins.className} relative min-h-[760px] overflow-hidden bg-gradient-to-b from-[#0a1f1c] to-[#0d3b31] px-5 py-20 text-paper outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:min-h-[900px] md:px-12 md:py-24`}
+      className="relative min-h-[760px] overflow-hidden bg-gradient-to-b from-[#0a1f1c] to-[#0d3b31] px-5 py-20 text-paper outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-mint md:min-h-[900px] md:px-12 md:py-24"
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <span className="absolute left-[calc(50%_-_160px)] top-0 h-[76%] w-px bg-white/[0.06]" />

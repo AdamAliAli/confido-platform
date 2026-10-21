@@ -1,5 +1,5 @@
 import { BlockRenderer } from '@/components/block-renderer';
-import { getPage } from '@/lib/api';
+import { getPage, getTeam } from '@/lib/api';
 import { LocationSection } from '@/components/sections/location-section';
 import { TeamSection } from '@/components/sections/team-section';
 import { ProcessSection } from '@/components/sections/process-section';
@@ -43,7 +43,7 @@ function collectProjectImages(value: unknown): string[] {
 }
 
 export default async function Home() {
-  const page = await getPage();
+  const [page, members] = await Promise.all([getPage(), getTeam()]);
   const apiBlocks = (page?.blocks || []) as PageBlock[];
   const blocks: PageBlock[] = apiBlocks.length ? apiBlocks.filter((block) => block.enabled !== false) : [
     fallbackHero,
@@ -60,7 +60,7 @@ export default async function Home() {
     <main>
       <BlockRenderer blocks={renderedBlocks} />
       <LocationSection />
-      <TeamSection />
+      <TeamSection members={members} />
       <ProcessSection />
       <FAQSection />
     </main>

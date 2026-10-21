@@ -1,9 +1,7 @@
-import { getTeam } from '@/lib/api';
+import type { TeamMember } from '@/lib/api';
 import { TeamSlider } from './team-slider';
 
-export async function TeamSection() {
-  const members = await getTeam();
-
+export function TeamSection({ members }: { members: TeamMember[] }) {
   if (members.length === 0) return null;
 
   return <TeamSlider members={members} />;
