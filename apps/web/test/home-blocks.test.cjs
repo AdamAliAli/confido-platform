@@ -56,8 +56,7 @@ test('homepage excludes disabled blocks and their gallery images', async () => {
   assert.deepEqual(rendered[0].data.galleryImages, []);
 });
 
-test('homepage retains the existing fallbacks for unavailable or empty pages', async () => {
-  for (const page of [null, { blocks: [] }]) {
-    assert.deepEqual((await renderBlocks(page)).map((block) => block.type), ['hero', 'services', 'projects', 'clarity']);
-  }
+test('homepage uses fallbacks only for unavailable pages and renders no blocks for empty pages', async () => {
+  assert.deepEqual((await renderBlocks(null)).map((block) => block.type), ['hero', 'services', 'projects', 'clarity']);
+  assert.deepEqual(await renderBlocks({ blocks: [] }), []);
 });
