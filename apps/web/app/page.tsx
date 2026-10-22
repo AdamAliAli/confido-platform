@@ -45,7 +45,7 @@ function collectProjectImages(value: unknown): string[] {
 export default async function Home() {
   const [page, members] = await Promise.all([getPage(), getTeam()]);
   const apiBlocks = (page?.blocks || []) as PageBlock[];
-  const blocks: PageBlock[] = apiBlocks.length ? apiBlocks.filter((block) => block.enabled !== false) : [
+  const blocks: PageBlock[] = page !== null ? apiBlocks.filter((block) => block.enabled !== false) : [
     fallbackHero,
     fallbackServices,
     { id: 'projects', type: 'projects', data: {} },

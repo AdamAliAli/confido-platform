@@ -50,6 +50,7 @@ export function ProjectsSection({ data }: { data: Record<string, any> }) {
           >
             <Image
               src={project.image}
+              unoptimized={!project.image.startsWith('https://framerusercontent.com/')}
               alt={project.title}
               fill
               sizes="(max-width: 768px) 100vw, 1296px"
