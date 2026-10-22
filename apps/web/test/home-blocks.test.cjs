@@ -24,7 +24,7 @@ async function renderHome(page, api = {}) {
 
 async function renderBlocks(page) {
   const result = await renderHome(page);
-  return JSON.parse(JSON.stringify(result.props.children[0].props.blocks));
+  return JSON.parse(JSON.stringify(result.props.children[1].props.blocks));
 }
 
 test('homepage preserves API order and does not inject missing sections', async () => {
@@ -43,7 +43,7 @@ test('page and team requests start together and members are passed to TeamSectio
   });
   assert.equal(requestedTeam, true);
   releasePage(null);
-  assert.equal((await result).props.children[2].props.members, members);
+  assert.equal((await result).props.children[3].props.members, members);
 });
 
 test('homepage excludes disabled blocks and their gallery images', async () => {

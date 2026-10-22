@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root{--ink:#030504;--paper:#f1f2ed;--mint:#18b99f;--pale:#d9eee9}
+[id]{scroll-margin-top:64px}
 *{box-sizing:border-box}html{background:var(--ink);scroll-behavior:smooth}body{margin:0;overflow-x:hidden;background:var(--ink);color:var(--paper)}a{color:inherit;text-decoration:none}
 
 .hero-shell{position:relative;isolation:isolate;min-height:120vh;overflow:hidden;background:#030504}

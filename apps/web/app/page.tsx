@@ -5,6 +5,7 @@ import { TeamSection } from '@/components/sections/team-section';
 import { ProcessSection } from '@/components/sections/process-section';
 import { FAQSection } from '@/components/sections/faq-section';
 import { SiteFooter } from '@/components/site-footer';
+import { SiteHeader } from '@/components/site-header';
 
 type PageBlock = { id: string; type: string; enabled?: boolean; data: Record<string, unknown> };
 
@@ -60,6 +61,7 @@ export default async function Home() {
 
   return (
     <main id="top">
+      <SiteHeader />
       <BlockRenderer blocks={renderedBlocks.filter((block) => block.type !== 'contact')} />
       <LocationSection />
       <TeamSection members={members} />
