@@ -22,9 +22,9 @@ export function SiteFooter() {
           <nav aria-label="Footer menu">
             <h2 className="text-[16px] font-medium text-white/50 md:text-[18px]">Menu</h2>
             <ul className="mt-8 space-y-6 text-[16px] md:mt-12 md:text-[18px]">
-              <li><a href="#top" className={`transition-colors hover:text-mint ${focusStyle}`}>Home</a></li>
-              <li><a href="#services" className={`transition-colors hover:text-mint ${focusStyle}`}>Services</a></li>
-              <li><a href="#projects" className={`transition-colors hover:text-mint ${focusStyle}`}>Projects</a></li>
+              <li><a href="/" className={`transition-colors hover:text-mint ${focusStyle}`}>Home</a></li>
+              <li><a href="/#services" className={`transition-colors hover:text-mint ${focusStyle}`}>Services</a></li>
+              <li><a href="/#projects" className={`transition-colors hover:text-mint ${focusStyle}`}>Projects</a></li>
             </ul>
           </nav>
           <nav aria-label="Footer legal and contact">
@@ -32,7 +32,7 @@ export function SiteFooter() {
             <ul className="mt-8 space-y-6 text-[16px] md:mt-12 md:text-[18px]">
               <li><span role="link" aria-disabled="true" title="Coming soon" className="cursor-default">Pricing</span></li>
               <li><a href="/privacy-policy" className={`transition-colors hover:text-mint ${focusStyle}`}>Privacy Policy</a></li>
-              <li><a href="#contact" className={`transition-colors hover:text-mint ${focusStyle}`}>Contact Us</a></li>
+              <li><a href="/#contact" className={`transition-colors hover:text-mint ${focusStyle}`}>Contact Us</a></li>
             </ul>
           </nav>
         </div>
