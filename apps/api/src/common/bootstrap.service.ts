@@ -19,6 +19,7 @@ export class BootstrapService implements OnModuleInit {
       { type: 'services', position: 1, data: { services: [{ title: 'Strategy', description: 'Clarity before everything.' }, { title: 'Positioning', description: 'Stand for something or disappear.' }, { title: 'Systems', description: 'Built to scale, not just look good.' }] } },
       { type: 'projects', position: 2, data: { projects: [] } },
       { type: 'clarity', position: 3, data: {} },
+      { type: 'contact', position: 4, data: { title: 'Let’s Build Something', accent: 'That Lasts', description: 'We work with a limited number of clients to ensure clarity, focus, and real impact.', email: 'hello@confido.studio' } },
     ];
     const exists = await this.db.page.findUnique({ where: { slug: 'home' }, include: { blocks: true } });
     if (exists) {

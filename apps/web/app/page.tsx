@@ -55,14 +55,16 @@ export default async function Home() {
   const renderedBlocks = blocks.map((block) => block.type === 'hero'
     ? { ...block, data: { ...block.data, galleryImages } }
     : block);
+  const contact = blocks.find((block) => block.type === 'contact');
 
   return (
     <main>
-      <BlockRenderer blocks={renderedBlocks} />
+      <BlockRenderer blocks={renderedBlocks.filter((block) => block.type !== 'contact')} />
       <LocationSection />
       <TeamSection members={members} />
       <ProcessSection />
       <FAQSection />
+      <BlockRenderer blocks={contact ? [contact] : []} />
     </main>
   );
 }

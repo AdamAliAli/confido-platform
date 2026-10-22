@@ -1,4 +1,5 @@
 import { ClaritySection } from './sections/clarity-section';
+import { ContactSection } from './sections/contact-section';
 import { HeroSection } from './sections/hero-section';
 import { ProjectsSection } from './sections/projects-section';
 import { ServicesSection } from './sections/services-section';
@@ -18,6 +19,8 @@ export function BlockRenderer({ blocks = [] }: { blocks: Block[] }) {
             return <ProjectsSection key={block.id} data={block.data} />;
           case 'clarity':
             return <ClaritySection key={block.id} data={block.data} />;
+          case 'contact':
+            return <ContactSection key={block.id} data={block.data} />;
           default:
             return null;
         }
