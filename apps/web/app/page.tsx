@@ -4,6 +4,7 @@ import { LocationSection } from '@/components/sections/location-section';
 import { TeamSection } from '@/components/sections/team-section';
 import { ProcessSection } from '@/components/sections/process-section';
 import { FAQSection } from '@/components/sections/faq-section';
+import { SiteFooter } from '@/components/site-footer';
 
 type PageBlock = { id: string; type: string; enabled?: boolean; data: Record<string, unknown> };
 
@@ -58,13 +59,14 @@ export default async function Home() {
   const contact = blocks.find((block) => block.type === 'contact');
 
   return (
-    <main>
+    <main id="top">
       <BlockRenderer blocks={renderedBlocks.filter((block) => block.type !== 'contact')} />
       <LocationSection />
       <TeamSection members={members} />
       <ProcessSection />
       <FAQSection />
       <BlockRenderer blocks={contact ? [contact] : []} />
+      <SiteFooter />
     </main>
   );
 }
