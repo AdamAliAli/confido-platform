@@ -21,7 +21,7 @@ export function ContactSection({ data }: { data: Record<string, unknown> }) {
     <section
       id="contact"
       aria-labelledby={headingId}
-      className="relative min-h-[640px] overflow-hidden border-b border-white/[0.06] bg-[#0b2420] px-6 pb-20 pt-16 text-white md:px-[50px] md:pt-[120px]"
+      className="relative min-h-[640px] overflow-hidden border-b border-white/[0.06] bg-[#0b2420] px-6 pb-20 pt-16 text-white md:px-[50px] md:pb-0 md:pt-[120px]"
     >
       <div className="relative z-10 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] md:text-[14px]">
         <span className="h-2 w-2 bg-mint" aria-hidden="true" />
@@ -45,13 +45,13 @@ export function ContactSection({ data }: { data: Record<string, unknown> }) {
         >{accent}</motion.span>
       </h2>
 
-      <div className="mt-10 grid min-w-0 items-center md:mt-12 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <div className="mt-10 grid min-w-0 items-center md:-mb-[clamp(160px,22vw,380px)] md:mt-12 md:min-h-[calc(360px+clamp(160px,22vw,380px))] md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-x-[clamp(48px,12vw,240px)]">
       <motion.div
         initial={reducedMotion ? false : { opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: reducedMotion ? 0 : 0.8, delay: reducedMotion ? 0 : 0.45, ease: 'easeOut' }}
-        className="relative z-10 min-w-0 md:order-2"
+        className="relative z-10 min-w-0 md:order-2 md:self-start md:pt-[clamp(48px,7vw,128px)]"
       >
         <p className="max-w-[240px] text-[13px] leading-relaxed text-white/[0.85] md:max-w-[320px] md:text-[18px]">{description}</p>
         <a
