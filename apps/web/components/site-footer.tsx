@@ -31,7 +31,7 @@ export function SiteFooter() {
             <h2 className="text-[16px] font-medium text-white/50 md:text-[18px]">Legal</h2>
             <ul className="mt-8 space-y-6 text-[16px] md:mt-12 md:text-[18px]">
               <li><span role="link" aria-disabled="true" title="Coming soon" className="cursor-default">Pricing</span></li>
-              <li><span role="link" aria-disabled="true" title="Coming soon" className="cursor-default">Privacy Policy</span></li>
+              <li><a href="/privacy-policy" className={`transition-colors hover:text-mint ${focusStyle}`}>Privacy Policy</a></li>
               <li><a href="#contact" className={`transition-colors hover:text-mint ${focusStyle}`}>Contact Us</a></li>
             </ul>
           </nav>
