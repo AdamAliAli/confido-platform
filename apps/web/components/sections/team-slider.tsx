@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode, UIEvent } from 'react';
 import type { TeamMember } from '@/lib/api';
+import { teamPhotoUrl } from '@/lib/team-photo';
 
 function SocialLink({ href, label, children }: { href?: string | null; label: string; children: ReactNode }) {
   if (!href) return null;
@@ -36,7 +37,7 @@ function MemberPortrait({ member }: { member: TeamMember }) {
 
   return (
     <img
-      src={member.photoUrl}
+      src={teamPhotoUrl(member.photoUrl)}
       alt={member.name}
       className="h-full w-full object-cover"
       loading="lazy"

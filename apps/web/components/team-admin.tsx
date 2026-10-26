@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { adminFetch, type TeamMember } from '@/lib/api';
+import { uploadTeamPhoto, validateTeamPhoto } from '@/lib/team-photo';
 
 type TeamForm = {
   name: string;
@@ -50,6 +51,11 @@ function payloadFromForm(form: TeamForm) {
 
 export function TeamAdmin({ token }: { token: string }) {
   const formSectionRef = useRef<HTMLElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const uploadRef = useRef<AbortController | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState('');
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [form, setForm] = useState<TeamForm>(EMPTY_FORM);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -72,6 +78,34 @@ export function TeamAdmin({ token }: { token: string }) {
   useEffect(() => {
     load();
   }, [token]);
+
+  useEffect(() => () => { uploadRef.current?.abort(); }, []);
+
+  async function uploadPhoto(file: File) {
+    setUploadError('');
+    try { validateTeamPhoto(file); } catch (error) {
+      setUploadError((error as Error).message);
+      return;
+    }
+    const controller = new AbortController();
+    uploadRef.current = controller;
+    setUploading(true);
+    setUploadProgress(0);
+    try {
+      const photoUrl = await uploadTeamPhoto(file, token, setUploadProgress, controller.signal);
+      if (!controller.signal.aborted) {
+        update('photoUrl', photoUrl);
+        setStatus('Photo uploaded. Save changes to publish it.');
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) setUploadError(error instanceof Error ? error.message : 'Photo upload failed.');
+    } finally {
+      if (uploadRef.current === controller) {
+        uploadRef.current = null;
+        setUploading(false);
+      }
+    }
+  }
 
   function update<K extends keyof TeamForm>(key: K, value: TeamForm[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -128,7 +162,7 @@ export function TeamAdmin({ token }: { token: string }) {
       <section ref={formSectionRef} className="scroll-mt-6 rounded-xl border border-white/10 bg-zinc-900 p-5">
         <div className="mb-5 flex items-center justify-between gap-4">
           <h2 className="text-xl">{editingId ? 'Edit team member' : 'Add team member'}</h2>
-          {editingId && <button type="button" onClick={resetForm} className="text-sm text-zinc-400 hover:text-white">Cancel</button>}
+          {editingId && <button type="button" disabled={uploading} onClick={resetForm} className="text-sm text-zinc-400 hover:text-white disabled:opacity-40">Cancel</button>}
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -141,9 +175,22 @@ export function TeamAdmin({ token }: { token: string }) {
           <label className="text-sm text-zinc-400 md:col-span-2">Quote
             <textarea className={`${inputClass} min-h-24`} value={form.quote} maxLength={320} onChange={(event) => update('quote', event.target.value)} />
           </label>
-          <label className="text-sm text-zinc-400 md:col-span-2">Photo URL
-            <input className={inputClass} type="url" value={form.photoUrl} placeholder="https://…" onChange={(event) => update('photoUrl', event.target.value)} />
-          </label>
+          <div className="text-sm text-zinc-400 md:col-span-2">
+            <label htmlFor="team-photo-url">Photo URL</label>
+            <div className="flex flex-wrap items-center gap-2">
+              <input id="team-photo-url" className={`${inputClass} min-w-0 flex-1`} disabled={uploading} type="url" value={form.photoUrl} placeholder="https://…" onChange={(event) => update('photoUrl', event.target.value)} />
+              <button type="button" disabled={uploading} onClick={() => photoInputRef.current?.click()} className="mt-2 rounded border border-white/20 px-3 py-3 text-white disabled:opacity-40">Upload photo</button>
+            </div>
+            <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choose team photo" className="hidden" onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = '';
+              if (file) void uploadPhoto(file);
+            }} />
+            <p className="mt-2 text-xs">JPEG, PNG or WebP, up to 8 MB.</p>
+            {uploading && <p role="status" className="mt-2 text-mint">Uploading… {uploadProgress}%</p>}
+            {uploadError && <p role="alert" className="mt-2 text-red-300">{uploadError}</p>}
+            {form.photoUrl.startsWith('https://') && <img key={form.photoUrl} src={form.photoUrl} alt="Team photo preview" className="mt-3 h-28 w-24 rounded bg-black object-cover" />}
+          </div>
           <label className="text-sm text-zinc-400">X URL
             <input className={inputClass} type="url" value={form.xUrl} placeholder="https://…" onChange={(event) => update('xUrl', event.target.value)} />
           </label>
@@ -160,7 +207,7 @@ export function TeamAdmin({ token }: { token: string }) {
 
         <button
           type="button"
-          disabled={!form.name.trim() || !form.role.trim() || !form.photoUrl.trim()}
+          disabled={uploading || !form.name.trim() || !form.role.trim() || !form.photoUrl.trim()}
           onClick={save}
           className="mt-5 rounded bg-mint px-5 py-3 text-black disabled:cursor-not-allowed disabled:opacity-40"
         >
@@ -181,8 +228,8 @@ export function TeamAdmin({ token }: { token: string }) {
               <p className="truncate text-sm text-zinc-400">{member.role} · Order {member.sortOrder}</p>
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={() => startEditing(member)} className="rounded border border-white/20 px-3 py-2 text-sm">Edit</button>
-              <button type="button" onClick={() => remove(member)} className="rounded bg-red-950 px-3 py-2 text-sm text-red-200">Delete</button>
+              <button type="button" disabled={uploading} onClick={() => startEditing(member)} className="rounded border border-white/20 px-3 py-2 text-sm disabled:opacity-40">Edit</button>
+              <button type="button" disabled={uploading} onClick={() => remove(member)} className="rounded bg-red-950 px-3 py-2 text-sm text-red-200 disabled:opacity-40">Delete</button>
             </div>
           </article>
         ))}
