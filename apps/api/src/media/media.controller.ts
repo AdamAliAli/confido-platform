@@ -6,8 +6,8 @@ import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 
 export class SignUploadDto {
-  @IsIn(['confido/team', 'confido/gallery'])
-  folder!: 'confido/team' | 'confido/gallery';
+  @IsIn(['confido/team', 'confido/gallery', 'confido/site'])
+  folder!: 'confido/team' | 'confido/gallery' | 'confido/site';
 }
 
 @Controller('media')

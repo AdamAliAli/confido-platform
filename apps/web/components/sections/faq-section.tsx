@@ -3,14 +3,18 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useId, useState } from 'react';
 import { FAQS } from './faq-data';
+import { text } from '@/lib/media-url';
 
-export function FAQSection() {
+export function FAQSection({ data = {} }: { data?: Record<string, unknown> }) {
   const reducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
   const sectionId = useId();
+  const supplied = Array.isArray(data.faqs) && data.faqs.length ? data.faqs : FAQS;
+  const faqs = supplied.map((item, index) => ({ question: text(item?.question, FAQS[index]?.question || FAQS[0].question), answer: text(item?.answer, FAQS[index]?.answer || FAQS[0].answer) }));
 
   return (
     <section
+      id="faq"
       aria-labelledby={`${sectionId}-heading`}
       className="overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white"
     >
@@ -18,24 +22,24 @@ export function FAQSection() {
         <div className="min-w-0 px-6 py-8 md:border-r md:border-white/[0.06] md:px-16 md:py-10">
           <div className="flex items-center gap-2 text-base font-medium tracking-[0.08em] md:text-lg">
             <span className="h-2 w-2 bg-mint" aria-hidden="true" />
-            FAQ
+            {text(data.label, 'FAQ')}
           </div>
           <h2
             id={`${sectionId}-heading`}
             className="mt-6 break-words text-[40px] font-normal leading-tight tracking-[-0.04em] md:text-[56px]"
           >
-            <span className="block">Frequently</span>
-            <span className="block font-semibold text-mint">Asked Questions</span>
+            <span className="block">{text(data.title, 'Frequently')}</span>
+            <span className="block font-semibold text-mint">{text(data.accent, 'Asked Questions')}</span>
           </h2>
         </div>
 
         <div className="min-w-0 border-t border-white/[0.06] md:border-t-0">
-          {FAQS.map((item, index) => {
+          {faqs.map((item, index) => {
             const active = activeIndex === index;
 
             return (
               <button
-                key={item.question}
+                key={`${item.question}-${index}`}
                 type="button"
                 aria-expanded={active}
                 onClick={() => setActiveIndex((current) => (current === index ? null : index))}

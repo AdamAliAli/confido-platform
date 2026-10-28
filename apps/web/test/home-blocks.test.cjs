@@ -32,6 +32,11 @@ test('homepage preserves API order and does not inject missing sections', async 
   assert.deepEqual((await renderBlocks({ blocks })).map((block) => block.type), ['clarity', 'hero', 'services']);
 });
 
+test('all section types including contact respect saved order and visibility', async () => {
+  const blocks = ['contact', 'faq', 'process', 'team', 'location', 'clarity', 'projects', 'services', 'hero'].map(type => ({ id: type, type, enabled: type !== 'faq', data: {} }));
+  assert.deepEqual((await renderBlocks({ blocks })).map(block => block.type), blocks.filter(block => block.enabled).map(block => block.type));
+});
+
 test('page and team requests start together and members are passed to TeamSection', async () => {
   let releasePage;
   let requestedTeam = false;
@@ -43,7 +48,7 @@ test('page and team requests start together and members are passed to TeamSectio
   });
   assert.equal(requestedTeam, true);
   releasePage(null);
-  assert.equal((await result).props.children[3].props.members, members);
+  assert.equal((await result).props.children[1].props.members, members);
 });
 
 test('homepage excludes disabled blocks and their gallery images', async () => {
@@ -57,6 +62,6 @@ test('homepage excludes disabled blocks and their gallery images', async () => {
 });
 
 test('homepage uses fallbacks only for unavailable pages and renders no blocks for empty pages', async () => {
-  assert.deepEqual((await renderBlocks(null)).map((block) => block.type), ['hero', 'services', 'projects', 'clarity']);
+  assert.deepEqual((await renderBlocks(null)).map((block) => block.type), ['hero', 'services', 'projects', 'clarity', 'location', 'team', 'process', 'faq', 'contact']);
   assert.deepEqual(await renderBlocks({ blocks: [] }), []);
 });

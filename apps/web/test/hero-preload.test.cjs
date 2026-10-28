@@ -26,6 +26,7 @@ function setup({ touch = false, desktop = true } = {}) {
         useEffect: (fn) => fn(),
       };
       if (name === 'framer-motion') return { motion: {}, AnimatePresence: () => null };
+      if (name === '@/lib/media-url') return {};
       if (name === './constants') return { PROJECT_IMAGES: [] };
       return require(name);
     },

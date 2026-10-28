@@ -2,6 +2,7 @@
 
 import { motion, MotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
+import { imageUrl, siteImage, text } from '@/lib/media-url';
 
 const CLARITY_ART = 'https://framerusercontent.com/images/LtwdL5pxo7YbkmSPBJn6shHk9pw.png?width=2740&height=1683';
 
@@ -35,9 +36,9 @@ function normalizeMetrics(data: Record<string, any>): Metric[] {
     };
 
     return {
-      label: typeof item.label === 'string' ? item.label : fallback.label,
-      value: typeof item.value === 'string' || typeof item.value === 'number' ? String(item.value) : fallback.value,
-      image: typeof item.image === 'string' && item.image.startsWith('http') ? item.image : fallback.image,
+      label: text(item?.label, fallback.label),
+      value: text(typeof item?.value === 'number' ? String(item.value) : item?.value, fallback.value),
+      image: imageUrl(item?.image, fallback.image),
     };
   });
 }
@@ -106,7 +107,7 @@ function ClarityCard({
         <motion.div
           className="clarity-card-art"
           style={{
-            backgroundImage: `url("${metric.image}")`,
+            backgroundImage: `url(${JSON.stringify(siteImage(metric.image, 1600))})`,
             backgroundPosition: usesTriptych ? `${index * 50}% center` : 'center',
             backgroundSize: usesTriptych ? `${Math.max(3, DEFAULT_METRICS.length) * 100}% auto` : 'cover',
           }}
@@ -154,7 +155,7 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
     { clamp: true },
   );
   const metrics = normalizeMetrics(data);
-  const heading = typeof data.heading === 'string' ? data.heading : 'Built on Clarity — Built to Scale';
+  const heading = text(data.heading, 'Built on Clarity — Built to Scale');
 
   return (
     <section id="clarity" className="clarity-section" aria-labelledby="clarity-heading">

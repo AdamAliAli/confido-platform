@@ -27,7 +27,7 @@ test('signed uploads require JWT and editor/admin role, validate folders and kee
     assert.equal((await sign(null)).status, 401);
     assert.equal((await sign('VIEWER')).status, 403);
     for (const role of ['ADMIN', 'EDITOR']) {
-      for (const folder of ['confido/team', 'confido/gallery']) {
+      for (const folder of ['confido/team', 'confido/gallery', 'confido/site']) {
         const response = await sign(role, { folder });
         assert.equal(response.status, 201);
         const result = await response.json();

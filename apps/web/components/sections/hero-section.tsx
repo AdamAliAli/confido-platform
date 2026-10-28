@@ -1,5 +1,7 @@
 'use client';
 
+import { text } from '@/lib/media-url';
+
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useRef, useState } from 'react';
 import { PROJECT_IMAGES } from './constants';
@@ -87,7 +89,7 @@ export function HeroSection({ data }: { data: Record<string, any> }) {
       <div className="h-[54px]" aria-hidden="true" />
 
       <div className="hero-content">
-        <div className="hero-kicker"><span className="kicker-dot" />{data.eyebrow}<span className="kicker-index">V</span></div>
+        <div className="hero-kicker"><span className="kicker-dot" />{text(data.eyebrow, 'Strategic brand consultancy')}<span className="kicker-index">V</span></div>
 
         <motion.div
           className="hero-lockup"
@@ -96,13 +98,13 @@ export function HeroSection({ data }: { data: Record<string, any> }) {
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="brands-row">
-            <h1>{data.title}</h1>
+            <h1>{text(data.title, 'Brands')}</h1>
             <div className="hero-meta">
               <span>© 2026</span>
-              <p>{data.description}</p>
+              <p>{text(data.description, 'Confido helps businesses build clear positioning, strong direction, and scalable brand systems.')}</p>
             </div>
           </div>
-          <h2><span>{data.accent}</span> {data.subtitle}</h2>
+          <h2><span>{text(data.accent, 'With')}</span> {text(data.subtitle, 'Direction')}</h2>
         </motion.div>
 
         <div className="scroll-cue"><i /><span>Scroll Down</span></div>

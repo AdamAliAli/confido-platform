@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { PROJECT_IMAGES } from './constants';
+import { imageUrl, safeHref, siteImage } from '@/lib/media-url';
 
 type Project = { title: string; category: string; image: string; year?: string; href?: string };
 
@@ -14,7 +15,7 @@ const FALLBACK_PROJECTS: Project[] = [
 
 function projectImage(value: any): string | undefined {
   const candidate = [value?.image, value?.imageUrl, value?.cover, value?.thumbnail, value?.coverImage, value?.galleryImages?.[0]]
-    .find((item) => typeof item === 'string' && (item.startsWith('https://') || item.startsWith('http://')));
+    .find((item) => imageUrl(item, '') !== '');
   return candidate;
 }
 
@@ -27,7 +28,7 @@ export function ProjectsSection({ data }: { data: Record<string, any> }) {
       category: typeof item.category === 'string' ? item.category : 'Branding',
       year: typeof item.year === 'string' || typeof item.year === 'number' ? String(item.year) : undefined,
       image: projectImage(item)!,
-      href: typeof item.href === 'string' ? item.href : typeof item.url === 'string' ? item.url : undefined,
+      href: safeHref(item.href ?? item.url),
     }));
   const visibleProjects = projects.length ? projects : FALLBACK_PROJECTS;
 
@@ -49,7 +50,7 @@ export function ProjectsSection({ data }: { data: Record<string, any> }) {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
-              src={project.image}
+              src={siteImage(project.image, 1200)}
               unoptimized={!project.image.startsWith('https://framerusercontent.com/')}
               alt={project.title}
               fill

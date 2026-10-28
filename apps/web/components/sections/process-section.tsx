@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
+import { imageUrl, siteImage, text } from '@/lib/media-url';
 
 const PROCESS_STEPS = [
   {
@@ -25,12 +26,18 @@ const PROCESS_STEPS = [
   },
 ] as const;
 
-export function ProcessSection() {
+export function ProcessSection({ data = {} }: { data?: Record<string, unknown> }) {
   const reducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const supplied = Array.isArray(data.steps) && data.steps.length ? data.steps : PROCESS_STEPS;
+  const steps = supplied.map((item, index) => {
+    const fallback = PROCESS_STEPS[index] || PROCESS_STEPS[0];
+    return { step: text(item?.step, fallback.step), title: text(item?.title, fallback.title), description: text(item?.description, fallback.description), image: imageUrl(item?.image, fallback.image) };
+  });
 
   return (
     <section
+      id="process"
       aria-labelledby="process-heading"
       className="overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white"
     >
@@ -38,24 +45,24 @@ export function ProcessSection() {
         <div className="relative min-w-0 p-6 md:min-h-[900px] md:border-r md:border-white/[0.06] md:p-10">
           <div className="flex items-center gap-2 text-base font-medium tracking-[0.08em] md:text-lg">
             <span className="h-2 w-2 bg-mint" aria-hidden="true" />
-            PROCESS
+            {text(data.label, 'PROCESS')}
           </div>
 
           <div className="mt-16 md:sticky md:bottom-16 md:mt-[55vh] md:pb-16">
             <h2 id="process-heading" className="text-[44px] font-normal leading-[1.02] tracking-[-0.04em] md:text-[clamp(44px,3.7vw,72px)]">
-              <span className="block">A Process Built</span>
-              <span className="ml-[8%] block text-mint">on Clarity</span>
+              <span className="block">{text(data.title, 'A Process Built')}</span>
+              <span className="ml-[8%] block text-mint">{text(data.accent, 'on Clarity')}</span>
             </h2>
           </div>
         </div>
 
         <div className="min-w-0 border-t border-white/[0.06] md:flex md:flex-col md:border-t-0">
-          {PROCESS_STEPS.map((item, index) => {
+          {steps.map((item, index) => {
             const active = activeIndex === index;
 
             return (
               <motion.button
-                key={item.step}
+                key={`${item.step}-${index}`}
                 layout={!reducedMotion}
                 transition={{ layout: { duration: reducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] } }}
                 type="button"
@@ -84,7 +91,8 @@ export function ProcessSection() {
                       >
                         <div className="mx-auto my-12 aspect-[3/2] w-full max-w-[280px] shrink-0 overflow-hidden">
                           <Image
-                            src={item.image}
+                            src={siteImage(item.image, 900)}
+                            unoptimized={!item.image.startsWith('/images/') && !item.image.startsWith('https://framerusercontent.com/')}
                             width={280}
                             height={187}
                             alt=""

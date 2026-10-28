@@ -47,7 +47,7 @@ function MemberPortrait({ member }: { member: TeamMember }) {
   );
 }
 
-export function TeamSlider({ members }: { members: TeamMember[] }) {
+export function TeamSlider({ members, label = 'TEAM MEMBERS' }: { members: TeamMember[]; label?: string }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const reducedMotion = useReducedMotion();
@@ -89,6 +89,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
 
   return (
     <section
+      id="team"
       aria-labelledby="team-heading"
       onKeyDown={handleKeyDown}
       tabIndex={0}
@@ -103,7 +104,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
 
       <div id="team-heading" className="relative z-10 mx-auto mb-16 flex w-full max-w-[320px] items-center justify-center gap-2 text-sm font-medium tracking-[0.08em] md:mb-[100px]">
         <span className="h-2 w-2 bg-mint" aria-hidden="true" />
-        TEAM MEMBERS
+        {label}
       </div>
 
       <div className="relative mx-auto max-w-6xl">
