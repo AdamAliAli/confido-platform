@@ -1,3 +1,4 @@
 import { MediaModule } from './media/media.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 import { Module } from '@nestjs/common'; import { ConfigModule } from '@nestjs/config'; import { AuthModule } from './auth/auth.module'; import { ContentModule } from './content/content.module'; import { PrismaModule } from './common/prisma.module'; import { BootstrapService } from './common/bootstrap.service'; import { HealthController } from './health.controller'; import { TeamModule } from './team/team.module';
-@Module({imports:[ConfigModule.forRoot({isGlobal:true}),PrismaModule,AuthModule,ContentModule,TeamModule,MediaModule],controllers:[HealthController],providers:[BootstrapService]}) export class AppModule{}
+@Module({imports:[ConfigModule.forRoot({isGlobal:true}),PrismaModule,AuthModule,ContentModule,TeamModule,MediaModule,NewsletterModule],controllers:[HealthController],providers:[BootstrapService]}) export class AppModule{}

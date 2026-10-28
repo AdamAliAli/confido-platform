@@ -5,6 +5,7 @@ import { Reorder } from 'framer-motion';
 import { API, adminFetch } from '@/lib/api';
 import { BlockForm } from '@/components/block-form';
 import { TeamAdmin } from '@/components/team-admin';
+import { SubscribersAdmin } from '@/components/subscribers-admin';
 
 type Block = {
   id: string;
@@ -21,7 +22,7 @@ export default function Admin() {
   const [pageId, setPageId] = useState('');
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [saveStatus, setSaveStatus] = useState<Record<string, string>>({});
-  const [view, setView] = useState<'blocks' | 'team'>('blocks');
+  const [view, setView] = useState<'blocks' | 'team' | 'subscribers'>('blocks');
 
   const [loginError, setLoginError] = useState('');
   const [orderStatus, setOrderStatus] = useState('');
@@ -141,11 +142,12 @@ export default function Admin() {
       <header className="mx-auto mb-8 flex max-w-5xl flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-sm text-mint">CONFIDO CMS</p>
-          <h1 className="text-3xl">{view === 'blocks' ? 'Page blocks' : 'Team members'}</h1>
+          <h1 className="text-3xl">{view === 'blocks' ? 'Page blocks' : view === 'team' ? 'Team members' : 'Subscribers'}</h1>
         </div>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setView('blocks')} className={`rounded px-4 py-3 ${view === 'blocks' ? 'bg-white text-black' : 'border border-white/20'}`}>Page blocks</button>
           <button onClick={() => setView('team')} className={`rounded px-4 py-3 ${view === 'team' ? 'bg-white text-black' : 'border border-white/20'}`}>Team</button>
+          <button onClick={() => setView('subscribers')} className={`rounded px-4 py-3 ${view === 'subscribers' ? 'bg-white text-black' : 'border border-white/20'}`}>Subscribers</button>
           {view === 'blocks' && <>
             <span role="status" className="self-center text-sm text-zinc-400">{orderStatus}</span>
             <button onClick={saveOrder} disabled={!pageId || savingOrder} className="rounded bg-mint px-5 py-3 text-black disabled:opacity-50">Save order</button>
@@ -154,7 +156,7 @@ export default function Admin() {
         </div>
       </header>
 
-      {view === 'team' ? <TeamAdmin token={token} /> : (
+      {view === 'subscribers' ? <SubscribersAdmin token={token} /> : view === 'team' ? <TeamAdmin token={token} /> : (
       <Reorder.Group
         axis="y"
         values={blocks}

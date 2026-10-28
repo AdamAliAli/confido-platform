@@ -1,4 +1,5 @@
-import { ArrowRight, ChevronUp } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
+import { NewsletterForm } from './newsletter-form';
 
 const focusStyle = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-4 focus-visible:ring-offset-[#102521]';
 
@@ -42,19 +43,7 @@ export function SiteFooter() {
         <FooterLabel>Subscribe</FooterLabel>
         <div className="min-w-0 max-w-[710px]">
           <h2 className="text-[16px] font-medium text-white/50 md:text-[18px]">Newsletter</h2>
-          <div className="mt-8 flex h-14 border-b border-white/[0.06] md:mt-10 md:h-[60px]">
-            <input
-              type="email"
-              aria-label="Email address for newsletter"
-              placeholder="Enter Your Email"
-              disabled
-              title="Coming soon"
-              className="min-w-0 flex-1 cursor-not-allowed bg-transparent pr-4 text-[16px] text-white opacity-100 placeholder:text-white disabled:opacity-100 md:text-[18px]"
-            />
-            <button type="button" disabled aria-label="Subscribe to newsletter (coming soon)" title="Coming soon" className="grid aspect-square h-full shrink-0 cursor-not-allowed place-items-center bg-mint text-[#070908] disabled:opacity-100">
-              <ArrowRight className="h-6 w-6" aria-hidden="true" />
-            </button>
-          </div>
+          <NewsletterForm />
           <p className="mt-8 text-[14px] leading-relaxed text-white/55 md:text-[16px]">
             No noise. Just clarity <span className="text-white">on branding and strategy.</span>
           </p>
