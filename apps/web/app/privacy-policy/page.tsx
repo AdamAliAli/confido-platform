@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { ContactSection } from '@/components/sections/contact-section';
-import { PrivacyHero } from '@/components/sections/privacy-hero';
+import { PageHero } from '@/components/sections/page-hero';
 import { LAST_UPDATED, POLICY_INTRO, POLICY_SECTIONS } from '@/components/sections/privacy-content';
 import { getPage } from '@/lib/api';
 
@@ -28,7 +28,7 @@ export default async function PrivacyPolicy() {
   return (
     <main id="top">
       <SiteHeader />
-      <PrivacyHero />
+      <PageHero label="PRIVACY POLICY" line1="Privacy" accent="Policy" rest="Outline" scrollTarget="#policy" />
       <section id="policy" aria-labelledby="policy-updated" className="bg-[#0b2420] px-6 py-16 text-white md:px-[50px] md:py-[110px]">
         <div className="mx-auto max-w-[1300px]">
           <div className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.08em]">
