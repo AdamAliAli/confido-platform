@@ -86,9 +86,11 @@ export function SiteHeader() {
       <header
         className="hero-nav"
         style={{
-          backgroundColor: scrolled ? 'rgba(3,5,4,0.85)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(14px)' : 'none',
-          transition: 'background-color 0.3s ease, backdrop-filter 0.3s ease',
+          backgroundColor: scrolled ? 'rgba(3,5,4,0.35)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(8px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(8px)' : 'none',
+          borderBottomColor: scrolled ? 'rgba(255,255,255,0.06)' : undefined,
+          transition: 'background-color 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, border-color 0.3s ease',
         }}
       >
         <button className={`menu-button${menuOpen ? ' is-open' : ''}`} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}><span /><span /></button>
