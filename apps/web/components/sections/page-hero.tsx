@@ -41,14 +41,8 @@ export function PageHero({ label, line1, accent, rest, scrollTarget }: PageHeroP
         ><span className="text-mint">{accent}</span>{' '}<span className="block md:inline">{rest}</span></motion.span>
       </h1>
 
-      <a href={scrollTarget} className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-[12px] text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-4 focus-visible:ring-offset-[#030504] md:bottom-8">
-        <motion.span
-          aria-hidden="true"
-          animate={reducedMotion ? { opacity: 1 } : { opacity: [0.4, 1, 0.4] }}
-          transition={reducedMotion ? { duration: 0 } : { duration: 2.5, ease: 'easeInOut', repeat: Infinity }}
-          className="h-[6px] w-[6px] rounded-full bg-mint motion-reduce:!opacity-100"
-        />
-        <span className="h-[90px] w-px bg-mint/40" aria-hidden="true" />
+      <a href={scrollTarget} className="scroll-cue !absolute !mt-0 bottom-6 left-1/2 z-10 -translate-x-1/2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-4 focus-visible:ring-offset-[#030504] md:bottom-8">
+        <i />
         <span>Scroll Down</span>
       </a>
     </section>
