@@ -134,7 +134,7 @@ export function TeamSlider({ members }: { members: TeamMember[] }) {
                 initial={false}
                 animate={reducedMotion || index === activeIndex ? { opacity: 1, scale: 1 } : { opacity: 0.72, scale: 0.975 }}
                 transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className="flex w-full max-w-[470px] flex-col overflow-hidden bg-[radial-gradient(120%_70%_at_100%_100%,#2d4b3e_0%,transparent_60%),linear-gradient(to_bottom,#101e1d_0%,#10201f_55%,#1f3731_100%)] p-6 shadow-2xl shadow-black/25 sm:px-12 sm:pb-10 sm:pt-12"
+                className="flex w-full max-w-[470px] flex-col overflow-hidden border border-white/[0.06] bg-[linear-gradient(to_bottom,rgba(16,30,29,0.92)_0%,rgba(16,32,31,0.7)_50%,rgba(31,55,49,0.35)_100%)] p-6 shadow-2xl shadow-black/25 backdrop-blur-xl sm:px-12 sm:pb-10 sm:pt-12"
               >
                 <div className="flex min-h-11 items-start justify-between gap-4">
                   <p className="line-clamp-2 max-w-[210px] pt-2 text-xl font-semibold leading-6 text-white/80">{member.role}</p>
