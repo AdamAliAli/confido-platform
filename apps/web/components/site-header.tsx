@@ -22,7 +22,7 @@ const MENU_ITEMS = [
   { label: 'About Us', href: '/#about-us' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Projects', href: '/#projects' },
-  { label: 'Services', href: '/#services' },
+  { label: 'Services', href: '/services' },
   { label: 'Contact', href: '/#contact' },
 ];
 

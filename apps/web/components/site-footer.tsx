@@ -24,7 +24,7 @@ export function SiteFooter() {
             <h2 className="text-[16px] font-medium text-white/50 md:text-[18px]">Menu</h2>
             <ul className="mt-8 space-y-6 text-[16px] md:mt-12 md:text-[18px]">
               <li><a href="/" className={`transition-colors hover:text-mint ${focusStyle}`}>Home</a></li>
-              <li><a href="/#services" className={`transition-colors hover:text-mint ${focusStyle}`}>Services</a></li>
+              <li><a href="/services" className={`transition-colors hover:text-mint ${focusStyle}`}>Services</a></li>
               <li><a href="/#projects" className={`transition-colors hover:text-mint ${focusStyle}`}>Projects</a></li>
             </ul>
           </nav>

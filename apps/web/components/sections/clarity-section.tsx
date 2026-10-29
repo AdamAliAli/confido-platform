@@ -128,6 +128,31 @@ function ClarityCard({
   );
 }
 
+export function ClarityMarquee({ text: heading }: { text: string }) {
+  return (
+      <div className="clarity-heading-stage">
+        <motion.h2
+          id="clarity-heading"
+          className="clarity-heading"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{
+            duration: 22,
+            ease: 'linear',
+            repeat: Infinity,
+            repeatType: 'loop',
+          }}
+        >
+          {[0, 1].map((group) => (
+            <span className="clarity-heading-group" aria-hidden={group === 1} key={group}>
+              <span className="clarity-heading-copy">{heading}</span>
+              <span className="clarity-heading-copy" aria-hidden="true">{heading}</span>
+            </span>
+          ))}
+        </motion.h2>
+      </div>
+  );
+}
+
 export function ClaritySection({ data }: { data: Record<string, any> }) {
   const cardsStageRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -159,26 +184,7 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
 
   return (
     <section id="clarity" className="clarity-section" aria-labelledby="clarity-heading">
-      <div className="clarity-heading-stage">
-        <motion.h2
-          id="clarity-heading"
-          className="clarity-heading"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{
-            duration: 22,
-            ease: 'linear',
-            repeat: Infinity,
-            repeatType: 'loop',
-          }}
-        >
-          {[0, 1].map((group) => (
-            <span className="clarity-heading-group" aria-hidden={group === 1} key={group}>
-              <span className="clarity-heading-copy">{heading}</span>
-              <span className="clarity-heading-copy" aria-hidden="true">{heading}</span>
-            </span>
-          ))}
-        </motion.h2>
-      </div>
+      <ClarityMarquee text={heading} />
 
       <div className="clarity-heading-gap" aria-hidden="true" />
 

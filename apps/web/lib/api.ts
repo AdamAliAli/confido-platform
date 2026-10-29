@@ -38,6 +38,19 @@ export async function getTeam(): Promise<TeamMember[]> {
   }
 }
 
+// Shared pages reuse enabled homepage content without exposing admin endpoints.
+export async function getHomeBlocks(): Promise<Record<string, Record<string, unknown>>> {
+  try {
+    const page = await getPage();
+    const blocks = Array.isArray(page?.blocks) ? page.blocks : [];
+    return Object.fromEntries(blocks
+      .filter((block: { type?: unknown; enabled?: boolean }) => block && typeof block.type === 'string' && block.enabled !== false)
+      .map((block: { type: string; data?: unknown }) => [block.type, block.data && typeof block.data === 'object' && !Array.isArray(block.data) ? block.data : {}]));
+  } catch {
+    return {};
+  }
+}
+
 export async function adminFetch(
   path: string,
   token: string,
