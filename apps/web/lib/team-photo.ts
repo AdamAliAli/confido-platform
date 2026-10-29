@@ -1,16 +1,16 @@
 import { adminFetch } from './api';
 
-export function validateTeamPhoto(file: File) {
+export function validateTeamPhoto(file: File, maxMb = 8) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
     throw new Error('Choose a JPEG, PNG or WebP image.');
   }
-  if (file.size > 8 * 1024 * 1024) throw new Error('Photo must be 8 MB or smaller.');
+  if (file.size > maxMb * 1024 * 1024) throw new Error(`Photo must be ${maxMb} MB or smaller.`);
 }
 
-export async function uploadTeamPhoto(file: File, token: string, onProgress: (percent: number) => void, signal: AbortSignal): Promise<string> {
-  validateTeamPhoto(file);
+export async function uploadTeamPhoto(file: File, token: string, onProgress: (percent: number) => void, signal: AbortSignal, folder: 'confido/team' | 'confido/gallery' | 'confido/site' = 'confido/team'): Promise<string> {
+  validateTeamPhoto(file, folder === 'confido/team' ? 8 : 10);
   const response = await adminFetch('/media/sign', token, {
-    method: 'POST', body: JSON.stringify({ folder: 'confido/team' }), signal,
+    method: 'POST', body: JSON.stringify({ folder }), signal,
   });
   if (!response.ok) {
     const error = await response.json().catch(() => null);

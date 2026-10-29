@@ -28,6 +28,20 @@ test('photo validation rejects oversized and unsupported files before signing', 
   assert.equal(requests, 0);
 });
 
+test('site uploads allow 10 MB and use the site folder while Team keeps its 8 MB limit', async () => {
+  let requests = 0;
+  const { uploadTeamPhoto } = load({ adminFetch: async (path, token, init) => {
+    requests++;
+    assert.deepEqual(JSON.parse(init.body), { folder: 'confido/site' });
+    return { ok: false, json: async () => ({ message: 'Signing checked' }) };
+  } });
+  const signal = new AbortController().signal;
+  await assert.rejects(uploadTeamPhoto({ type: 'image/webp', size: 10 * 1024 * 1024 }, 'jwt', () => {}, signal, 'confido/site'), /Signing checked/);
+  await assert.rejects(uploadTeamPhoto({ type: 'image/webp', size: 10 * 1024 * 1024 + 1 }, 'jwt', () => {}, signal, 'confido/site'), /10 MB/);
+  await assert.rejects(uploadTeamPhoto({ type: 'image/webp', size: 9 * 1024 * 1024 }, 'jwt', () => {}, signal), /8 MB/);
+  assert.equal(requests, 1);
+});
+
 test('upload sends signed fields without secrets and returns secure URL with progress', async () => {
   const progress = [];
   class Request {
