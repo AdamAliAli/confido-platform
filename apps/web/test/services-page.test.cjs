@@ -60,7 +60,7 @@ test('expertise list has three editable rows and disables reveal for reduced mot
   for (const reduced of [false, true]) {
     const { ExpertiseList } = load('components/sections/expertise-list.tsx', {
       'framer-motion': { motion: { article: 'article' }, useReducedMotion: () => reduced },
-      'lucide-react': { Spline: 'icon' }, './page-content': content,
+      'lucide-react': { Spline: 'icon' }, './page-content': content, './section-header': { SectionHeader: () => null },
     });
     const result = ExpertiseList({ label: 'OUR EXPERTISE', title: 'What We Do', accent: 'Why It Matters' });
     assert.equal(result.props.id, 'what-we-do');

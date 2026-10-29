@@ -3,20 +3,13 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { Spline } from 'lucide-react';
 import { EXPERTISE } from './page-content';
+import { SectionHeader } from './section-header';
 
-export function ExpertiseList({ label, title, accent }: { label: string; title: string; accent: string }) {
+export function ExpertiseList({ label = 'OUR EXPERTISE', title = 'What We Do', accent = 'Why It Matters', showHeader = true }: { label?: string; title?: string; accent?: string; showHeader?: boolean }) {
   const reducedMotion = useReducedMotion();
   return (
-    <section id="what-we-do" aria-labelledby="expertise-list-heading" className="bg-[#0b2420] text-white">
-      <div className="flex flex-col gap-10 px-6 py-[90px] md:flex-row md:items-start md:justify-between md:px-[50px]">
-        <div className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.08em]">
-          <span className="h-2 w-2 bg-mint" aria-hidden="true" />{label}
-        </div>
-        <h2 id="expertise-list-heading" className="min-w-0 break-words text-right text-[clamp(40px,4vw,64px)] font-light leading-tight tracking-[-0.04em]">
-          <span className="block">{title}</span>
-          <span className="block font-semibold text-mint">{accent}</span>
-        </h2>
-      </div>
+    <section id="what-we-do" aria-labelledby={showHeader ? 'expertise-list-heading' : undefined} aria-label={showHeader ? undefined : 'Our expertise'} className="bg-[#0b2420] text-white">
+      {showHeader && <SectionHeader label={label} title={title} accent={accent} headingId="expertise-list-heading" />}
       {EXPERTISE.map((item, index) => (
         <motion.article
           key={item.title}

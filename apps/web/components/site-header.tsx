@@ -19,7 +19,7 @@ function ConfidoLogo() {
 
 const MENU_ITEMS = [
   { label: 'Home', href: '/' },
-  { label: 'About Us', href: '/#about-us' },
+  { label: 'About Us', href: '/about' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Projects', href: '/#projects' },
   { label: 'Services', href: '/services' },

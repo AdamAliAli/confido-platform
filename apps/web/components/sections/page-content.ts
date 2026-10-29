@@ -26,3 +26,13 @@ export const EXPERTISE = [
     ],
   },
 ];
+
+// Edit the About introduction here. The CTA destination is a site-relative path.
+export const ABOUT = {
+  label: 'OUR THINKING',
+  title: 'How We',
+  accent: 'Think',
+  statement: 'Confido was built on a simple belief — most brands don’t fail because of design, they fail because of lack of clarity.',
+  cta: 'Start a Project',
+  ctaHref: '/contact',
+};
