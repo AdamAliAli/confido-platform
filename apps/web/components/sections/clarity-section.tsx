@@ -1,10 +1,12 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
 import { motion, MotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { imageUrl, siteImage, text } from '@/lib/media-url';
 
-const CLARITY_ART = 'https://framerusercontent.com/images/LtwdL5pxo7YbkmSPBJn6shHk9pw.png?width=2740&height=1683';
+const CLARITY_ART = SECTION_DEFAULTS.clarity.metrics[0].image;
 
 type RawMetric = {
   label?: unknown;
@@ -18,11 +20,7 @@ type Metric = {
   image: string;
 };
 
-const DEFAULT_METRICS: Metric[] = [
-  { label: 'Strategic Partners', value: '98+', image: CLARITY_ART },
-  { label: 'Value Created', value: '200M', image: CLARITY_ART },
-  { label: 'Client Retention', value: '99%', image: CLARITY_ART },
-];
+const DEFAULT_METRICS: Metric[] = SECTION_DEFAULTS.clarity.metrics;
 
 function normalizeMetrics(data: Record<string, any>): Metric[] {
   const supplied = Array.isArray(data.metrics) ? data.metrics as RawMetric[] : [];
@@ -180,7 +178,7 @@ export function ClaritySection({ data }: { data: Record<string, any> }) {
     { clamp: true },
   );
   const metrics = normalizeMetrics(data);
-  const heading = text(data.heading, 'Built on Clarity — Built to Scale');
+  const heading = text(data.heading, SECTION_DEFAULTS.clarity.heading);
 
   return (
     <section id="clarity" className="clarity-section" aria-labelledby="clarity-heading">

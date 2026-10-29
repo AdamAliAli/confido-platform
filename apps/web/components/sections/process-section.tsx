@@ -1,30 +1,14 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
+
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 import { imageUrl, siteImage, text } from '@/lib/media-url';
 
-const PROCESS_STEPS = [
-  {
-    step: 'Step 1',
-    title: 'Discover',
-    description: 'We dive deep into your business, market, and gaps.',
-    image: '/images/Process-1.avif',
-  },
-  {
-    step: 'Step 2',
-    title: 'Define',
-    description: 'We build your positioning and strategic direction.',
-    image: '/images/Process-2.avif',
-  },
-  {
-    step: 'Step 3',
-    title: 'Design',
-    description: 'We translate strategy into a clear brand identity.',
-    image: '/images/Process-3.avif',
-  },
-] as const;
+const PROCESS_STEPS = SECTION_DEFAULTS.process.steps;
 
 export function ProcessSection({ data = {} }: { data?: Record<string, unknown> }) {
   const reducedMotion = useReducedMotion();
@@ -45,13 +29,13 @@ export function ProcessSection({ data = {} }: { data?: Record<string, unknown> }
         <div className="relative min-w-0 p-6 md:min-h-[900px] md:border-r md:border-white/[0.06] md:p-10">
           <div className="flex items-center gap-2 text-base font-medium tracking-[0.08em] md:text-lg">
             <span className="h-2 w-2 bg-mint" aria-hidden="true" />
-            {text(data.label, 'PROCESS')}
+            {text(data.label, SECTION_DEFAULTS.process.label)}
           </div>
 
           <div className="mt-16 md:sticky md:bottom-16 md:mt-[55vh] md:pb-16">
             <h2 id="process-heading" className="text-[44px] font-normal leading-[1.02] tracking-[-0.04em] md:text-[clamp(44px,3.7vw,72px)]">
-              <span className="block">{text(data.title, 'A Process Built')}</span>
-              <span className="ml-[8%] block text-mint">{text(data.accent, 'on Clarity')}</span>
+              <span className="block">{text(data.title, SECTION_DEFAULTS.process.title)}</span>
+              <span className="ml-[8%] block text-mint">{text(data.accent, SECTION_DEFAULTS.process.accent)}</span>
             </h2>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { PageHero } from '@/components/sections/page-hero';
@@ -21,7 +22,7 @@ export default async function About() {
       <AboutIntro id="how-we-think" />
       <ExpertiseList showHeader={false} />
       <div className="overflow-hidden bg-[#0b2420] px-6 py-16 md:px-0 md:py-0">
-        <ClarityMarquee text={text(blocks.clarity?.heading, 'Built on Clarity — Built to Scale')} />
+        <ClarityMarquee text={text(blocks.clarity?.heading, SECTION_DEFAULTS.clarity.heading)} />
       </div>
       <LocationSection data={blocks.location || {}} />
       <FAQSection data={blocks.faq || {}} />

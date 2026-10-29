@@ -1,5 +1,8 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
+
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
@@ -12,10 +15,10 @@ function text(value: unknown, fallback: string) {
 export function ContactSection({ data }: { data: Record<string, unknown> }) {
   const reducedMotion = useReducedMotion();
   const headingId = useId();
-  const title = text(data.title, 'Let’s Build Something');
-  const accent = text(data.accent, 'That Lasts');
-  const description = text(data.description, 'We work with a limited number of clients to ensure clarity, focus, and real impact.');
-  const email = text(data.email, 'hello@confido.studio');
+  const title = text(data.title, SECTION_DEFAULTS.contact.title);
+  const accent = text(data.accent, SECTION_DEFAULTS.contact.accent);
+  const description = text(data.description, SECTION_DEFAULTS.contact.description);
+  const email = text(data.email, SECTION_DEFAULTS.contact.email);
 
   return (
     <section

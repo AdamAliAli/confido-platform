@@ -8,7 +8,7 @@ const ts = require('typescript');
 function load(file, imports = {}, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, {
-    exports, ...globals, require: name => imports[name] || require(name),
+    exports, ...globals, require: name => imports[name] || (name === '@/lib/section-defaults' ? load('lib/section-defaults.ts') : name.startsWith('.') ? load(path.relative(path.join(__dirname, '..'), path.resolve(path.dirname(path.join(__dirname, '..', file)), name)) + '.ts') : require(name)),
   });
   return exports;
 }

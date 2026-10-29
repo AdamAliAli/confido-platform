@@ -1,10 +1,11 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
 import { text } from '@/lib/media-url';
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useRef, useState } from 'react';
-import { PROJECT_IMAGES } from './constants';
 
 type ActiveCell = { id: string; row: number; column: number; image: string };
 
@@ -79,7 +80,7 @@ export function HeroSection({ data }: { data: Record<string, any> }) {
   const galleryImages =
     Array.isArray(data.galleryImages) && data.galleryImages.length
       ? data.galleryImages
-      : PROJECT_IMAGES;
+      : SECTION_DEFAULTS.hero.galleryImages;
 
   return (
     <section id="hero" className="hero-shell">
@@ -89,7 +90,7 @@ export function HeroSection({ data }: { data: Record<string, any> }) {
       <div className="h-[54px]" aria-hidden="true" />
 
       <div className="hero-content">
-        <div className="hero-kicker"><span className="kicker-dot" />{text(data.eyebrow, 'Strategic brand consultancy')}<span className="kicker-index">V</span></div>
+        <div className="hero-kicker"><span className="kicker-dot" />{text(data.eyebrow, SECTION_DEFAULTS.hero.eyebrow)}<span className="kicker-index">V</span></div>
 
         <motion.div
           className="hero-lockup"
@@ -98,13 +99,13 @@ export function HeroSection({ data }: { data: Record<string, any> }) {
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="brands-row">
-            <h1>{text(data.title, 'Brands')}</h1>
+            <h1>{text(data.title, SECTION_DEFAULTS.hero.title)}</h1>
             <div className="hero-meta">
               <span>© 2026</span>
-              <p>{text(data.description, 'Confido helps businesses build clear positioning, strong direction, and scalable brand systems.')}</p>
+              <p>{text(data.description, SECTION_DEFAULTS.hero.description)}</p>
             </div>
           </div>
-          <h2><span>{text(data.accent, 'With')}</span> {text(data.subtitle, 'Direction')}</h2>
+          <h2><span>{text(data.accent, SECTION_DEFAULTS.hero.accent)}</span> {text(data.subtitle, SECTION_DEFAULTS.hero.subtitle)}</h2>
         </motion.div>
 
         <div className="scroll-cue"><i /><span>Scroll Down</span></div>

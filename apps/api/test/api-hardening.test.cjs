@@ -32,16 +32,17 @@ test('login DTO allows short passwords but enforces maximum lengths', async () =
   assert.ok((await check({ email: 'x'.repeat(255), password: 'short' })).length);
 });
 
-test('project validation rejects unsafe or missing links before writing', async () => {
+test('project validation allows optional links but rejects unsafe links and missing images before writing', async () => {
   let writes = 0;
   const service = new ContentService({ block: { update: async () => { writes++; } } });
-  for (const project of [null, {}, { href: 'http://example.com', image: 'https://example.com/a.jpg' }, { href: 'https://example.com', image: 'javascript:alert(1)' }]) {
+  for (const project of [null, {}, ...['http://example.com', 'javascript:alert(1)', '//example.com', 123, {}].map(href => ({ href, image: 'https://example.com/a.jpg' })), { href: 'https://example.com', image: 'javascript:alert(1)' }]) {
     assert.throws(() => service.update('a', { data: { projects: [project] } }), (error) => error.getStatus() === 400);
   }
   assert.equal(writes, 0);
   await service.update('a', { data: { projects: [{ href: 'https://example.com', image: 'https://example.com/a.jpg' }] } });
+  for (const href of [undefined, null, '']) await service.update('a', { data: { projects: [{ href, image: 'https://example.com/a.jpg' }] } });
   await service.update('a', { enabled: false });
-  assert.equal(writes, 2);
+  assert.equal(writes, 5);
 });
 
 test('login is limited per forwarded IP; other routes and error handling remain independent', async () => {

@@ -27,6 +27,7 @@ function setup({ touch = false, desktop = true } = {}) {
       };
       if (name === 'framer-motion') return { motion: {}, AnimatePresence: () => null };
       if (name === '@/lib/media-url') return {};
+      if (name === '@/lib/section-defaults') return { SECTION_DEFAULTS: { hero: { galleryImages: [] } } };
       if (name === './constants') return { PROJECT_IMAGES: [] };
       return require(name);
     },

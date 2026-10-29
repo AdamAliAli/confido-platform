@@ -7,7 +7,7 @@ const ts = require('typescript');
 
 function load(file, imports = {}) {
   const exports = {};
-  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, require: name => imports[name] || require(name) });
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, require: name => imports[name] || (name === '@/lib/section-defaults' ? load('lib/section-defaults.ts') : name.startsWith('.') ? load(path.relative(path.join(__dirname, '..'), path.resolve(path.dirname(path.join(__dirname, '..', file)), name)) + '.ts') : require(name)) });
   return exports;
 }
 const nodes = element => element == null || typeof element !== 'object' ? [] : Array.isArray(element) ? element.flatMap(nodes) : [element, ...nodes(element.props?.children)];

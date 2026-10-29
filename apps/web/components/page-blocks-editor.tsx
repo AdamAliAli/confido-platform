@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Reorder, useDragControls } from 'framer-motion';
 import { Eye, EyeOff, GripVertical } from 'lucide-react';
 import { adminFetch } from '@/lib/api';
-import { ADMIN_SCHEMA, moveItem } from '@/lib/admin-schema';
+import { ADMIN_SCHEMA, blockSaveData, editorSectionData, moveItem } from '@/lib/admin-schema';
 import { BlockForm } from './block-form';
 
 export type PageBlock = { id: string; type: string; position: number; enabled: boolean; data: Record<string, unknown> };
@@ -25,8 +25,10 @@ function BlockRow({ block, selected, dirty, disabled, onSelect, onToggle, onMove
 }
 
 export function PageBlocksEditor({ initialBlocks, pageId, token, active, onTeam }: { initialBlocks: PageBlock[]; pageId: string; token: string; active: boolean; onTeam: () => void }) {
-  const [blocks, setBlocks] = useState(initialBlocks);
-  const [saved, setSaved] = useState<Record<string, PageBlock>>(() => Object.fromEntries(initialBlocks.map(block => [block.id, block])));
+  const resolved = (block: PageBlock) => ({ ...block, data: editorSectionData(block.type, block.data || {}).data });
+  const [blocks, setBlocks] = useState(() => initialBlocks.map(resolved));
+  const [saved, setSaved] = useState<Record<string, PageBlock>>(() => Object.fromEntries(initialBlocks.map(block => [block.id, resolved(block)])));
+  const [showingDefaults, setShowingDefaults] = useState<Record<string, boolean>>(() => Object.fromEntries(initialBlocks.map(block => [block.id, editorSectionData(block.type, block.data || {}).showingDefaults])));
   const [savedOrder, setSavedOrder] = useState(initialBlocks.map(block => block.id));
   const [selectedId, setSelectedId] = useState(initialBlocks[0]?.id || '');
   const [statuses, setStatuses] = useState<Record<string, string>>({});
@@ -65,13 +67,14 @@ export function PageBlocksEditor({ initialBlocks, pageId, token, active, onTeam 
     saveLock.current = true; setSavingId(selected.id); setStatuses(current => ({ ...current, [selected.id]: 'Saving…' }));
     const sent = selected;
     try {
-      const response = await adminFetch(`/content/admin/blocks/${sent.id}`, token, { method: 'PATCH', body: JSON.stringify({ data: sent.data, enabled: sent.enabled }) });
+      const response = await adminFetch(`/content/admin/blocks/${sent.id}`, token, { method: 'PATCH', body: JSON.stringify({ data: blockSaveData(sent.type, sent.data), enabled: sent.enabled }) });
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(Array.isArray(error?.message) ? error.message.join(' ') : error?.message || `Request failed (${response.status})`);
       }
       const result: PageBlock = await response.json();
       setSaved(current => ({ ...current, [sent.id]: result }));
+      setShowingDefaults(current => ({ ...current, [sent.id]: false }));
       setBlocks(current => current.map(block => block.id === sent.id && sameContent(sent, block) ? { ...result, position: block.position } : block));
       setStatuses(current => ({ ...current, [sent.id]: 'Saved' }));
       setRevision(value => value + 1);
@@ -131,6 +134,7 @@ export function PageBlocksEditor({ initialBlocks, pageId, token, active, onTeam 
           <p role="status" className={`w-full break-words text-sm ${status.startsWith('Save failed') ? 'text-red-300' : selectedDirty ? 'text-mint' : 'text-zinc-400'}`}>{status}{uploads ? ' · Uploading…' : ''}</p>
         </div>
         <div className="p-5">
+          {showingDefaults[selected.id] && <p className="mb-5 text-sm text-zinc-400">Showing the current site content. Edit and press Save to store it.</p>}
           <BlockForm key={selected.id} type={selected.type} data={selected.data || {}} token={token} disabled={!!uploads} onUploadChange={uploadChange} onChange={data => edit({ ...selected, data })} />
           {selected.type === 'team' && <div className="mt-6 rounded-lg border border-white/10 p-4"><p className="mb-3 text-sm text-zinc-400">Edit people in the Team tab</p><button type="button" className={buttonStyle} disabled={!!uploads} onClick={onTeam}>Open Team tab</button></div>}
         </div>

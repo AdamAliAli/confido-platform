@@ -67,10 +67,10 @@ export class ContentService {
       for (const project of dto.data.projects) {
         if (
           !project || typeof project !== 'object' ||
-          typeof project.href !== 'string' || !project.href.startsWith('https://') ||
+          (project.href != null && project.href !== '' && (typeof project.href !== 'string' || !project.href.startsWith('https://'))) ||
           typeof project.image !== 'string' || !project.image.startsWith('https://')
         ) {
-          throw new BadRequestException('Every project href and image must start with https://');
+          throw new BadRequestException('Every project image and any nonempty href must start with https://');
         }
       }
     }

@@ -1,17 +1,15 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
+
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { PROJECT_IMAGES } from './constants';
 import { imageUrl, safeHref, siteImage } from '@/lib/media-url';
 
 type Project = { title: string; category: string; image: string; year?: string; href?: string };
 
-const FALLBACK_PROJECTS: Project[] = [
-  { title: 'Mathew Company Branding', category: 'Art Direction', image: PROJECT_IMAGES[0], year: '2023' },
-  { title: 'Hilltodo Agency Branding', category: 'Marketing', image: PROJECT_IMAGES[1], year: '2023' },
-  { title: 'Krea Klock Branding', category: 'Branding', image: PROJECT_IMAGES[2], year: '2023' },
-];
+const FALLBACK_PROJECTS: Project[] = SECTION_DEFAULTS.projects.projects;
 
 function projectImage(value: any): string | undefined {
   const candidate = [value?.image, value?.imageUrl, value?.cover, value?.thumbnail, value?.coverImage, value?.galleryImages?.[0]]

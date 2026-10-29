@@ -1,5 +1,8 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
+
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -47,7 +50,7 @@ function MemberPortrait({ member }: { member: TeamMember }) {
   );
 }
 
-export function TeamSlider({ members, label = 'TEAM MEMBERS' }: { members: TeamMember[]; label?: string }) {
+export function TeamSlider({ members, label = SECTION_DEFAULTS.team.label }: { members: TeamMember[]; label?: string }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const reducedMotion = useReducedMotion();

@@ -1,3 +1,4 @@
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { PageHero } from '@/components/sections/page-hero';
@@ -20,7 +21,7 @@ export default async function Services() {
       <PageHero label="OUR EXPERTISE" line1="Strategic" accent="Brand" rest="Expertise" scrollTarget="#what-we-do" fitSecondLine />
       <ExpertiseList label="OUR EXPERTISE" title="What We Do" accent="Why It Matters" />
       <div className="overflow-hidden bg-[#0b2420] px-6 py-16 md:px-0 md:py-0">
-        <ClarityMarquee text={text(blocks.clarity?.heading, 'Built on Clarity — Built to Scale')} />
+        <ClarityMarquee text={text(blocks.clarity?.heading, SECTION_DEFAULTS.clarity.heading)} />
       </div>
       <PricingSection />
       <ProcessSection data={blocks.process || {}} />

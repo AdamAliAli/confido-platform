@@ -1,5 +1,8 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
+
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useState } from 'react';
 
@@ -51,13 +54,11 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 }
 
 export function ServicesSection({ data }: { data: Record<string, any> }) {
-  const fallback: Service[] = [
-    { title: 'Strategy', description: 'Clarity before complexity.', icon: '✳' },
-    { title: 'Positioning', description: 'Stand for something, or disappear.', icon: '✎' },
-    { title: 'Systems', description: 'Built to scale, built to last.', icon: '◇' },
-  ];
-  const services: Service[] = Array.isArray(data.services) && data.services.length
-    ? data.services.slice(0, 3).map((item: any, index: number) => ({
+  const icons = ['✳', '✎', '◇'];
+  const fallback: Service[] = SECTION_DEFAULTS.services.services.map((service, index) => ({ ...service, icon: icons[index] }));
+  const supplied = Array.isArray(data.services) && data.services.length ? data.services : data.items;
+  const services: Service[] = Array.isArray(supplied) && supplied.length
+    ? supplied.slice(0, 3).map((item: any, index: number) => ({
         title: typeof item?.title === 'string' ? item.title : fallback[index].title,
         description: typeof item?.description === 'string' ? item.description : fallback[index].description,
         icon: fallback[index].icon,

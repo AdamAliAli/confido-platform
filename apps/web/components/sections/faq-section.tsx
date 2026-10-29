@@ -1,5 +1,7 @@
 'use client';
 
+import { SECTION_DEFAULTS } from '@/lib/section-defaults';
+
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useId, useState } from 'react';
 import { FAQS } from './faq-data';
@@ -22,14 +24,14 @@ export function FAQSection({ data = {} }: { data?: Record<string, unknown> }) {
         <div className="min-w-0 px-6 py-8 md:border-r md:border-white/[0.06] md:px-16 md:py-10">
           <div className="flex items-center gap-2 text-base font-medium tracking-[0.08em] md:text-lg">
             <span className="h-2 w-2 bg-mint" aria-hidden="true" />
-            {text(data.label, 'FAQ')}
+            {text(data.label, SECTION_DEFAULTS.faq.label)}
           </div>
           <h2
             id={`${sectionId}-heading`}
             className="mt-6 break-words text-[40px] font-normal leading-tight tracking-[-0.04em] md:text-[56px]"
           >
-            <span className="block">{text(data.title, 'Frequently')}</span>
-            <span className="block font-semibold text-mint">{text(data.accent, 'Asked Questions')}</span>
+            <span className="block">{text(data.title, SECTION_DEFAULTS.faq.title)}</span>
+            <span className="block font-semibold text-mint">{text(data.accent, SECTION_DEFAULTS.faq.accent)}</span>
           </h2>
         </div>
 

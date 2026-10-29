@@ -10,8 +10,8 @@ function load(relative, options = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, {
     exports, URL, require(name) {
-      if (name === 'react') return { useState: value => [options.open && value === null ? 0 : value, () => {}], useRef: () => ({ current: null }), useId: () => 'test-section' };
-      if (name === 'framer-motion') return { motion: new Proxy({}, { get: (_, tag) => `motion.${tag}` }), AnimatePresence: ({ children }) => children, useReducedMotion: () => true };
+      if (name === 'react') return { useCallback: fn => fn, useState: value => [options.open && value === null ? 0 : value, () => {}], useRef: () => ({ current: null }), useId: () => 'test-section' };
+      if (name === 'framer-motion') return { useMotionValue: () => 0, useSpring: value => value, useScroll: () => ({ scrollYProgress: 0 }), useTransform: () => 0, motion: new Proxy({}, { get: (_, tag) => `motion.${tag}` }), AnimatePresence: ({ children }) => children, useReducedMotion: () => true };
       if (name === 'next/image') return { __esModule: true, default: 'Image' };
       if (name === 'lucide-react') return { ChevronLeft: 'icon', ChevronRight: 'icon' };
       if (name === '@/lib/api' || name === './api') return {};
@@ -34,6 +34,29 @@ function nodes(element) {
   return [element, ...nodes(element.props?.children)];
 }
 const allText = tree => nodes(tree).filter(n => typeof n === 'string').join(' ');
+
+test('empty editor blocks resolve to exactly the public fallback text and images for all nine sections', () => {
+  const { editorSectionData, ADMIN_SCHEMA } = load('lib/admin-schema.ts');
+  for (const type of Object.keys(ADMIN_SCHEMA)) {
+    const exports = load(`components/sections/${type}-section.tsx`, { open: true });
+    const Component = exports[type === 'faq' ? 'FAQSection' : `${type[0].toUpperCase()}${type.slice(1)}Section`];
+    const members = [{ id: 'a', name: 'Ada', role: 'Designer', photoUrl: 'https://example.com/a.jpg' }];
+    const live = Component({ data: {}, members });
+    const filled = Component({ data: editorSectionData(type, {}).data, members });
+    assert.equal(allText(filled), allText(live), type);
+    const images = tree => nodes(tree).filter(node => node?.props?.src || node?.props?.style?.backgroundImage).map(node => ({ src: node.props.src, background: node.props.style?.backgroundImage }));
+    assert.equal(JSON.stringify(images(filled)), JSON.stringify(images(live)), type);
+  }
+});
+
+test('services prefer canonical data, then legacy items, then shared defaults', () => {
+  const { ServicesSection } = load('components/sections/services-section.tsx');
+  const legacy = [{ title: 'Legacy service', description: 'Keep this saved content' }];
+  assert.match(allText(ServicesSection({ data: { services: [], items: legacy } })), /Legacy service/);
+  const canonical = allText(ServicesSection({ data: { services: [{ title: 'Canonical', description: 'Canonical copy' }], items: legacy } }));
+  assert.match(canonical, /Canonical/); assert.doesNotMatch(canonical, /Legacy service/);
+  assert.match(allText(ServicesSection({ data: {} })), /Clarity before complexity/);
+});
 
 test('new section blocks render current fallbacks for empty or blank data', () => {
   const location = load('components/sections/location-section.tsx').LocationSection({ data: { label: '', photos: [], city: '' } });

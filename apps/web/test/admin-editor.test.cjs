@@ -10,7 +10,7 @@ function load(file, imports = {}, extra = {}) {
   const source = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
   vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText + (file.endsWith('block-form.tsx') ? '\nexports.ListField = ListField; exports.ImageField = ImageField;' : ''), {
     exports, window: { confirm: () => true }, ...extra,
-    require: name => imports[name] || require(name),
+    require: name => imports[name] || (name === '@/lib/section-defaults' ? load('lib/section-defaults.ts') : name.startsWith('.') ? load(path.relative(path.join(__dirname, '..'), path.resolve(path.dirname(path.join(__dirname, '..', file)), name)) + '.ts') : require(name)),
   });
   return exports;
 }
@@ -74,7 +74,7 @@ test('image upload requests the site folder and fills the URL field', async () =
   assert.equal(value, 'https://res.cloudinary.com/test/image/upload/test.webp');
 });
 
-function editorHarness(adminFetch, wide = false) {
+function editorHarness(adminFetch, wide = false, initialData = {}) {
   const hooks = [], listeners = new Map();
   let index = 0, effects = [];
   const react = {
@@ -87,9 +87,63 @@ function editorHarness(adminFetch, wide = false) {
   const { PageBlocksEditor } = load('components/page-blocks-editor.tsx', {
     react, 'framer-motion': { Reorder: { Group: 'reorder-group', Item: 'reorder-item' } }, 'lucide-react': {}, '@/lib/api': { adminFetch }, '@/lib/admin-schema': schema, './block-form': { BlockForm },
   }, { window: { matchMedia: () => ({ matches: wide, addEventListener() {}, removeEventListener() {} }), addEventListener: (key, fn) => listeners.set(key, fn), removeEventListener: (key, fn) => { if (listeners.get(key) === fn) listeners.delete(key); } } });
-  const blocks = Object.keys(schema.ADMIN_SCHEMA).map((type, position) => ({ id: type, type, position, enabled: true, data: {} }));
+  const blocks = Object.keys(schema.ADMIN_SCHEMA).map((type, position) => ({ id: type, type, position, enabled: true, data: initialData[type] || {} }));
   return { listeners, render() { index = 0; effects = []; const tree = PageBlocksEditor({ initialBlocks: blocks, pageId: 'home', token: 'test-token', active: true, onTeam() {} }); children(tree).find(node => node.type === 'form').props.ref.current = { reportValidity: () => true }; effects.forEach(fn => fn()); return tree; }, form: tree => children(tree).find(node => node.type === BlockForm) };
 }
+
+test('empty blocks load site defaults as clean baselines and Save stores all schema fields', async () => {
+  const calls = [];
+  const harness = editorHarness(async (url, token, init) => {
+    const body = JSON.parse(init.body); const type = url.split('/').pop(); calls.push({ type, ...body });
+    return { ok: true, json: async () => ({ id: type, type, position: 0, ...body }) };
+  });
+  for (const type of Object.keys(schema.ADMIN_SCHEMA)) {
+    let tree = harness.render();
+    children(tree).find(node => node.props.block?.id === type).props.onSelect(); tree = harness.render();
+    const expected = schema.editorSectionData(type, {}).data;
+    assert.equal(JSON.stringify(harness.form(tree).props.data), JSON.stringify(expected));
+    assert.equal(button(tree, 'Discard changes').props.disabled, true);
+    assert.equal(harness.listeners.has('beforeunload'), false);
+    assert.ok(children(tree).some(node => node.props.children === 'Showing the current site content. Edit and press Save to store it.'));
+    children(tree).find(node => node.type === 'form').props.onSubmit({ preventDefault() {} }); await tick(); tree = harness.render();
+    assert.equal(JSON.stringify(calls.at(-1).data), JSON.stringify(expected));
+    for (const field of schema.ADMIN_SCHEMA[type].fields) assert.ok(field.key in calls.at(-1).data);
+    assert.equal(button(tree, 'Discard changes').props.disabled, true);
+    assert.equal(children(tree).some(node => node.props.children === 'Showing the current site content. Edit and press Save to store it.'), false);
+  }
+});
+
+test('legacy services remain saved content and Save migrates items without losing edits', async () => {
+  let stored;
+  const items = [{ title: 'Saved service', description: 'Saved description' }];
+  const harness = editorHarness(async (url, token, init) => {
+    stored = JSON.parse(init.body).data;
+    return { ok: true, json: async () => ({ id: 'services', type: 'services', enabled: true, position: 1, data: stored }) };
+  }, false, { services: { services: [], items } });
+  let tree = harness.render(); children(tree).find(node => node.props.block?.id === 'services').props.onSelect(); tree = harness.render();
+  assert.equal(JSON.stringify(harness.form(tree).props.data.services), JSON.stringify(items));
+  assert.equal(button(tree, 'Discard changes').props.disabled, true);
+  assert.equal(harness.listeners.has('beforeunload'), false);
+  children(tree).find(node => node.type === 'form').props.onSubmit({ preventDefault() {} }); await tick(); tree = harness.render();
+  assert.equal(JSON.stringify(stored.services), JSON.stringify(items)); assert.equal('items' in stored, false);
+  assert.equal(button(tree, 'Discard changes').props.disabled, true);
+});
+
+test('default filling preserves saved fields, fills nested blanks and never mutates shared content', () => {
+  const saved = { heading: 'Custom heading', metrics: [{ label: 'Custom metric', value: 0, image: '' }] };
+  const resolved = schema.editorSectionData('clarity', saved);
+  assert.equal(resolved.data.heading, 'Custom heading');
+  assert.equal(resolved.data.metrics[0].label, 'Custom metric');
+  assert.equal(resolved.data.metrics[0].value, 0);
+  assert.match(resolved.data.metrics[0].image, /^https:\/\//);
+  assert.equal(saved.metrics[0].image, '');
+  const defaults = schema.editorSectionData('process', {}).data;
+  defaults.steps[0].title = 'Draft only';
+  assert.equal(schema.editorSectionData('process', {}).data.steps[0].title, 'Discover');
+  const gallery = { title: 'Saved hero', galleryImages: ['https://example.com/saved.jpg'] };
+  assert.equal(JSON.stringify(schema.editorSectionData('hero', gallery).data.galleryImages), JSON.stringify(gallery.galleryImages));
+  assert.equal(JSON.stringify(schema.editorSectionData('unknown', { custom: 'Saved' }).data), JSON.stringify({ custom: 'Saved' }));
+});
 
 test('save race preserves newer drafts; discard restores last saved content; shortcut and warnings track dirtiness', async () => {
   let release, sent;
