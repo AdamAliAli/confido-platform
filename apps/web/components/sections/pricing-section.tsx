@@ -35,7 +35,7 @@ export function PricingSection() {
               </li>
             ))}
           </ul>
-          <a href="/#contact" className="group mt-10 inline-flex h-9 max-w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-4 focus-visible:ring-offset-[#06100e] md:mt-14 md:h-16 md:w-[354px]">
+          <a href="/contact?interest=Social%20Media%20Management" className="group mt-10 inline-flex h-9 max-w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-4 focus-visible:ring-offset-[#06100e] md:mt-14 md:h-16 md:w-[354px]">
             <span className="flex w-[155px] items-center justify-center bg-mint px-2 text-center text-[13px] text-[#070908] md:min-w-0 md:w-[290px] md:flex-1 md:text-[20px]">{PRICING.cta}</span>
             <span className="flex w-9 shrink-0 items-center justify-center bg-[#d9eee9] text-[#070908] md:w-16" aria-hidden="true">
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none md:h-5 md:w-5" />

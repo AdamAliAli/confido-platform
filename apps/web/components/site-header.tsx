@@ -23,7 +23,7 @@ const MENU_ITEMS = [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Projects', href: '/#projects' },
   { label: 'Services', href: '/services' },
-  { label: 'Contact', href: '/#contact' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 function MenuPanel({ onClose }: { onClose: () => void }) {
@@ -99,8 +99,8 @@ export function SiteHeader() {
           <span className="nav-divider" />
           <span className="nav-label">Consultancy</span>
         </div>
-        <a className="book-link" href="/#contact"><span>Book a Call</span></a>
-        <a className="book-arrow" href="/#contact" aria-label="Book a Call">→</a>
+        <a className="book-link" href="/contact"><span>Book a Call</span></a>
+        <a className="book-arrow" href="/contact" aria-label="Book a Call">→</a>
       </header>
       <AnimatePresence>{menuOpen && <MenuPanel onClose={() => setMenuOpen(false)} />}</AnimatePresence>
     </div>

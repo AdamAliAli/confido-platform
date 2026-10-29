@@ -5,6 +5,8 @@ import { API, adminFetch } from '@/lib/api';
 import { PageBlocksEditor } from '@/components/page-blocks-editor';
 import { TeamAdmin } from '@/components/team-admin';
 import { SubscribersAdmin } from '@/components/subscribers-admin';
+import { MessagesAdmin } from '@/components/messages-admin';
+import type { Inquiry } from '@/lib/inquiries';
 
 type Block = {
   id: string;
@@ -20,7 +22,9 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [pageId, setPageId] = useState('');
   const [blocks, setBlocks] = useState<Block[]>([]);
-  const [view, setView] = useState<'blocks' | 'team' | 'subscribers'>('blocks');
+  const [view, setView] = useState<'blocks' | 'team' | 'subscribers' | 'messages'>('blocks');
+
+  const [unreadCount, setUnreadCount] = useState<number | null>(null);
 
   const [loginError, setLoginError] = useState('');
   const [orderStatus, setOrderStatus] = useState('');
@@ -72,6 +76,19 @@ export default function Admin() {
     if (savedToken) load(savedToken).catch(() => setOrderStatus('Failed to load pages'));
   }, []);
 
+  useEffect(() => {
+    if (!token) { setUnreadCount(null); return; }
+    if (view === 'messages') return;
+    const controller = new AbortController();
+    adminFetch('/inquiries', token, { signal: controller.signal })
+      .then(async response => {
+        if (!response.ok) return;
+        const messages: Inquiry[] = await response.json();
+        if (!controller.signal.aborted) setUnreadCount(messages.filter(message => !message.read).length);
+      }).catch(() => {});
+    return () => controller.abort();
+  }, [token, view]);
+
   if (!token) {
     return (
       <main className="grid min-h-screen place-items-center bg-zinc-950 p-6">
@@ -89,11 +106,12 @@ export default function Admin() {
   return (
     <main className="min-h-screen bg-zinc-950 p-4 md:p-6">
       <header className="mb-6 grid items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
-        <div><p className="text-sm text-mint">Confido CMS</p><h1 className="text-lg font-medium">{view === 'blocks' ? 'Page blocks' : view === 'team' ? 'Team members' : 'Subscribers'}</h1></div>
+        <div><p className="text-sm text-mint">Confido CMS</p><h1 className="text-lg font-medium">{view === 'blocks' ? 'Page blocks' : view === 'team' ? 'Team members' : view === 'subscribers' ? 'Subscribers' : 'Messages'}</h1></div>
         <nav aria-label="Admin tabs" className="flex flex-wrap gap-2">
           <button onClick={() => setView('blocks')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'blocks' ? 'bg-white text-black' : 'border border-white/10'}`}>Page blocks</button>
           <button onClick={() => setView('team')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'team' ? 'bg-white text-black' : 'border border-white/10'}`}>Team</button>
           <button onClick={() => setView('subscribers')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'subscribers' ? 'bg-white text-black' : 'border border-white/10'}`}>Subscribers</button>
+          <button onClick={() => setView('messages')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'messages' ? 'bg-white text-black' : 'border border-white/10'}`}>Messages{unreadCount !== null && ` (${unreadCount})`}</button>
         </nav>
         <div className="flex gap-2 lg:justify-end"><a href="/" target="_blank" rel="noreferrer" className="inline-flex h-10 items-center rounded-lg border border-white/10 px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint">View site ↗</a><button onClick={logout} className="h-10 rounded-lg border border-white/10 px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint">Log out</button></div>
       </header>
@@ -101,6 +119,7 @@ export default function Admin() {
       <div hidden={view !== 'blocks'}><PageBlocksEditor key={pageId} pageId={pageId} token={token} initialBlocks={blocks} active={view === 'blocks'} onTeam={() => setView('team')} /></div>
       {view === 'team' && <TeamAdmin token={token} />}
       {view === 'subscribers' && <SubscribersAdmin token={token} />}
+      {view === 'messages' && <MessagesAdmin token={token} onUnreadChange={setUnreadCount} />}
     </main>
   );
 }

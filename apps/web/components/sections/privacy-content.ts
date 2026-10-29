@@ -1,7 +1,7 @@
 export type PolicySection = { heading: string; paragraphs: string[]; bullets?: string[] };
 
 // Update this date whenever you revise the policy below.
-export const LAST_UPDATED = '22nd October 2026';
+export const LAST_UPDATED = '29th October 2026';
 
 // Introductory text appears before the numbered content sections, without a heading.
 export const POLICY_INTRO = 'At Confido SDN BHD, Malaysia, we value your privacy. This policy explains how we collect, use and protect your personal data in line with Malaysia’s Personal Data Protection Act 2010 (PDPA).';
@@ -12,7 +12,7 @@ export const POLICY_SECTIONS: PolicySection[] = [
   {
     heading: 'Information We Collect',
     paragraphs: [
-      'We collect details you choose to send us by email, such as your name, email address, company and project details. If you subscribe to our newsletter, we collect your email address.',
+      'We collect details you choose to send us by email, such as your name, email address, company and project details. Our contact form collects your email, optional phone number, the service you are interested in and your project details, used only to reply to you. If you subscribe to our newsletter, we collect your email address.',
       'We also keep basic server logs, including IP addresses, browser information and pages requested, for security. We do not collect sensitive personal data.',
     ],
   },
