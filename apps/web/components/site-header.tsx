@@ -2,6 +2,8 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { House, Newspaper, Tag, AppWindow, BriefcaseBusiness, MessageCircleMore } from 'lucide-react';
 
 function ConfidoLogo() {
   return (
@@ -18,15 +20,23 @@ function ConfidoLogo() {
 }
 
 const MENU_ITEMS = [
-  { label: 'Home', href: '/' },
-  { label: 'About Us', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Projects', href: '/#projects' },
-  { label: 'Services', href: '/services' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Home', href: '/', icon: House },
+  { label: 'About Us', href: '/about', icon: Newspaper },
+  { label: 'Pricing', href: '/pricing', icon: Tag },
+  { label: 'Projects', href: '/#projects', icon: AppWindow },
+  { label: 'Services', href: '/services', icon: BriefcaseBusiness },
+  { label: 'Contact', href: '/contact', icon: MessageCircleMore },
 ];
 
 function MenuPanel({ onClose }: { onClose: () => void }) {
+  const pathname = usePathname();
+  const [hash, setHash] = useState('');
+  useEffect(() => {
+    const syncHash = () => setHash(window.location.hash);
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+    return () => window.removeEventListener('hashchange', syncHash);
+  }, []);
   return (
     <>
       <motion.button
@@ -46,12 +56,13 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
       >
         <div className="menu-heading"><i />MENU</div>
         <nav className="menu-links" aria-label="Main navigation">
-          {MENU_ITEMS.map((item) => (
-            <a key={item.label} href={item.href} onClick={onClose}>
-              <span className="menu-icon" aria-hidden="true" />
+          {MENU_ITEMS.map((item) => {
+            const current = item.href === '/#projects' ? pathname === '/' && hash === '#projects' : pathname === item.href && !(item.href === '/' && hash === '#projects');
+            return <a key={item.label} href={item.href} onClick={onClose} aria-current={current ? item.href.includes('#') ? 'location' : 'page' : undefined}>
+              <item.icon className="menu-icon" size={24} strokeWidth={1.5} aria-hidden="true" />
               <span>{item.label}</span>
-            </a>
-          ))}
+            </a>;
+          })}
         </nav>
         <div className="menu-cta">
           <p>Let’s Build<br /><strong>With Confido</strong></p>
