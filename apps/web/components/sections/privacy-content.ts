@@ -1,7 +1,7 @@
 export type PolicySection = { heading: string; paragraphs: string[]; bullets?: string[] };
 
 // Update this date whenever you revise the policy below.
-export const LAST_UPDATED = '29th October 2026';
+export const LAST_UPDATED = '30th October 2026';
 
 // Introductory text appears before the numbered content sections, without a heading.
 export const POLICY_INTRO = 'At Confido SDN BHD, Malaysia, we value your privacy. This policy explains how we collect, use and protect your personal data in line with Malaysia’s Personal Data Protection Act 2010 (PDPA).';
@@ -34,11 +34,11 @@ export const POLICY_SECTIONS: PolicySection[] = [
   },
   {
     heading: 'Your Rights and Choices',
-    paragraphs: ['You can access, correct or delete your personal data, withdraw consent and unsubscribe at any time by emailing admin@confido-agency.com.'],
+    paragraphs: ['You can access, correct or delete your personal data, withdraw consent and unsubscribe at any time by emailing info@confido-agency.com.'],
     bullets: ['Access, update, or delete your data', 'Unsubscribe from emails anytime', 'Full transparency and control'],
   },
   {
     heading: 'Changes to This Policy',
-    paragraphs: ['We will post updates on this page and change the date above. If you have questions about this policy, contact admin@confido-agency.com.'],
+    paragraphs: ['We will post updates on this page and change the date above. If you have questions about this policy, contact info@confido-agency.com.'],
   },
 ];

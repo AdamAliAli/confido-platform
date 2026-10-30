@@ -11,7 +11,7 @@ import { ContactSection } from '@/components/sections/contact-section';
 import { getHomeBlocks } from '@/lib/api';
 import { text } from '@/lib/media-url';
 
-export const metadata = { title: 'Services — Confido' };
+export const metadata = { title: 'Services', description: 'Brand strategy, positioning and scalable brand systems built around clarity and direction.' };
 
 export default async function Services() {
   const blocks = await getHomeBlocks();

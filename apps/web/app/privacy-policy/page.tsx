@@ -6,9 +6,9 @@ import { PageHero } from '@/components/sections/page-hero';
 import { LAST_UPDATED, POLICY_INTRO, POLICY_SECTIONS } from '@/components/sections/privacy-content';
 import { getPage } from '@/lib/api';
 
-export const metadata = { title: 'Privacy Policy — Confido' };
+export const metadata = { title: 'Privacy Policy', description: 'Learn how Confido collects, uses and protects your personal data under Malaysia’s PDPA.' };
 
-const EMAIL = 'admin@confido-agency.com';
+const EMAIL = 'info@confido-agency.com';
 
 function PolicyText({ value }: { value: string }) {
   const parts = value.split(EMAIL);

@@ -71,5 +71,5 @@ export const SECTION_DEFAULTS = {
     answer: 'We don’t start with design. We start with clarity — and build everything on top of it.',
   },
 ] },
-  contact: { title: 'Let’s Build Something', accent: 'That Lasts', description: 'We work with a limited number of clients to ensure clarity, focus, and real impact.', email: 'hello@confido.studio' },
+  contact: { title: 'Let’s Build Something', accent: 'That Lasts', description: 'We work with a limited number of clients to ensure clarity, focus, and real impact.', email: 'info@confido-agency.com' },
 };

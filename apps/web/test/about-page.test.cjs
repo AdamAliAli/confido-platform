@@ -16,7 +16,7 @@ test('About page renders the requested order and reuses homepage data or default
   for (const blocks of [{}, { clarity: { heading: 'Custom heading' }, location: { city: 'Custom city' }, faq: { faqs: [] }, contact: { title: 'Custom contact' } }]) {
     const imports = new Proxy({ '@/lib/api': { getHomeBlocks: async () => blocks }, '@/lib/media-url': { text: (value, fallback) => value || fallback } }, { get(target, name) { if (name in target) return target[name]; if (name.startsWith('@/components/')) return new Proxy({}, { get: (_, key) => key }); } });
     const page = load('app/about/page.tsx', imports);
-    assert.equal(page.metadata.title, 'About Us — Confido');
+    assert.equal(page.metadata.title, 'About Us');
     const result = await page.default();
     const children = result.props.children;
     assert.deepEqual(Array.from(children, child => child.type), ['SiteHeader', 'PageHero', 'AboutIntro', 'ExpertiseList', 'div', 'LocationSection', 'FAQSection', 'ContactSection', 'SiteFooter']);

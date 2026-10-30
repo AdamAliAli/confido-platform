@@ -16,7 +16,7 @@ test('contact page uses shared blocks, requested section order and only valid qu
   const blocks = { faq: { faqs: [] }, contact: { title: 'Contact heading' } };
   const imports = new Proxy({ '@/lib/api': { getHomeBlocks: async () => blocks }, '@/lib/inquiries': inquiryLib }, { get(target, name) { if (name in target) return target[name]; if (name.startsWith('@/components/')) return new Proxy({}, { get: (_, key) => key }); } });
   const page = load('app/contact/page.tsx', imports);
-  assert.equal(page.metadata.title, 'Contact — Confido');
+  assert.equal(page.metadata.title, 'Contact');
   for (const interest of ['Social Media Management', 'wrong', ['Brand Strategy']]) {
     const result = await page.default({ searchParams: Promise.resolve({ interest }) });
     const children = result.props.children;

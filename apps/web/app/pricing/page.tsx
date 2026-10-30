@@ -5,7 +5,7 @@ import { PricingSection } from '@/components/sections/pricing-section';
 import { ContactSection } from '@/components/sections/contact-section';
 import { getPage } from '@/lib/api';
 
-export const metadata = { title: 'Pricing — Confido' };
+export const metadata = { title: 'Pricing', description: 'Explore Confido’s social media management pricing and book a free consultation.' };
 
 export default async function Pricing() {
   const page = await getPage();

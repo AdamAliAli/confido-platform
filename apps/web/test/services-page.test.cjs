@@ -43,7 +43,7 @@ test('services page has the requested order, hero and shared section content', a
       '@/lib/media-url': { text: (value, fallback) => typeof value === 'string' && value.trim() ? value : fallback },
     }, { get(target, name) { if (name in target) return target[name]; if (name.startsWith('@/components/')) return new Proxy({}, { get: (_, key) => key }); } });
     const page = load('app/services/page.tsx', imports);
-    assert.equal(page.metadata.title, 'Services — Confido');
+    assert.equal(page.metadata.title, 'Services');
     const result = await page.default();
     const children = result.props.children;
     assert.deepEqual(Array.from(children, child => child.type), ['SiteHeader', 'PageHero', 'ExpertiseList', 'div', 'PricingSection', 'ProcessSection', 'FAQSection', 'ContactSection', 'SiteFooter']);
