@@ -14,12 +14,12 @@ function load(file, imports = {}, globals = {}) {
 }
 const nodes = element => element == null || typeof element !== 'object' ? [] : Array.isArray(element) ? element.flatMap(nodes) : [element, ...nodes(element.props?.children)];
 
-test('shared home blocks use enabled data, no-store fetch, and safe API-down defaults', async () => {
+test('shared home blocks use enabled data, tagged five-minute fetch, and safe API-down defaults', async () => {
   let calls = 0;
   const api = load('lib/api.ts', {}, {
     process: { env: { NEXT_PUBLIC_API_URL: 'http://test-api/api' } },
     fetch: async (url, init) => {
-      calls++; assert.equal(url, 'http://test-api/api/content/public/home'); assert.equal(init.cache, 'no-store');
+      calls++; assert.equal(url, 'http://test-api/api/content/public/home'); assert.equal(JSON.stringify(init.next), JSON.stringify({ revalidate: 300, tags: ['content'] }));
       return { ok: true, json: async () => ({ blocks: [
         { type: 'clarity', enabled: true, data: { heading: 'Custom heading' } },
         { type: 'contact', enabled: false, data: { email: 'hidden@example.com' } },

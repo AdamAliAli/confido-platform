@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import Image from 'next/image';
 import { API } from '@/lib/api';
 import { INQUIRY_INTERESTS } from '@/lib/inquiries';
@@ -19,6 +19,11 @@ export function ContactForm({ initialInterest = '' }: { initialInterest?: string
   const [error, setError] = useState('');
   const [invalid, setInvalid] = useState<Record<string, boolean>>({});
   const validity = (field: string, value: boolean) => setInvalid(current => ({ ...current, [field]: value }));
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('interest');
+    if (INQUIRY_INTERESTS.some(value => value === requested)) setInterest(requested!);
+  }, []);
 
   async function send() {
     if (pending) return;

@@ -11,19 +11,19 @@ function elements(node) {
   const children = node.props?.children;
   return [node, ...(Array.isArray(children) ? children.flat(Infinity) : [children]).flatMap(elements)];
 }
-function harness(fetch, initialInterest = '') {
-  const state = []; let index = 0; const exports = {};
+function harness(fetch, initialInterest = '', search = '') {
+  const state = []; let index = 0; const exports = {}; const effects = []; let effectUsed = false;
   const source = fs.readFileSync(path.join(__dirname, '../components/sections/contact-form.tsx'), 'utf8');
   vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, {
-    exports, fetch, require(name) {
-      if (name === 'react') return { useId: () => 'contact', useState(initial) { const key = index++; if (!(key in state)) state[key] = initial; return [state[key], value => { state[key] = typeof value === 'function' ? value(state[key]) : value; }]; } };
+    exports, fetch, URLSearchParams, window: { location: { search } }, require(name) {
+      if (name === 'react') return { useEffect(fn) { if (!effectUsed) { effectUsed = true; effects.push(fn); } }, useId: () => 'contact', useState(initial) { const key = index++; if (!(key in state)) state[key] = initial; return [state[key], value => { state[key] = typeof value === 'function' ? value(state[key]) : value; }]; } };
       if (name === '@/lib/api') return { API: 'http://test-api/api' };
       if (name === '@/lib/inquiries') return { INQUIRY_INTERESTS: interests };
       if (name === 'next/image') return { default: 'image' };
       return require(name);
     },
   });
-  const render = () => { index = 0; return exports.ContactForm({ initialInterest }); };
+  const render = () => { index = 0; const tree = exports.ContactForm({ initialInterest }); while (effects.length) effects.shift()(); return tree; };
   const field = name => elements(render()).find(node => node.props?.name === name);
   const change = (name, value) => field(name).props.onChange({ target: { value } });
   const submit = () => elements(render()).find(node => node.type === 'form').props.onSubmit({ preventDefault() {} });
@@ -62,4 +62,11 @@ test('failed submission preserves fields and invalid query interest is ignored',
   assert.equal(form.field('email').props.value, 'person@example.com');
   assert.match(elements(form.render()).find(node => node.props?.role === 'alert').props.children, /minute/);
   assert.equal(elements(form.render()).find(node => node.type === 'button').props.disabled, false);
+});
+
+ test('cached contact form preselects only valid browser query interests after hydration', () => {
+  for (const [search, expected] of [['?interest=Social%20Media%20Management', interests[0]], ['?interest=wrong', ''], ['', '']]) {
+    const form = harness(async () => ({}), '', search); form.render();
+    assert.equal(form.field('interest').props.value, expected);
+  }
 });

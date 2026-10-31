@@ -12,17 +12,17 @@ function load(file, imports = {}, globals = {}) {
 const nodes = element => element == null || typeof element !== 'object' ? [] : Array.isArray(element) ? element.flatMap(nodes) : [element, ...nodes(element.props?.children)];
 const inquiryLib = load('lib/inquiries.ts', {}, { atob });
 
-test('contact page uses shared blocks, requested section order and only valid query interests', async () => {
+test('contact page uses shared blocks, requested section order without server query dependencies', async () => {
   const blocks = { faq: { faqs: [] }, contact: { title: 'Contact heading' } };
   const imports = new Proxy({ '@/lib/api': { getHomeBlocks: async () => blocks }, '@/lib/inquiries': inquiryLib }, { get(target, name) { if (name in target) return target[name]; if (name.startsWith('@/components/')) return new Proxy({}, { get: (_, key) => key }); } });
   const page = load('app/contact/page.tsx', imports);
   assert.equal(page.metadata.title, 'Contact');
-  for (const interest of ['Social Media Management', 'wrong', ['Brand Strategy']]) {
-    const result = await page.default({ searchParams: Promise.resolve({ interest }) });
+  {
+    const result = await page.default();
     const children = result.props.children;
     assert.deepEqual(Array.from(children, child => child.type), ['SiteHeader', 'PageHero', 'ContactForm', 'FAQSection', 'ContactSection', 'SiteFooter']);
     assert.equal(children[1].props.scrollTarget, '#contact-form');
-    assert.equal(children[2].props.initialInterest, interest === 'Social Media Management' ? interest : '');
+    assert.equal(children[2].props.initialInterest, undefined);
     assert.equal(children[3].props.data, blocks.faq); assert.equal(children[4].props.data, blocks.contact);
   }
 });

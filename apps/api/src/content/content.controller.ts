@@ -4,10 +4,11 @@ import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { ContentService } from './content.service';
 import { UpdateBlockDto, UpdateOrderDto } from './dto';
+import { RevalidationService } from '../common/revalidation.service';
 
 @Controller('content')
 export class ContentController {
-  constructor(private readonly s: ContentService) {}
+  constructor(private readonly s: ContentService, private readonly revalidation: RevalidationService) {}
 
   @Get('public/:slug')
   publicPage(@Param('slug') slug: string) { return this.s.publicPage(slug); }
@@ -20,14 +21,18 @@ export class ContentController {
   @Patch('admin/pages/:id/order')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN', 'EDITOR')
-  order(@Param('id') id: string, @Body() dto: UpdateOrderDto) {
-    return this.s.order(id, dto.ids);
+  async order(@Param('id') id: string, @Body() dto: UpdateOrderDto) {
+    const result = await this.s.order(id, dto.ids);
+    await this.revalidation.contentChanged();
+    return result;
   }
 
   @Patch('admin/blocks/:id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN', 'EDITOR')
-  update(@Param('id') id: string, @Body() dto: UpdateBlockDto) {
-    return this.s.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateBlockDto) {
+    const result = await this.s.update(id, dto);
+    await this.revalidation.contentChanged();
+    return result;
   }
 }

@@ -15,7 +15,7 @@ export type TeamMember = {
 export async function getPage() {
   try {
     const response = await fetch(`${API}/content/public/home`, {
-      cache: 'no-store',
+      next: { revalidate: 300, tags: ['content'] },
     });
 
     if (!response.ok) return null;
@@ -28,7 +28,7 @@ export async function getPage() {
 export async function getTeam(): Promise<TeamMember[]> {
   try {
     const response = await fetch(`${API}/team`, {
-      cache: 'no-store',
+      next: { revalidate: 300, tags: ['content'] },
     });
 
     if (!response.ok) return [];
