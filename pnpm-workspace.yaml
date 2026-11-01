@@ -10,6 +10,8 @@ onlyBuiltDependencies:
 overrides:
   motion-dom: 12.23.12
   motion-utils: 12.23.6
+  postcss: 8.5.23
+  multer: 2.5.0
 allowBuilds:
   '@nestjs/core': true
   '@prisma/client': true
