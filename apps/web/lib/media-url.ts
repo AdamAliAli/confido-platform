@@ -2,7 +2,7 @@ export function siteImage(url: string, width: number): string {
   try {
     const parsed = new URL(url);
     if (parsed.protocol === 'https:' && parsed.hostname === 'res.cloudinary.com') {
-      parsed.pathname = parsed.pathname.replace('/image/upload/', `/image/upload/f_auto,q_auto,w_${width}/`);
+      parsed.pathname = parsed.pathname.replace('/image/upload/', `/image/upload/f_auto,q_auto,c_limit,w_${width}/`);
       return parsed.toString();
     }
   } catch { /* Keep local paths and other URLs unchanged. */ }

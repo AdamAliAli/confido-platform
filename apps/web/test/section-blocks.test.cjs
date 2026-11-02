@@ -89,7 +89,7 @@ test('new sections use edited text and block unsafe image and link values', () =
 
 test('site media transformations and safe links only allow intended URLs', () => {
   const { siteImage, safeHref, imageUrl } = load('lib/media-url.ts');
-  assert.equal(siteImage('https://res.cloudinary.com/demo/image/upload/v1/a.jpg', 900), 'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_900/v1/a.jpg');
+  assert.equal(siteImage('https://res.cloudinary.com/demo/image/upload/v1/a.jpg', 900), 'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,c_limit,w_900/v1/a.jpg');
   assert.equal(siteImage('/images/a.webp', 1000), '/images/a.webp');
   for (const value of ['javascript:alert(1)', '//evil.test', '/\\evil.test', 'data:text/html,test', 'http://example.com']) assert.equal(safeHref(value), undefined);
   for (const value of ['https://example.com', '/pricing', 'mailto:hello@example.com']) assert.equal(safeHref(value), value);
