@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import dynamic from 'next/dynamic';
 import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react';
 import { image, poster, srcSet, video, type GalleryItem } from '@/lib/cloudinary';
 import { safeHref } from '@/lib/media-url';
@@ -9,6 +10,9 @@ import { workImage, workSrcSet, type WorkItem } from '@/lib/work-items';
 import { SectionHeader } from './section-header';
 
 const sizes = '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw';
+const WorkDeck = dynamic(() => import('./work-deck').then(module => module.WorkDeck), {
+  loading: () => <div className="h-[560px]" role="status" aria-label="Loading work cards" />,
+});
 
 function GalleryVideo({ item }: { item: GalleryItem }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -83,7 +87,7 @@ export function WorkGallery({ items }: { items: WorkItem[] }) {
   return <>
     {brands.length > 0 && <section aria-label="Brands we worked with" className="bg-[#0b2420] px-6 py-[90px] md:px-[50px]"><p className="mb-10 flex items-center gap-2 text-xs uppercase"><i className="h-2 w-2 bg-mint" aria-hidden="true" />Brands we worked with</p><div className="grid grid-cols-3 md:grid-cols-6">{brands.map(item => <div key={item.id} className="flex min-w-0 items-center justify-center border border-white/[0.06] p-4 md:p-8"><img src={item.mediaType === 'video' ? poster(item.publicId, 400, item.cloudName) : image(item.publicId, 400, item.cloudName)} srcSet={srcSet(item)} sizes="(min-width: 768px) 16vw, 33vw" width={item.width} height={item.height} alt={item.title} loading="lazy" decoding="async" className="max-h-12 w-full object-contain opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0" /></div>)}</div></section>}
     <section id="work" aria-labelledby="work-heading" className="bg-[#0b2420] pb-[90px] text-white"><SectionHeader label="SELECTED WORK" title="Our Work" accent="In Motion" headingId="work-heading" /><div className="px-6 md:px-[50px]"><div aria-label="Filter work" className="mb-8 flex flex-wrap gap-3">{categories.map(category => <button key={category} aria-pressed={filter === category} onClick={() => { setFilter(category); setSelected(null); }} className={`rounded-full border px-4 py-2 text-xs transition-colors focus-visible:ring-2 focus-visible:ring-mint ${filter === category ? 'border-mint text-mint' : 'border-white/20 text-white/70 hover:text-mint'}`}>{category}</button>)}</div>
-      {!work.length ? <p className="py-16 text-white/70">New work coming soon.</p> : <div className="columns-1 gap-4 md:columns-2 lg:columns-3">{filtered.map((item, index) => <button key={item.id} aria-label={`View ${item.title}`} onClick={() => setSelected(index)} style={{ aspectRatio: `${item.width}/${item.height}` }} className="group relative mb-4 block w-full break-inside-avoid overflow-hidden bg-[#06100e] text-left focus-visible:ring-2 focus-visible:ring-mint">{item.mediaType === 'video' ? <GalleryVideo item={item} /> : <img src={workImage(item, 800)} srcSet={workSrcSet(item)} sizes={sizes} width={item.width} height={item.height} alt={item.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />}<span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-16 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100"><span className="block text-lg">{item.title}</span><span className="text-xs text-white/70">{[item.client, item.category].filter(Boolean).join(' · ')}</span></span></button>)}</div>}
+      {!work.length ? <p className="py-16 text-white/70">New work coming soon.</p> : <WorkDeck key={filter} items={filtered} onOpen={setSelected}><div className="columns-1 gap-4 md:columns-2 lg:columns-3">{filtered.map((item, index) => <button key={item.id} aria-label={`View ${item.title}`} onClick={() => setSelected(index)} style={{ aspectRatio: `${item.width}/${item.height}` }} className="group relative mb-4 block w-full break-inside-avoid overflow-hidden bg-[#06100e] text-left focus-visible:ring-2 focus-visible:ring-mint">{item.mediaType === 'video' ? <GalleryVideo item={item} /> : <img src={workImage(item, 800)} srcSet={workSrcSet(item)} sizes={sizes} width={item.width} height={item.height} alt={item.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />}<span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-16 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100"><span className="block text-lg">{item.title}</span><span className="text-xs text-white/70">{[item.client, item.category].filter(Boolean).join(' · ')}</span></span></button>)}</div></WorkDeck>}
     </div></section>{selected !== null && <Viewer items={filtered} start={selected} close={close} />}
   </>;
 }
