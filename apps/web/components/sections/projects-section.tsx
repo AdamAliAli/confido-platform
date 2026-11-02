@@ -66,6 +66,7 @@ export function ProjectsSection({ data }: { data: Record<string, any> }) {
           </motion.article>
         ))}
       </div>
+      <a href="/work" className="mx-6 my-10 inline-block text-sm text-mint underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-mint md:mx-[50px]">View all work →</a>
     </section>
   );
 }

@@ -29,6 +29,6 @@ test('SEO uses the configured origin or localhost and excludes admin from discov
     assert.equal(robots.rules.allow, '/'); assert.equal(robots.rules.disallow, '/admin');
     assert.equal(robots.sitemap, new URL('/sitemap.xml', origin).href);
     const sitemap = load('app/sitemap.ts', siteUrl).default();
-    assert.deepEqual(Array.from(sitemap, item => item.url), ['/', '/services', '/about', '/contact', '/pricing', '/privacy-policy'].map(route => new URL(route, origin).href));
+    assert.deepEqual(Array.from(sitemap, item => item.url), ['/', '/services', '/about', '/contact', '/pricing', '/privacy-policy', '/work'].map(route => new URL(route, origin).href));
   }
 });

@@ -23,7 +23,7 @@ const MENU_ITEMS = [
   { label: 'Home', href: '/', icon: House },
   { label: 'About Us', href: '/about', icon: Newspaper },
   { label: 'Pricing', href: '/pricing', icon: Tag },
-  { label: 'Projects', href: '/#projects', icon: AppWindow },
+  { label: 'Projects', href: '/work', icon: AppWindow },
   { label: 'Services', href: '/services', icon: BriefcaseBusiness },
   { label: 'Contact', href: '/contact', icon: MessageCircleMore },
 ];

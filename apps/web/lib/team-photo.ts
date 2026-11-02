@@ -9,6 +9,15 @@ export function validateTeamPhoto(file: File, maxMb = 8) {
 
 export async function uploadTeamPhoto(file: File, token: string, onProgress: (percent: number) => void, signal: AbortSignal, folder: 'confido/team' | 'confido/gallery' | 'confido/site' = 'confido/team'): Promise<string> {
   validateTeamPhoto(file, folder === 'confido/team' ? 8 : 10);
+  const result = await uploadMedia(file, token, onProgress, signal, { folder, acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'], maxMb: folder === 'confido/team' ? 8 : 10, resource: 'image' });
+  return result.secure_url;
+}
+
+export type UploadedMedia = { secure_url: string; public_id: string; resource_type: 'image' | 'video'; width: number; height: number };
+export async function uploadMedia(file: File, token: string, onProgress: (percent: number) => void, signal: AbortSignal, options: { folder: 'confido/team' | 'confido/site' | 'confido/gallery'; acceptedTypes: string[]; maxMb: number; resource?: 'image' | 'auto' }): Promise<UploadedMedia> {
+  if (!options.acceptedTypes.includes(file.type)) throw new Error('Choose a JPEG, PNG, WebP or MP4 file.');
+  if (file.size > options.maxMb * 1024 * 1024) throw new Error(`File must be ${options.maxMb} MB or smaller.`);
+  const folder = options.folder;
   const response = await adminFetch('/media/sign', token, {
     method: 'POST', body: JSON.stringify({ folder }), signal,
   });
@@ -30,8 +39,8 @@ export async function uploadTeamPhoto(file: File, token: string, onProgress: (pe
     const abort = () => request.abort();
     if (signal.aborted) { reject(new Error('Upload cancelled.')); return; }
     signal.addEventListener('abort', abort, { once: true });
-    request.open('POST', `https://api.cloudinary.com/v1_1/${encodeURIComponent(signed.cloudName)}/image/upload`);
-    request.timeout = 120000;
+    request.open('POST', `https://api.cloudinary.com/v1_1/${encodeURIComponent(signed.cloudName)}/${options.resource || 'auto'}/upload`);
+    request.timeout = 600000;
     request.upload.onprogress = (event) => {
       if (event.lengthComputable) onProgress(Math.min(99, Math.round(event.loaded / event.total * 100)));
     };
@@ -45,7 +54,7 @@ export async function uploadTeamPhoto(file: File, token: string, onProgress: (pe
         if (request.status < 200 || request.status >= 300) throw new Error(result.error?.message || 'Photo upload failed.');
         if (typeof result.secure_url !== 'string' || !result.secure_url.startsWith('https://')) throw new Error('Upload did not return a secure photo URL.');
         onProgress(100);
-        resolve(result.secure_url);
+        resolve(result);
       } catch (error) { reject(error); }
     };
     request.send(body);

@@ -1,4 +1,14 @@
 export const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+import type { GalleryItem } from './cloudinary';
+
+export async function getGallery(): Promise<GalleryItem[]> {
+  try {
+    const response = await fetch(`${API}/gallery`, { next: { revalidate: 300, tags: ['content'] } });
+    if (!response.ok) return [];
+    const items = await response.json();
+    return Array.isArray(items) ? items.filter(item => typeof item.publicId === 'string' && /^confido\/gallery\/[\w\-/]+$/.test(item.publicId) && item.width > 0 && item.height > 0) : [];
+  } catch { return []; }
+}
 
 export type TeamMember = {
   id: string;

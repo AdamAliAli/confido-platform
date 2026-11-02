@@ -25,7 +25,7 @@ export function SiteFooter() {
             <ul className="mt-8 space-y-6 text-[16px] md:mt-12 md:text-[18px]">
               <li><a href="/" className={`transition-colors hover:text-mint ${focusStyle}`}>Home</a></li>
               <li><a href="/services" className={`transition-colors hover:text-mint ${focusStyle}`}>Services</a></li>
-              <li><a href="/#projects" className={`transition-colors hover:text-mint ${focusStyle}`}>Projects</a></li>
+              <li><a href="/work" className={`transition-colors hover:text-mint ${focusStyle}`}>Projects</a></li>
             </ul>
           </nav>
           <nav aria-label="Footer legal and contact">

@@ -12,6 +12,23 @@ enum Role {
   EDITOR
 }
 
+model GalleryItem {
+  id        String   @id @default(cuid())
+  section   String
+  mediaType String
+  publicId  String   @unique
+  title     String
+  client    String?
+  category  String?
+  width     Int
+  height    Int
+  position  Int
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([section, position])
+}
+
 model Subscriber {
   id        String   @id @default(cuid())
   email     String   @unique

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { API, adminFetch } from '@/lib/api';
 import { PageBlocksEditor } from '@/components/page-blocks-editor';
+import { GalleryAdmin } from '@/components/gallery-admin';
 import { TeamAdmin } from '@/components/team-admin';
 import { SubscribersAdmin } from '@/components/subscribers-admin';
 import { MessagesAdmin } from '@/components/messages-admin';
@@ -22,7 +23,7 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [pageId, setPageId] = useState('');
   const [blocks, setBlocks] = useState<Block[]>([]);
-  const [view, setView] = useState<'blocks' | 'team' | 'subscribers' | 'messages'>('blocks');
+  const [view, setView] = useState<'blocks' | 'team' | 'gallery' | 'subscribers' | 'messages'>('blocks');
 
   const [unreadCount, setUnreadCount] = useState<number | null>(null);
 
@@ -106,10 +107,11 @@ export default function Admin() {
   return (
     <main className="min-h-screen bg-zinc-950 p-4 md:p-6">
       <header className="mb-6 grid items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
-        <div><p className="text-sm text-mint">Confido CMS</p><h1 className="text-lg font-medium">{view === 'blocks' ? 'Page blocks' : view === 'team' ? 'Team members' : view === 'subscribers' ? 'Subscribers' : 'Messages'}</h1></div>
+        <div><p className="text-sm text-mint">Confido CMS</p><h1 className="text-lg font-medium">{view === 'blocks' ? 'Page blocks' : view === 'team' ? 'Team members' : view === 'gallery' ? 'Gallery' : view === 'subscribers' ? 'Subscribers' : 'Messages'}</h1></div>
         <nav aria-label="Admin tabs" className="flex flex-wrap gap-2">
           <button onClick={() => setView('blocks')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'blocks' ? 'bg-white text-black' : 'border border-white/10'}`}>Page blocks</button>
           <button onClick={() => setView('team')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'team' ? 'bg-white text-black' : 'border border-white/10'}`}>Team</button>
+          <button onClick={() => setView('gallery')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'gallery' ? 'bg-white text-black' : 'border border-white/10'}`}>Gallery</button>
           <button onClick={() => setView('subscribers')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'subscribers' ? 'bg-white text-black' : 'border border-white/10'}`}>Subscribers</button>
           <button onClick={() => setView('messages')} className={`h-10 rounded-lg px-4 text-sm focus-visible:ring-2 focus-visible:ring-mint ${view === 'messages' ? 'bg-white text-black' : 'border border-white/10'}`}>Messages{unreadCount !== null && ` (${unreadCount})`}</button>
         </nav>
@@ -118,6 +120,7 @@ export default function Admin() {
       {orderStatus && <p role="status" className="mb-4 text-sm text-zinc-400">{orderStatus}</p>}
       <div hidden={view !== 'blocks'}><PageBlocksEditor key={pageId} pageId={pageId} token={token} initialBlocks={blocks} active={view === 'blocks'} onTeam={() => setView('team')} /></div>
       {view === 'team' && <TeamAdmin token={token} />}
+      <div hidden={view !== 'gallery'}><GalleryAdmin token={token} /></div>
       {view === 'subscribers' && <SubscribersAdmin token={token} />}
       {view === 'messages' && <MessagesAdmin token={token} onUnreadChange={setUnreadCount} />}
     </main>
