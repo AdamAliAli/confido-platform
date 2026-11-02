@@ -3,7 +3,7 @@ import { imageUrl, safeHref, siteImage, text } from './media-url';
 
 export type ProjectWorkItem = {
   id: string; section: 'work'; mediaType: 'image'; imageUrl: string;
-  title: string; client: string; category: string; width: number; height: number; href?: string;
+  title: string; client: string; category: string; width: number; height: number; href?: string; year?: string;
 };
 export type WorkItem = GalleryItem | ProjectWorkItem;
 
@@ -56,6 +56,7 @@ export function combineWorkItems(projectData: unknown, gallery: GalleryItem[]): 
       title: text(project.title, text(project.name, `Project ${index + 1}`)), client: '',
       category: text(project.category, 'Branding'), width: dimensions.width, height: dimensions.height,
       href: safeHref(project.href ?? project.url),
+      year: typeof project.year === 'string' || typeof project.year === 'number' ? String(project.year).trim() || undefined : undefined,
     });
   }
   for (const item of gallery) {
