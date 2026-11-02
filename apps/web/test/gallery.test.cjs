@@ -16,9 +16,9 @@ function elements(node) {
 const item = { id: 'a', section: 'work', mediaType: 'image', publicId: 'confido/gallery/a', title: 'A project', category: 'Posts', width: 800, height: 1000 };
 test('gallery delivery transforms and namespace validation never permit arbitrary URLs', () => {
   const lib = load('lib/cloudinary.ts');
-  assert.equal(lib.image(item.publicId, 1200), 'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_1200/confido/gallery/a');
-  assert.match(lib.video(item.publicId, 800), /video\/upload\/f_auto:video,q_auto,w_800/);
-  assert.match(lib.poster(item.publicId, 400), /so_0,f_auto,q_auto,w_400\/confido\/gallery\/a.jpg$/);
+  assert.equal(lib.image(item.publicId, 1200), 'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,c_limit,w_1200/confido/gallery/a');
+  assert.match(lib.video(item.publicId, 800), /video\/upload\/f_auto:video,q_auto,c_limit,w_800/);
+  assert.match(lib.poster(item.publicId, 400), /so_0,f_auto,q_auto,c_limit,w_400\/confido\/gallery\/a.jpg$/);
   for (const invalid of ['https://evil.example/a', 'other/a', 'confido/gallery/../a', 'confido/gallery/a?x=1']) assert.equal(lib.image(invalid, 800), '');
   assert.equal(lib.image(item.publicId, 800, 'invalid/cloud'), '');
   assert.equal(lib.srcSet(item).split(', ').length, 4);
