@@ -10,35 +10,47 @@ import { workImage, workSrcSet, type WorkItem } from '@/lib/work-items';
 type WorkDeckProps = { items: WorkItem[]; onOpen: (index: number) => void; children: ReactNode; viewerOpen?: boolean };
 type Shuffle = { index: number; direction: 1 | -1; token: number };
 const spring = { type: 'spring', stiffness: 220, damping: 26 } as const;
-const stageHeight = 520;
-
-// Fit the actual rotated corners, including the larger highlighted card, inside the stage.
-// Unconstrained fans use the requested angles and spacing; tighter stages reduce both.
+// Fit the rotated card corners rather than clipping a fixed-width fan. The closed
+// stack also tightens on small screens, and both layouts stay centred in the stage.
 export function deckGeometry(count: number, width: number, cardWidth: number, cardHeight: number) {
+  if (!count) return { step: 0, spread: 0, y: 0, closedStep: 0, closedSpread: 0, closedY: 0 };
+  const stageHeight = cardHeight + 120;
   const middle = (count - 1) / 2;
   const step = count > 1 ? Math.min(10, 70 / (count - 1)) : 0;
-  const spread = Math.min(70, 900 / Math.max(count, 1));
-  function bounds(fit: number) {
-    let left = Infinity, right = -Infinity, bottom = -Infinity;
+  const closedStep = count > 1 ? 8 / (count - 1) : 0;
+  const spread = Math.min(70, 900 / count) * Math.min(1, 260 / cardWidth);
+  function bounds(fit: number, open: boolean) {
+    let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
     for (let index = 0; index < count; index++) {
-      const angle = (index - middle) * step * fit * Math.PI / 180;
-      for (const scale of [0.85, 0.92]) for (const x of [-cardWidth / 2, cardWidth / 2]) for (const y of [-1.6 * cardHeight, -0.6 * cardHeight]) {
-        const px = (index - middle) * spread * fit + scale * (x * Math.cos(angle) - y * Math.sin(angle));
+      const distance = index - middle;
+      const angle = distance * (open ? step : closedStep) * fit * Math.PI / 180;
+      for (const scale of open ? [0.85, 0.92] : [1]) for (const x of [-cardWidth / 2, cardWidth / 2]) for (const y of [-1.6 * cardHeight, -0.6 * cardHeight]) {
+        const px = distance * (open ? spread : 2) * fit + scale * (x * Math.cos(angle) - y * Math.sin(angle));
+        const py = (stageHeight - cardHeight) / 2 + 1.6 * cardHeight + scale * (x * Math.sin(angle) + y * Math.cos(angle)) + (open ? scale === 0.92 ? -28 : 0 : distance * 2 * fit);
         left = Math.min(left, px); right = Math.max(right, px);
-        bottom = Math.max(bottom, (stageHeight - cardHeight) / 2 + 1.6 * cardHeight + scale * (x * Math.sin(angle) + y * Math.cos(angle)) - (scale === 0.92 ? 28 : 0));
+        top = Math.min(top, py); bottom = Math.max(bottom, py);
       }
     }
-    return { extent: Math.max(Math.abs(left), Math.abs(right)), bottom };
+    return { extent: Math.max(Math.abs(left), Math.abs(right)), top, bottom };
   }
-  let low = 0, high = 1;
-  const available = Math.max(0, width / 2 - 16);
-  if (bounds(1).extent > available) {
-    for (let attempt = 0; attempt < 20; attempt++) {
+  function fitLayout(open: boolean) {
+    const minimumWidth = cardWidth * (open ? 0.92 : 1);
+    const gutter = Math.min(open ? 16 : 8, Math.max(0, (width - minimumWidth) / 2 - 1));
+    const fits = (fit: number) => {
+      const box = bounds(fit, open);
+      return box.extent <= Math.max(0, width / 2 - gutter) && box.bottom - box.top <= stageHeight - 32;
+    };
+    let low = 0, high = 1;
+    if (fits(1)) low = 1;
+    else for (let attempt = 0; attempt < 20; attempt++) {
       const fit = (low + high) / 2;
-      if (bounds(fit).extent <= available) low = fit; else high = fit;
+      if (fits(fit)) low = fit; else high = fit;
     }
-  } else low = 1;
-  return { step: step * low, spread: spread * low, y: -Math.max(0, bounds(low).bottom - stageHeight + 16) };
+    const box = bounds(low, open);
+    return { fit: low, y: stageHeight / 2 - (box.top + box.bottom) / 2 };
+  }
+  const fan = fitLayout(true), stack = fitLayout(false);
+  return { step: step * fan.fit, spread: spread * fan.fit, y: fan.y, closedStep: closedStep * stack.fit, closedSpread: 2 * stack.fit, closedY: stack.y };
 }
 
 export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDeckProps) {
@@ -53,7 +65,7 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
   const [focusedCard, setFocusedCard] = useState<number | null>(null);
   const [canHover, setCanHover] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [size, setSize] = useState({ width: 0, cardWidth: 260, cardHeight: 360 });
+  const [size, setSize] = useState({ width: 0, cardWidth: 340, cardHeight: 469.2 });
   const cards = items.slice(0, 12);
   const [order, setOrder] = useState(() => cards.map((_, index) => index));
   const [shuffle, setShuffle] = useState<Shuffle | null>(null);
@@ -61,6 +73,7 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
   const shuffleRef = useRef<Shuffle | null>(null);
   const sequence = useRef(0);
   const stage = useRef<HTMLDivElement>(null);
+  const cardSize = useRef<HTMLDivElement>(null);
   const firstTouch = useRef(false);
   const middle = (cards.length - 1) / 2;
   const expanded = hovered || focusWithin || tapped;
@@ -111,19 +124,20 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
   }, [mounted, hovered, interactionFocus, tapped, viewerOpen, hidden, reducedMotion, showGrid, cards.length, startShuffle]);
   useEffect(() => {
     const element = stage.current;
-    if (!element || showGrid || reducedMotion) return;
+    const card = cardSize.current;
+    if (!element || !card || showGrid || reducedMotion) return;
     const mouse = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const desktop = window.matchMedia('(min-width: 768px)');
     const measure = () => {
       setCanHover(mouse.matches);
-      setSize({ width: element.clientWidth, cardWidth: desktop.matches ? 260 : 200, cardHeight: desktop.matches ? 360 : 280 });
+      const rect = card.getBoundingClientRect();
+      setSize({ width: element.clientWidth, cardWidth: rect.width, cardHeight: rect.height });
       if (!mouse.matches) setHovered(false);
     };
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    mouse.addEventListener('change', measure); desktop.addEventListener('change', measure);
-    return () => { observer.disconnect(); mouse.removeEventListener('change', measure); desktop.removeEventListener('change', measure); };
+    observer.observe(element); observer.observe(card);
+    mouse.addEventListener('change', measure);
+    return () => { observer.disconnect(); mouse.removeEventListener('change', measure); };
   }, [showGrid, reducedMotion]);
 
   function closeFan() {
@@ -157,13 +171,13 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
           <button type="button" aria-label="Next project" disabled={cards.length < 2 || !!shuffle} onClick={() => startShuffle(1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 transition-colors hover:border-mint hover:bg-mint hover:text-[#070908] focus-visible:ring-2 focus-visible:ring-mint disabled:opacity-30"><ChevronRight className="h-5 w-5" aria-hidden="true" /></button>
         </div>
       </div>
-      <div className="min-w-0"
+      <div className="min-w-0 [--deck-preferred-width:min(78vw,300px)] [--deck-card-width:min(var(--deck-preferred-width),calc(72vh/1.38))] md:[--deck-preferred-width:300px] lg:[--deck-preferred-width:clamp(340px,26vw,440px)]"
         onFocusCapture={event => { if (event.target !== stage.current && event.target.matches(':focus-visible')) setFocusWithin(true); }}
         onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) { setFocusWithin(false); setFocusedCard(null); } }}
       >
         <div
           ref={stage} role="group" aria-label="Selected work card deck" tabIndex={-1}
-          data-open={expanded} data-top-index={topIndex} data-shuffling={!!shuffle} className="relative h-[520px] w-full overflow-hidden outline-none"
+          data-open={expanded} data-top-index={topIndex} data-shuffling={!!shuffle} className="relative mx-auto w-full overflow-hidden outline-none" style={{ height: 'calc(var(--deck-card-width) * 1.38 + 120px)' }}
           onPointerEnter={event => { if (canHover && event.pointerType === 'mouse') { cancelShuffle(); setHovered(true); } }}
           onPointerLeave={event => { if (event.pointerType === 'mouse') { setHovered(false); setHoveredCard(null); setTapped(false); } }}
           onPointerDownCapture={event => { cancelShuffle(); firstTouch.current = event.pointerType !== 'mouse' && !expanded; }}
@@ -175,20 +189,20 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
             const lifted = expanded && active === index;
             const outgoing = shuffle?.index === index;
             const exitX = shuffle ? shuffle.direction * exitDistance : 0;
-            return <div key={item.id} className="absolute left-1/2 top-1/2 h-[280px] w-[200px] -translate-x-1/2 -translate-y-1/2 md:h-[360px] md:w-[260px]" style={{ zIndex: outgoing ? cards.length + 2 : lifted ? cards.length + 1 : expanded ? slot : cards.length - slot }}>
+            return <div key={item.id} ref={index === 0 ? cardSize : undefined} className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ width: 'var(--deck-card-width)', height: 'calc(var(--deck-card-width) * 1.38)', zIndex: outgoing ? cards.length + 2 : lifted ? cards.length + 1 : expanded ? slot : cards.length - slot }}>
               <motion.button
                 type="button" aria-label={`View ${item.title}`} data-card-index={index}
                 initial={false}
                 animate={outgoing ? { x: exitX, y: -24, rotate: shuffle.direction * 12, scale: 0.95 } : {
-                  x: expanded ? (slot - middle) * geometry.spread : (slot - middle) * 2,
-                  y: expanded ? geometry.y - (lifted ? 28 : 0) : (slot - middle) * 2,
-                  rotate: expanded ? (slot - middle) * geometry.step : cards.length > 1 ? -4 + slot * 8 / (cards.length - 1) : 0,
+                  x: expanded ? (slot - middle) * geometry.spread : (slot - middle) * geometry.closedSpread,
+                  y: expanded ? geometry.y - (lifted ? 28 : 0) : (slot - middle) * geometry.closedSpread + geometry.closedY,
+                  rotate: expanded ? (slot - middle) * geometry.step : (slot - middle) * geometry.closedStep,
                   scale: expanded ? lifted ? 0.92 : 0.85 : 1,
                 }}
                 transition={outgoing ? { duration: 0.4, ease: 'easeInOut' } : spring}
                 onAnimationComplete={definition => { if (outgoing && shuffle && typeof definition === 'object' && 'x' in definition && definition.x === exitX) finishShuffle(shuffle); }}
                 style={{ transformOrigin: '50% 160%' }}
-                className="relative block h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-[#06100e] text-left shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
+                className="pointer-events-auto relative block h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-[#06100e] text-left shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
                 onPointerEnter={event => { if (canHover && event.pointerType === 'mouse') setHoveredCard(index); }}
                 onPointerLeave={() => setHoveredCard(value => value === index ? null : value)}
                 onFocus={event => { if (event.currentTarget.matches(':focus-visible')) setFocusedCard(index); }}
@@ -198,9 +212,9 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
                   cancelShuffle(); onOpen(index);
                 }}
               >
-                <img src={item.mediaType === 'video' ? poster(item.publicId, 800, item.cloudName) : workImage(item, 800)} srcSet={item.mediaType === 'video' ? srcSet(item) : workSrcSet(item)} sizes="(min-width: 768px) 260px, 200px" width={item.width} height={item.height} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                <img src={item.mediaType === 'video' ? poster(item.publicId, 800, item.cloudName) : workImage(item, 800)} srcSet={item.mediaType === 'video' ? srcSet(item) : workSrcSet(item)} sizes="(min-width: 1024px) min(clamp(340px, 26vw, 440px), calc(72vh / 1.38)), (min-width: 768px) min(300px, calc(72vh / 1.38)), min(78vw, 300px, calc(72vh / 1.38))" width={item.width} height={item.height} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
                 {item.mediaType === 'video' && <Play aria-hidden="true" className="absolute right-3 top-3 h-6 w-6 rounded-full bg-black/50 p-1" />}
-                <span className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 to-transparent p-5 pt-16 transition-opacity duration-200 ${!expanded || lifted ? 'opacity-100' : 'opacity-0'}`}><span className="block text-lg">{item.title}</span><span className="text-xs text-white/70">{item.category}</span></span>
+                <span className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 to-transparent p-5 pt-16 transition-opacity duration-200 ${!expanded || lifted ? 'opacity-100' : 'opacity-0'}`}><span className="block text-[24px]">{item.title}</span><span className="text-[14px] text-white/70">{item.category}</span></span>
               </motion.button>
             </div>;
           })}
