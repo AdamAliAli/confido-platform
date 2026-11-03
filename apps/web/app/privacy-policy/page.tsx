@@ -1,3 +1,4 @@
+import { pageMetadata } from '@/lib/seo';
 import { Fragment } from 'react';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -6,7 +7,7 @@ import { PageHero } from '@/components/sections/page-hero';
 import { LAST_UPDATED, POLICY_INTRO, POLICY_SECTIONS } from '@/components/sections/privacy-content';
 import { getPage } from '@/lib/api';
 
-export const metadata = { title: 'Privacy Policy', description: 'Learn how Confido collects, uses and protects your personal data under Malaysia’s PDPA.' };
+export const metadata = pageMetadata("Privacy Policy", "Learn how Confido in Kuala Lumpur collects, uses and protects your personal data under Malaysia’s PDPA.", "/privacy-policy");
 
 const EMAIL = 'info@confido-agency.com';
 

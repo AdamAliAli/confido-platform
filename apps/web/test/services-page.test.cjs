@@ -8,7 +8,7 @@ const ts = require('typescript');
 function load(file, imports = {}, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, {
-    exports, ...globals, require: name => imports[name] || (name === '@/lib/section-defaults' ? load('lib/section-defaults.ts') : name.startsWith('.') ? load(path.relative(path.join(__dirname, '..'), path.resolve(path.dirname(path.join(__dirname, '..', file)), name)) + '.ts') : require(name)),
+    exports, ...globals, require: name => imports[name] || (name === '@/lib/seo' ? require('./seo-helpers.cjs') : undefined) || (name === '@/lib/section-defaults' ? load('lib/section-defaults.ts') : name.startsWith('.') ? load(path.relative(path.join(__dirname, '..'), path.resolve(path.dirname(path.join(__dirname, '..', file)), name)) + '.ts') : require(name)),
   });
   return exports;
 }
@@ -43,9 +43,9 @@ test('services page has the requested order, hero and shared section content', a
       '@/lib/media-url': { text: (value, fallback) => typeof value === 'string' && value.trim() ? value : fallback },
     }, { get(target, name) { if (name in target) return target[name]; if (name.startsWith('@/components/')) return new Proxy({}, { get: (_, key) => key }); } });
     const page = load('app/services/page.tsx', imports);
-    assert.equal(page.metadata.title, 'Services');
+    assert.equal(page.metadata.title, 'Branding & Social Media Services');
     const result = await page.default();
-    const children = result.props.children;
+    const children = result.props.children.filter(child => child.type !== 'JsonLd');
     assert.deepEqual(Array.from(children, child => child.type), ['SiteHeader', 'PageHero', 'ExpertiseList', 'div', 'PricingSection', 'ProcessSection', 'FAQSection', 'ContactSection', 'SiteFooter']);
     assert.equal(children[1].props.line1, 'Strategic');
     assert.equal(children[1].props.scrollTarget, '#what-we-do');

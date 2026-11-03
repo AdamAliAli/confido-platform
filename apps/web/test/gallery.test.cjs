@@ -6,7 +6,7 @@ const vm = require('node:vm');
 const ts = require('typescript');
 function load(file, imports = {}, globals = {}) {
   const exports = {};
-  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, process: { env: { NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: 'demo' } }, ...globals, require: name => imports[name] || require(name) });
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, process: { env: { NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: 'demo' } }, ...globals, require: name => imports[name] || (name === '@/lib/seo' ? require('./seo-helpers.cjs') : undefined) || require(name) });
   return exports;
 }
 function workLib() { return load('lib/work-items.ts', { './cloudinary': load('lib/cloudinary.ts'), './media-url': load('lib/media-url.ts', {}, { URL }) }, { URL }); }

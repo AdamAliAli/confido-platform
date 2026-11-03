@@ -1,3 +1,4 @@
+import { pageMetadata } from '@/lib/seo';
 import { SECTION_DEFAULTS } from '@/lib/section-defaults';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -11,14 +12,14 @@ import { ContactSection } from '@/components/sections/contact-section';
 import { getHomeBlocks } from '@/lib/api';
 import { text } from '@/lib/media-url';
 
-export const metadata = { title: 'About Us', description: 'Meet Confido and discover the thinking behind brands built on clarity.' };
+export const metadata = pageMetadata("About Confido in Kuala Lumpur", "Meet Confido, a Kuala Lumpur brand consultancy helping businesses in Malaysia build clarity through strategy, positioning and scalable brand systems.", "/about");
 
 export default async function About() {
   const blocks = await getHomeBlocks();
   return (
     <main id="top">
       <SiteHeader />
-      <PageHero label="ABOUT US" line1="Built on" accent="Clarity" rest="Defined" scrollTarget="#how-we-think" fitSecondLine />
+      <PageHero srTitle="About Confido, a brand consultancy in Kuala Lumpur" label="ABOUT US" line1="Built on" accent="Clarity" rest="Defined" scrollTarget="#how-we-think" fitSecondLine />
       <AboutIntro id="how-we-think" />
       <ExpertiseList showHeader={false} />
       <div className="overflow-hidden bg-[#0b2420] px-6 py-16 md:px-0 md:py-0">

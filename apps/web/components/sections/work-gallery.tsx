@@ -36,7 +36,7 @@ function GalleryVideo({ item }: { item: GalleryItem }) {
     return () => { observer.disconnect(); element.pause(); motion.removeEventListener('change', update); connection?.removeEventListener('change', update); document.removeEventListener('visibilitychange', update); };
   }, []);
   useEffect(() => { if (active) void ref.current?.play().catch(() => {}); }, [active]);
-  return <><img src={poster(item.publicId, 800, item.cloudName)} srcSet={srcSet(item)} sizes={sizes} width={item.width} height={item.height} loading="lazy" decoding="async" alt="" className="h-full w-full object-cover" /><video ref={ref} src={active ? video(item.publicId, 800, item.cloudName) : undefined} muted loop playsInline preload="none" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover ${active ? '' : 'invisible'}`} /><Play aria-hidden="true" className="absolute right-3 top-3 h-6 w-6 rounded-full bg-black/50 p-1" /></>;
+  return <><img src={poster(item.publicId, 800, item.cloudName)} srcSet={srcSet(item)} sizes={sizes} width={item.width} height={item.height} loading="lazy" decoding="async" alt={item.title} className="h-full w-full object-cover" /><video ref={ref} src={active ? video(item.publicId, 800, item.cloudName) : undefined} muted loop playsInline preload="none" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover ${active ? '' : 'invisible'}`} /><Play aria-hidden="true" className="absolute right-3 top-3 h-6 w-6 rounded-full bg-black/50 p-1" /></>;
 }
 
 function Viewer({ items, start, close }: { items: WorkItem[]; start: number; close: () => void }) {

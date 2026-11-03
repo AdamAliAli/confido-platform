@@ -212,7 +212,7 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
                   cancelShuffle(); onOpen(index);
                 }}
               >
-                <img src={item.mediaType === 'video' ? poster(item.publicId, 800, item.cloudName) : workImage(item, 800)} srcSet={item.mediaType === 'video' ? srcSet(item) : workSrcSet(item)} sizes="(min-width: 1024px) min(clamp(340px, 26vw, 440px), calc(72vh / 1.38)), (min-width: 768px) min(300px, calc(72vh / 1.38)), min(78vw, 300px, calc(72vh / 1.38))" width={item.width} height={item.height} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                <img src={item.mediaType === 'video' ? poster(item.publicId, 800, item.cloudName) : workImage(item, 800)} srcSet={item.mediaType === 'video' ? srcSet(item) : workSrcSet(item)} sizes="(min-width: 1024px) min(clamp(340px, 26vw, 440px), calc(72vh / 1.38)), (min-width: 768px) min(300px, calc(72vh / 1.38)), min(78vw, 300px, calc(72vh / 1.38))" width={item.width} height={item.height} alt={item.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                 {item.mediaType === 'video' && <Play aria-hidden="true" className="absolute right-3 top-3 h-6 w-6 rounded-full bg-black/50 p-1" />}
                 <span className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 to-transparent p-5 pt-16 transition-opacity duration-200 ${!expanded || lifted ? 'opacity-100' : 'opacity-0'}`}><span className="block text-[24px]">{item.title}</span><span className="text-[14px] text-white/70">{item.category}</span></span>
               </motion.button>

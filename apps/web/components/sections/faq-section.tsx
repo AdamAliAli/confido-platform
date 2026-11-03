@@ -1,5 +1,7 @@
 'use client';
 
+import { JsonLd } from '@/components/json-ld';
+import { faqSchema } from '@/lib/seo';
 import { SECTION_DEFAULTS } from '@/lib/section-defaults';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
@@ -20,6 +22,7 @@ export function FAQSection({ data = {} }: { data?: Record<string, unknown> }) {
       aria-labelledby={`${sectionId}-heading`}
       className="overflow-hidden border-y border-white/[0.06] bg-[#0b2420] text-white"
     >
+      <JsonLd data={faqSchema(faqs)} />
       <div className="grid py-12 md:grid-cols-2 md:py-32">
         <div className="min-w-0 px-6 py-8 md:border-r md:border-white/[0.06] md:px-16 md:py-10">
           <div className="flex items-center gap-2 text-base font-medium tracking-[0.08em] md:text-lg">

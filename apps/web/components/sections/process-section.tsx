@@ -79,7 +79,7 @@ export function ProcessSection({ data = {} }: { data?: Record<string, unknown> }
                             unoptimized={!item.image.startsWith('/images/') && !item.image.startsWith('https://framerusercontent.com/')}
                             width={280}
                             height={187}
-                            alt=""
+                            alt={`${item.title} — ${item.description}`}
                             className="h-full w-full object-cover grayscale"
                           />
                         </div>

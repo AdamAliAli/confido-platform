@@ -6,7 +6,7 @@ const vm = require('node:vm');
 const ts = require('typescript');
 function load(file, imports = {}, globals = {}) {
   const exports = {};
-  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, ...globals, require: name => imports[name] || require(name) });
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, ...globals, require: name => imports[name] || (name === '@/lib/seo' ? require('./seo-helpers.cjs') : undefined) || require(name) });
   return exports;
 }
 const nodes = element => element == null || typeof element !== 'object' ? [] : Array.isArray(element) ? element.flatMap(nodes) : [element, ...nodes(element.props?.children)];
@@ -16,7 +16,7 @@ test('contact page uses shared blocks, requested section order without server qu
   const blocks = { faq: { faqs: [] }, contact: { title: 'Contact heading' } };
   const imports = new Proxy({ '@/lib/api': { getHomeBlocks: async () => blocks }, '@/lib/inquiries': inquiryLib }, { get(target, name) { if (name in target) return target[name]; if (name.startsWith('@/components/')) return new Proxy({}, { get: (_, key) => key }); } });
   const page = load('app/contact/page.tsx', imports);
-  assert.equal(page.metadata.title, 'Contact');
+  assert.equal(page.metadata.title, 'Contact Confido in Kuala Lumpur');
   {
     const result = await page.default();
     const children = result.props.children;

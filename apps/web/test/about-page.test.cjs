@@ -7,7 +7,7 @@ const ts = require('typescript');
 
 function load(file, imports = {}) {
   const exports = {};
-  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, require: name => imports[name] || (name === '@/lib/section-defaults' ? load('lib/section-defaults.ts') : name.startsWith('.') ? load(path.relative(path.join(__dirname, '..'), path.resolve(path.dirname(path.join(__dirname, '..', file)), name)) + '.ts') : require(name)) });
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, require: name => imports[name] || (name === '@/lib/seo' ? require('./seo-helpers.cjs') : undefined) || (name === '@/lib/section-defaults' ? load('lib/section-defaults.ts') : name.startsWith('.') ? load(path.relative(path.join(__dirname, '..'), path.resolve(path.dirname(path.join(__dirname, '..', file)), name)) + '.ts') : require(name)) });
   return exports;
 }
 const nodes = element => element == null || typeof element !== 'object' ? [] : Array.isArray(element) ? element.flatMap(nodes) : [element, ...nodes(element.props?.children)];
@@ -16,7 +16,7 @@ test('About page renders the requested order and reuses homepage data or default
   for (const blocks of [{}, { clarity: { heading: 'Custom heading' }, location: { city: 'Custom city' }, faq: { faqs: [] }, contact: { title: 'Custom contact' } }]) {
     const imports = new Proxy({ '@/lib/api': { getHomeBlocks: async () => blocks }, '@/lib/media-url': { text: (value, fallback) => value || fallback } }, { get(target, name) { if (name in target) return target[name]; if (name.startsWith('@/components/')) return new Proxy({}, { get: (_, key) => key }); } });
     const page = load('app/about/page.tsx', imports);
-    assert.equal(page.metadata.title, 'About Us');
+    assert.equal(page.metadata.title, 'About Confido in Kuala Lumpur');
     const result = await page.default();
     const children = result.props.children;
     assert.deepEqual(Array.from(children, child => child.type), ['SiteHeader', 'PageHero', 'AboutIntro', 'ExpertiseList', 'div', 'LocationSection', 'FAQSection', 'ContactSection', 'SiteFooter']);

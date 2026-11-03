@@ -99,7 +99,7 @@ export function HeroSection({ data }: { data: Record<string, any> }) {
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="brands-row">
-            <h1>{text(data.title, SECTION_DEFAULTS.hero.title)}</h1>
+            <h1>{text(data.title, SECTION_DEFAULTS.hero.title)}<span className="sr-only">{` ${text(data.accent, SECTION_DEFAULTS.hero.accent)} ${text(data.subtitle, SECTION_DEFAULTS.hero.subtitle)} — Confido, brand strategy and social media agency in Kuala Lumpur, Malaysia`}</span></h1>
             <div className="hero-meta">
               <span>© 2026</span>
               <p>{text(data.description, SECTION_DEFAULTS.hero.description)}</p>

@@ -1,7 +1,10 @@
+import { pageMetadata } from '@/lib/seo';
 import { BlockRenderer } from '@/components/block-renderer';
 import { getPage, getTeam } from '@/lib/api';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
+
+export const metadata = pageMetadata("Confido — Brand Strategy & Social Media Agency in Malaysia", "Confido is a Kuala Lumpur brand consultancy for strategy, positioning and social media management, working with businesses in Malaysia and the Gulf.", "/", true);
 
 type PageBlock = { id: string; type: string; enabled?: boolean; data: Record<string, unknown> };
 
@@ -32,6 +35,7 @@ export default async function Home() {
       <SiteHeader />
       <BlockRenderer blocks={renderedBlocks} members={members} />
       <SiteFooter />
+      {!blocks.some(block => block.type === 'hero') && <h1 className="sr-only">Brands With Direction — Confido, brand strategy and social media agency in Kuala Lumpur, Malaysia</h1>}
     </main>
   );
 }

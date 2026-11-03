@@ -1,4 +1,6 @@
 import './globals.css';
+import { JsonLd } from '@/components/json-ld';
+import { ORGANIZATION } from '@/lib/seo';
 import { Poppins } from 'next/font/google';
 import type { Metadata } from 'next';
 
@@ -17,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body className={`${poppins.variable} ${poppins.className}`}>{children}</body></html>;
+  return <html lang="en"><body className={`${poppins.variable} ${poppins.className}`}><JsonLd data={ORGANIZATION} />{children}</body></html>;
 }

@@ -3,9 +3,9 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 
-type PageHeroProps = { label: string; line1: string; accent: string; rest: string; scrollTarget: string; fitSecondLine?: boolean };
+type PageHeroProps = { label: string; line1: string; accent: string; rest: string; scrollTarget: string; srTitle?: string; fitSecondLine?: boolean };
 
-export function PageHero({ label, line1, accent, rest, scrollTarget, fitSecondLine = false }: PageHeroProps) {
+export function PageHero({ label, line1, accent, rest, scrollTarget, srTitle, fitSecondLine = false }: PageHeroProps) {
   const reducedMotion = useReducedMotion();
 
   return (
@@ -29,17 +29,20 @@ export function PageHero({ label, line1, accent, rest, scrollTarget, fitSecondLi
         </div>
         <h1 id="page-title" className="page-hero-title shrink-0 break-words font-light leading-[0.95] tracking-[-0.07em]">
           <motion.span
+            aria-hidden={srTitle ? true : undefined}
             initial={reducedMotion ? false : { opacity: 0, filter: 'blur(12px)', y: 24 }}
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.8, ease: 'easeOut' }}
             className="block motion-reduce:!transform-none motion-reduce:!opacity-100 motion-reduce:!filter-none"
           >{line1}</motion.span>
           <motion.span
+            aria-hidden={srTitle ? true : undefined}
             initial={reducedMotion ? false : { opacity: 0, filter: 'blur(12px)', y: 24 }}
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.8, delay: reducedMotion ? 0 : 0.2, ease: 'easeOut' }}
             className={`block md:ml-[35%] motion-reduce:!transform-none motion-reduce:!opacity-100 motion-reduce:!filter-none ${fitSecondLine ? 'md:text-[0.86em]' : ''}`}
           ><span className="text-mint">{accent}</span>{' '}<span className="block md:inline">{rest}</span></motion.span>
+          {srTitle && <span className="sr-only">{srTitle}</span>}
         </h1>
       </div>
 

@@ -14,6 +14,7 @@ async function renderHome(page, api = {}) {
   vm.runInNewContext(outputText, {
     exports,
     require(name) {
+      if (name === '@/lib/seo') return require('./seo-helpers.cjs');
       if (name === '@/lib/api') return { getPage: async () => page, getTeam: async () => [], ...api };
       if (name.startsWith('@/components/')) return new Proxy({}, { get: () => () => null });
       return require(name);

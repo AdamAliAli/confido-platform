@@ -1,3 +1,5 @@
+import { JsonLd } from '@/components/json-ld';
+import { pageMetadata, serviceSchema } from '@/lib/seo';
 import { SECTION_DEFAULTS } from '@/lib/section-defaults';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -11,14 +13,15 @@ import { ContactSection } from '@/components/sections/contact-section';
 import { getHomeBlocks } from '@/lib/api';
 import { text } from '@/lib/media-url';
 
-export const metadata = { title: 'Services', description: 'Brand strategy, positioning and scalable brand systems built around clarity and direction.' };
+export const metadata = pageMetadata("Branding & Social Media Services", "Brand strategy, positioning, brand systems and social media management in Malaysia. Build a clear, consistent brand with Confido in Kuala Lumpur.", "/services");
 
 export default async function Services() {
   const blocks = await getHomeBlocks();
   return (
     <main id="top">
       <SiteHeader />
-      <PageHero label="OUR EXPERTISE" line1="Strategic" accent="Brand" rest="Expertise" scrollTarget="#what-we-do" fitSecondLine />
+      <JsonLd data={serviceSchema(true)} />
+      <PageHero srTitle="Branding and social media services in Malaysia" label="OUR EXPERTISE" line1="Strategic" accent="Brand" rest="Expertise" scrollTarget="#what-we-do" fitSecondLine />
       <ExpertiseList label="OUR EXPERTISE" title="What We Do" accent="Why It Matters" />
       <div className="overflow-hidden bg-[#0b2420] px-6 py-16 md:px-0 md:py-0">
         <ClarityMarquee text={text(blocks.clarity?.heading, SECTION_DEFAULTS.clarity.heading)} />
