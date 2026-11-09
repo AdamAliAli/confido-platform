@@ -71,7 +71,7 @@ function Viewer({ items, start, close }: { items: WorkItem[]; start: number; clo
     <button aria-label="Close viewer" onClick={close} className="absolute right-4 top-4 rounded p-3 focus-visible:ring-2 focus-visible:ring-mint"><X /></button>
     {item.mediaType === 'video' ? <video key={item.id} src={video(item.publicId, 2000, item.cloudName)} controls autoPlay playsInline preload="none" poster={poster(item.publicId, 1200, item.cloudName)} className="max-h-[75vh] max-w-full" /> : <img src={workImage(item, 2000)} alt={item.title} width={item.width} height={item.height} className={`${href ? 'max-h-[65vh]' : 'max-h-[75vh]'} w-auto max-w-full object-contain`} />}
     <h3 id="gallery-viewer-title" className="mt-4 text-center text-lg">{item.title}</h3>{item.client && <p className="text-sm text-white/70">{item.client}</p>}
-    {href && <a href={href} className="mt-3 rounded text-sm text-mint underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-mint">Visit project ↗</a>}
+    {href && <a href={href} className="mt-3 rounded text-sm text-mint underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-mint">{'caseStudy' in item && item.caseStudy ? 'Read case study' : 'Visit project ↗'}</a>}
     {items.length > 1 && <div className="mt-4 flex gap-6"><button aria-label="Previous item" onClick={() => move(-1)} className="rounded p-2 focus-visible:ring-2 focus-visible:ring-mint"><ChevronLeft /></button><span aria-live="polite">{index + 1} / {items.length}</span><button aria-label="Next item" onClick={() => move(1)} className="rounded p-2 focus-visible:ring-2 focus-visible:ring-mint"><ChevronRight /></button></div>}
   </div>, document.body);
 }

@@ -8,12 +8,12 @@ const ts = require('typescript');
 function load(file, siteUrl, imports = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, {
-    exports, URL, process: { env: { NEXT_PUBLIC_SITE_URL: siteUrl } }, require: name => imports[name] || (name === '@/lib/seo' ? load('lib/seo.ts', siteUrl) : name === '@/components/json-ld' ? load('components/json-ld.tsx', siteUrl) : require(name)),
+    exports, URL, process: { env: { NEXT_PUBLIC_SITE_URL: siteUrl } }, require: name => imports[name] || (name === '@/lib/api' ? { getHomeBlocks: async () => ({}) } : name === '@/lib/case-studies' ? load('lib/case-studies.ts', siteUrl, { './media-url': load('lib/media-url.ts', siteUrl) }) : name === '@/lib/seo' ? load('lib/seo.ts', siteUrl) : name === '@/components/json-ld' ? load('components/json-ld.tsx', siteUrl) : require(name)),
   });
   return exports;
 }
 
-test('SEO uses the configured origin or localhost and excludes admin from discovery', () => {
+test('SEO uses the configured origin or localhost and excludes admin from discovery', async () => {
   for (const siteUrl of [undefined, '', 'https://confido.example/']) {
     const origin = siteUrl || 'http://localhost:3000';
     let font;
@@ -28,7 +28,7 @@ test('SEO uses the configured origin or localhost and excludes admin from discov
     const robots = load('app/robots.ts', siteUrl).default();
     assert.equal(robots.rules.allow, '/'); assert.equal(robots.rules.disallow, '/admin');
     assert.equal(robots.sitemap, new URL('/sitemap.xml', origin).href);
-    const sitemap = load('app/sitemap.ts', siteUrl).default();
+    const sitemap = await load('app/sitemap.ts', siteUrl).default();
     assert.deepEqual(Array.from(sitemap, item => item.url), ['/', '/services', '/work', '/about', '/contact', '/pricing', '/privacy-policy'].map(route => new URL(route, origin).href));
   }
 });
@@ -73,8 +73,8 @@ test('structured data is valid JSON and safely escapes saved HTML delimiters', (
   assert.equal(services[0].offers.priceSpecification.unitText, 'MONTH');
 });
 
-test('sitemap gives every public route a modification date and the intended priority', () => {
-  const entries = load('app/sitemap.ts', 'https://confido.example').default();
+test('sitemap gives every public route a modification date and the intended priority', async () => {
+  const entries = await load('app/sitemap.ts', 'https://confido.example').default();
   const priorities = { '/': 1, '/services': 0.9, '/work': 0.9, '/about': 0.8, '/contact': 0.8, '/pricing': 0.8, '/privacy-policy': 0.3 };
   for (const entry of entries) {
     assert.equal(entry.priority, priorities[new URL(entry.url).pathname]);

@@ -76,8 +76,8 @@ export function BlockForm({ data, onChange, type, fields, token, disabled, onUpl
         {field.kind === 'list' ? <h3 className="mb-3 text-lg font-medium">{field.label}</h3> : <label htmlFor={id} className="mb-2 block text-sm font-medium">{field.label}</label>}
         {field.kind === 'list' ? <ListField field={field} value={data[field.key]} data={data} onChange={onChange} token={token} disabled={disabled} onUploadChange={onUploadChange} />
           : field.kind === 'image' ? <ImageField id={id} value={value} onChange={update} token={token} onUploadChange={onUploadChange} />
-          : field.kind === 'textarea' ? <textarea id={id} rows={4} className={inputStyle} value={value} onChange={event => update(event.target.value)} />
-          : <input id={id} type={field.kind === 'email' ? 'email' : field.kind === 'url' ? 'url' : 'text'} inputMode={field.kind === 'url' ? 'url' : undefined} className={inputStyle} value={value} onChange={event => update(event.target.value)} />}
+          : field.kind === 'textarea' ? <textarea id={id} rows={4} maxLength={field.max} className={inputStyle} value={value} onChange={event => update(event.target.value)} />
+          : <input id={id} maxLength={field.max} type={field.kind === 'email' ? 'email' : field.kind === 'url' ? 'url' : 'text'} inputMode={field.kind === 'url' ? 'url' : undefined} className={inputStyle} value={value} onChange={event => update(event.target.value)} />}
         {field.help && <p className="mt-2 text-xs leading-relaxed text-zinc-500">{field.help}</p>}
       </div>;
     })}

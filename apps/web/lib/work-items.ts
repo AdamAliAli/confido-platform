@@ -1,9 +1,10 @@
 import { image, srcSet, type GalleryItem } from './cloudinary';
 import { imageUrl, safeHref, siteImage, text } from './media-url';
+import { caseStudySlug } from './case-studies';
 
 export type ProjectWorkItem = {
   id: string; section: 'work'; mediaType: 'image'; imageUrl: string;
-  title: string; client: string; category: string; width: number; height: number; href?: string; year?: string;
+  title: string; client: string; category: string; width: number; height: number; href?: string; year?: string; caseStudy?: boolean;
 };
 export type WorkItem = GalleryItem | ProjectWorkItem;
 
@@ -55,7 +56,8 @@ export function combineWorkItems(projectData: unknown, gallery: GalleryItem[]): 
       id: `project:${index}`, section: 'work', mediaType: 'image', imageUrl: src,
       title: text(project.title, text(project.name, `Project ${index + 1}`)), client: '',
       category: text(project.category, 'Branding'), width: dimensions.width, height: dimensions.height,
-      href: safeHref(project.href ?? project.url),
+      href: caseStudySlug(project.slug) ? `/work/${project.slug}` : safeHref(project.href ?? project.url),
+      caseStudy: !!caseStudySlug(project.slug),
       year: typeof project.year === 'string' || typeof project.year === 'number' ? String(project.year).trim() || undefined : undefined,
     });
   }

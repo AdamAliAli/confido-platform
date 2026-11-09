@@ -152,7 +152,7 @@ export function WorkDeck({ items, onOpen, children, viewerOpen = false }: WorkDe
   const href = 'href' in current ? safeHref(current.href) : undefined;
   const year = 'year' in current && (typeof current.year === 'string' || typeof current.year === 'number') ? String(current.year).trim() : '';
   const actionClass = 'group mt-6 inline-flex h-9 max-w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b2420] md:h-16 md:w-[354px]';
-  const action = <><span className="flex w-[155px] items-center justify-center bg-mint text-[13px] text-[#070908] md:min-w-0 md:w-[290px] md:flex-1 md:text-[20px]">{href ? 'Visit project ↗' : 'View project'}</span><span className="flex w-9 shrink-0 items-center justify-center bg-[#d9eee9] text-[#070908] md:w-16" aria-hidden="true"><ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none md:h-5 md:w-5" /></span></>;
+  const action = <><span className="flex w-[155px] items-center justify-center bg-mint text-[13px] text-[#070908] md:min-w-0 md:w-[290px] md:flex-1 md:text-[20px]">{href ? ('caseStudy' in current && current.caseStudy ? 'Read case study' : 'Visit project ↗') : 'View project'}</span><span className="flex w-9 shrink-0 items-center justify-center bg-[#d9eee9] text-[#070908] md:w-16" aria-hidden="true"><ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none md:h-5 md:w-5" /></span></>;
 
   return <>
     <div className="grid min-w-0 gap-4 motion-reduce:hidden lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-center lg:gap-8"

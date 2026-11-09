@@ -9,7 +9,7 @@ function load(file, imports = {}, globals = {}) {
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports, process: { env: { NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: 'demo' } }, ...globals, require: name => imports[name] || (name === '@/lib/seo' ? require('./seo-helpers.cjs') : undefined) || require(name) });
   return exports;
 }
-function workLib() { return load('lib/work-items.ts', { './cloudinary': load('lib/cloudinary.ts'), './media-url': load('lib/media-url.ts', {}, { URL }) }, { URL }); }
+function workLib() { return load('lib/work-items.ts', { './cloudinary': load('lib/cloudinary.ts'), './case-studies': load('lib/case-studies.ts', { './media-url': load('lib/media-url.ts', {}, { URL }) }), './media-url': load('lib/media-url.ts', {}, { URL }) }, { URL }); }
 function elements(node) {
   if (!node || typeof node !== 'object') return [];
   return [node, ...[node.props?.children].flat(Infinity).flatMap(elements)];

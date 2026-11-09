@@ -6,6 +6,7 @@ import { SECTION_DEFAULTS } from '@/lib/section-defaults';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { imageUrl, safeHref, siteImage } from '@/lib/media-url';
+import { caseStudySlug } from '@/lib/case-studies';
 
 type Project = { title: string; category: string; image: string; year?: string; href?: string };
 
@@ -26,7 +27,7 @@ export function ProjectsSection({ data }: { data: Record<string, any> }) {
       category: typeof item.category === 'string' ? item.category : 'Branding',
       year: typeof item.year === 'string' || typeof item.year === 'number' ? String(item.year) : undefined,
       image: projectImage(item)!,
-      href: safeHref(item.href ?? item.url),
+      href: caseStudySlug(item.slug) ? `/work/${item.slug}` : safeHref(item.href ?? item.url),
     }));
   const visibleProjects = projects.length ? projects : FALLBACK_PROJECTS;
 

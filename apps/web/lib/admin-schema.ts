@@ -23,6 +23,22 @@ export const ADMIN_SCHEMA: Record<string, BlockSchema> = {
       { key: 'title', label: 'Title', kind: 'text' }, { key: 'category', label: 'Category', kind: 'text' },
       { key: 'year', label: 'Year', kind: 'text' }, { key: 'image', label: 'Image', kind: 'image' },
       { key: 'href', label: 'Link (optional)', kind: 'url', help: 'Use a full HTTPS link to the project.' },
+      { key: 'slug', label: 'Slug (optional)', kind: 'text', max: 80, help: 'Page address, e.g. osmanli-oud-malaysia. Fill it in to give this project its own case-study page. Lowercase letters, numbers and dashes only.' },
+      { key: 'client', label: 'Client', kind: 'text' },
+      { key: 'market', label: 'Market', kind: 'text', help: 'e.g. Malaysia' },
+      { key: 'period', label: 'Period', kind: 'text', help: 'e.g. May–Aug 2026' },
+      { key: 'services', label: 'Services', kind: 'text', help: 'e.g. Social media management, Paid ads' },
+      { key: 'summary', label: 'Summary', kind: 'textarea', max: 155, help: '1–2 sentences. Shown at the top and in Google results (max 155 characters).' },
+      { key: 'challenge', label: 'Challenge', kind: 'textarea', help: 'Leave an empty line between paragraphs.' },
+      { key: 'approach', label: 'Approach', kind: 'textarea', help: 'Leave an empty line between paragraphs.' },
+      { key: 'results', label: 'Results', kind: 'list', max: 6, itemLabel: 'Result', fields: [
+        { key: 'value', label: 'Value', kind: 'text', help: 'e.g. +1,357%' },
+        { key: 'label', label: 'Label', kind: 'text', help: 'e.g. Instagram reach' },
+      ] },
+      { key: 'resultsNote', label: 'Results note', kind: 'textarea', help: 'Optional small print under the results.' },
+      { key: 'gallery', label: 'Gallery', kind: 'list', max: 8, itemLabel: 'Image', fields: [
+        { key: 'src', label: 'Image', kind: 'image' }, { key: 'alt', label: 'Describe the image', kind: 'text' },
+      ] },
     ] },
   ] },
   clarity: { name: 'Clarity', section: '#clarity', fields: [
